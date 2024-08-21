@@ -1,3 +1,4 @@
 *.o
 emu8085
 build/
+Instructions.txt
