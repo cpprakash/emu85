@@ -8,8 +8,20 @@ PROJECT=$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES)
 
 BUILD_DIR=build
 
-emu8085: main.o
-	$(PROJECT) main.o -o emu8085
+MAIN=$(BUILD_DIR)/main.o
+INSTRUCTIONS=$(BUILD_DIR)/Instructions.o
+
+emu8085: createdir main.o Instructions.o
+	$(PROJECT) main.o $(INSTRUCTIONS)
+
+createdir: clean
+	mkdir $(BUILD_DIR)
+
+Instructions.o: src/Instructions.cpp headers/Instructions.hpp
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c src/Instructions.cpp -o $(INSTRUCTIONS)
 
 main.o: main.cpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) -c main.cpp -o main.o
+
+clean:
+	rm -rf $(BUILD_DIR)
