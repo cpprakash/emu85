@@ -11,8 +11,10 @@ public:
   void GenerateTokens();
 };
 
-int main(void) {
-  std::cout << "Hello World from 8085 Emulator" << std::endl;
+int main(int argc, char *argv[]) {
+  std::cout << "Hello World from 8085 Emulator argc=" << argc << argv[1]
+            << std::endl;
+
   return 0;
 }
 
