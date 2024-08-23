@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "headers/Assembler.hpp"
 #include "headers/Instructions.hpp"
 
 class FileHandler {
