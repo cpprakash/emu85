@@ -48,7 +48,7 @@ void FileHandler::ReadFile(char *file_path) {
 
     delete[] memblock;
   } else {
-    std::cout << "Unable to open file";
+    std::cout << "Unable to open file" << std::endl;
   }
 }
 void FileHandler::GenerateTokens(std::string file_text) {
