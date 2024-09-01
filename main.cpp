@@ -17,6 +17,9 @@ public:
 private:
   void GenerateTokens(std::string file_text);
 
+private:
+  Assembler _assembler;
+
 public:
   std::vector<std::string> tokens;
 };
@@ -48,6 +51,7 @@ void FileHandler::ReadFile(char *file_path) {
     GenerateTokens(memblock);
 
     delete[] memblock;
+    _assembler.AssembleProgram(tokens);
   } else {
     std::cout << "Unable to open file" << std::endl;
   }
