@@ -66,7 +66,8 @@ void Assembler::HandleAddInstructions(std::vector<std::string> &program,
             << " at index " << index << std::endl;
   if (program[index + 1] == "A") {
     std::cout << "ADD A instrution is found" << std::endl;
+
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    my_map = _instructions.instruction_map.find("INS_ADD_A");
+    // my_map = _instructions.instruction_map.find("INS_ADD_A");
   }
 }

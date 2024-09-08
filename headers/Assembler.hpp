@@ -23,6 +23,9 @@ private:
   void HandleAddInstructions(std::vector<std::string> &program,
                              unsigned int index);
 
+public:
+  std::vector<unsigned char> final_program;
+
 private:
   Instructions _instructions;
 };

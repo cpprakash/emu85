@@ -107,7 +107,7 @@ public:
     XTHL
   };
 
-  std::vector<InstructionTable> instruction_table;
+  // std::vector<InstructionTable> instruction_table;
 
 private:
   unsigned int total_instructions;
