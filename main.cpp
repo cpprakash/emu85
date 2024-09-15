@@ -6,6 +6,9 @@
 #include "headers/Assembler.hpp"
 #include "headers/Instructions.hpp"
 
+/***
+ * class to handle file read
+ */
 class FileHandler {
 public:
   FileHandler() {}
@@ -24,6 +27,10 @@ public:
   std::vector<std::string> tokens;
 };
 
+/***
+ * Main function, takes the filepath of the assembly as the argument
+ * and then calls the ReadFile method from FileHandler class
+ */
 int main(int argc, char *argv[]) {
   std::cout << "Hello World from 8085 Emulator argc=" << argc << argv[1]
             << std::endl;
@@ -35,6 +42,9 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
+/***
+ * Reads the file based on the parameters passed from the main function
+ */
 void FileHandler::ReadFile(char *file_path) {
   std::streampos size;
   char *memblock;
@@ -56,23 +66,31 @@ void FileHandler::ReadFile(char *file_path) {
     std::cout << "Unable to open file" << std::endl;
   }
 }
+
+/***
+ * Generates the tokens based on the file content of the <program>.asm file
+ */
 void FileHandler::GenerateTokens(std::string file_text) {
   // std::cout << file_text << std::endl;
   for (unsigned int i = 0; i < file_text.length(); i++) {
-    if (isspace(file_text[i]))
+    if (file_text[i] == '\n' || file_text[i] == '\r') {
+      tokens.push_back("NEWLINE");
       continue;
-    if (isalpha(file_text[i])) {
+    }
+    if (isspace(file_text[i])) // check if token is space, do nothing
+      continue;
+    if (isalpha(file_text[i])) { // check if token starts with character
       std::string temp_string;
-      while (isalpha(file_text[i])) {
+      while (isalpha(file_text[i])) { // collect the token
         temp_string += file_text[i];
         i++;
       }
-      tokens.push_back(temp_string);
+      tokens.push_back(temp_string); // store the token
       i--;
       // std::cout << "Tempstring = " << temp_string << std::endl;
-    } else if (isdigit(file_text[i])) {
+    } else if (isdigit(file_text[i])) { // check if token starts with a digit
       std::string temp_num;
-      while (isdigit(file_text[i])) {
+      while (isdigit(file_text[i])) { // while it is a digit collect it
         temp_num += file_text[i];
         i++;
       }
@@ -81,6 +99,12 @@ void FileHandler::GenerateTokens(std::string file_text) {
       // std::cout << "TempNumber = " << temp_num << std::endl;
     } else if (file_text[i] == ',') {
       tokens.push_back("COMMA");
+      // std::cout << "Token is comma" << std::endl;
+    } else if (file_text[i] == ':') {
+      tokens.push_back("COLON");
+      // std::cout << "Token is comma" << std::endl;
+    } else if (file_text[i] == ';') {
+      tokens.push_back("COMMENT");
       // std::cout << "Token is comma" << std::endl;
     } else {
       std::cout << "Unknow token|" << file_text[i] << "|" << std::endl;

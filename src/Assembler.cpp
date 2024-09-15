@@ -1,19 +1,33 @@
 #include "../headers/Assembler.hpp"
 
+/***
+ * Assemble the progrm
+ */
 void Assembler::AssembleProgram(std::vector<std::string> program) {
   if (program.size() == 0) {
     std::cout << "Program is empty, cant assemble it." << std::endl;
     return;
   }
+
   for (size_t i = 0; i < program.size(); i++) {
-    // std::cout << "Token " << i << " = " << program[i] << std::endl;
+    std::cout << "Token " << i << " = " << program[i] << std::endl;
     // All AXX instructions
-    if (program[i] == "ACI") {
+    if (program[i] == "ORG") {
+      std::cout << "ORG directive found, have to relocate to " << program[i + 1]
+                << std::endl;
+      if (program[i + 2] != "H") {
+        std::cout << "Error the relocation address is not in hex "
+                  << program[i + 2] << std::endl;
+        has_errors = true;
+      }
+      if (program[i + 3] == ";") {
+      }
+    } else if (program[i] == "ACI") {
       std::cout << "ACI " << std::endl;
-      HandleAddInstructions(program, i);
+      HandleAciInstructions(program, i);
     } else if (program[i] == "ADC") {
       std::cout << "ADC " << std::endl;
-      HandleAddInstructions(program, i);
+      HandleAdcInstructions(program, i);
     } else if (program[i] == "ADD") {
       std::cout << "ADD " << std::endl;
       HandleAddInstructions(program, i);
@@ -54,12 +68,43 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     }
   }
 }
+/***
+ * Relocate address based on ORG directive
+ * ORG directive can shift the origin for the next instructions
+ * example
+ * Assume that the current value of the location counter is OFH (decimal15)
+ * when the following ORG directive is encountered: PAG1: ORG OFFH ;ORG
+ * ASSEMBLER TO LOCATION ;OFFH (decimal 225) The symbol PAG1 is assigned the
+ * address OFH. The next instruction or data byte is assembled at location OFFH.
+ */
+void Assembler::RelocateAddress(unsigned short new_address) {}
+
+void Assembler::UpdateCurrentAssembleAddress(unsigned short &address) {
+  std::cout << "Updating the current assembler address" << std::endl;
+}
+
+/***
+ * ParseLable function to parse the lable inside the ASM instrustions
+ * the label can be of form
+ * LABEL: OPCODE OPERAND ;COMMENT
+ */
+void Assembler::ParseLabels() {}
+
+/**
+ * Handle ACI Instructions
+ */
 void Assembler::HandleAciInstructions(std::vector<std::string> &program,
                                       unsigned int index) {}
 
+/***
+ * Handle ADC instructions
+ */
 void Assembler::HandleAdcInstructions(std::vector<std::string> &program,
                                       unsigned int index) {}
 
+/***
+ * Handle ADD instructions
+ */
 void Assembler::HandleAddInstructions(std::vector<std::string> &program,
                                       unsigned int index) {
   std::cout << "HandleAddInstructions called with token = " << program[index]
@@ -69,5 +114,20 @@ void Assembler::HandleAddInstructions(std::vector<std::string> &program,
 
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
     // my_map = _instructions.instruction_map.find("INS_ADD_A");
+  }
+}
+
+/**
+ * Handle LDA Instructions
+ */
+void Assembler::HandleLdaInstructions(std::vector<std::string> &program,
+                                      unsigned int index) {}
+
+void Assembler::RunFinalProgram(void) {
+  if (has_errors) {
+    std::cout
+        << "Program contains error, please fix them before running it again. "
+        << std::endl;
+    return;
   }
 }
