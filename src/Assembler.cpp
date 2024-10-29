@@ -24,13 +24,13 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
       }
     } else if (program[i] == "ACI") {
       std::cout << "ACI " << std::endl;
-      HandleAciInstructions(program, i);
+      HandleAciInstruction(program, i);
     } else if (program[i] == "ADC") {
       std::cout << "ADC " << std::endl;
-      HandleAdcInstructions(program, i);
+      HandleAdcInstruction(program, i);
     } else if (program[i] == "ADD") {
       std::cout << "ADD " << std::endl;
-      HandleAddInstructions(program, i);
+      HandleAddInstruction(program, i);
     } else if (program[i] == "ADI") {
       std::cout << "ADI " << std::endl;
     } else if (program[i] == "ANA") {
@@ -93,20 +93,20 @@ void Assembler::ParseLabels() {}
 /**
  * Handle ACI Instructions
  */
-void Assembler::HandleAciInstructions(std::vector<std::string> &program,
-                                      unsigned int index) {}
+void Assembler::HandleAciInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {}
 
 /***
  * Handle ADC instructions
  */
-void Assembler::HandleAdcInstructions(std::vector<std::string> &program,
-                                      unsigned int index) {}
+void Assembler::HandleAdcInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {}
 
 /***
  * Handle ADD instructions
  */
-void Assembler::HandleAddInstructions(std::vector<std::string> &program,
-                                      unsigned int index) {
+void Assembler::HandleAddInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
   std::cout << "HandleAddInstructions called with token = " << program[index]
             << " at index " << index << std::endl;
   if (program[index + 1] == "A") {
@@ -114,14 +114,78 @@ void Assembler::HandleAddInstructions(std::vector<std::string> &program,
 
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
     // my_map = _instructions.instruction_map.find("INS_ADD_A");
+  } else if (program[index + 1] == "B") {
+    std::cout << "ADD B instrution is found" << std::endl;
+
+    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    // my_map = _instructions.instruction_map.find("INS_ADD_A");
+  } else if (program[index + 1] == "C") {
+    std::cout << "ADD C instrution is found" << std::endl;
+
+    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    // my_map = _instructions.instruction_map.find("INS_ADD_A");
+  } else if (program[index + 1] == "D") {
+    std::cout << "ADD D instrution is found" << std::endl;
+
+    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    // my_map = _instructions.instruction_map.find("INS_ADD_A");
+  } else if (program[index + 1] == "E") {
+    std::cout << "ADD E instrution is found" << std::endl;
+
+    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    // my_map = _instructions.instruction_map.find("INS_ADD_A");
+  } else if (program[index + 1] == "H") {
+    std::cout << "ADD H instrution is found" << std::endl;
+
+    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    // my_map = _instructions.instruction_map.find("INS_ADD_A");
+  } else if (program[index + 1] == "L") {
+    std::cout << "ADD L instrution is found" << std::endl;
+
+    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    // my_map = _instructions.instruction_map.find("INS_ADD_A");
+  } else if (program[index + 1] == "M") {
+    std::cout << "ADD M instrution is found" << std::endl;
+
+    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    // my_map = _instructions.instruction_map.find("INS_ADD_A");
+  } else {
+    // error no matching instruction found with ADD X
   }
+}
+/***
+ * Handle ADI instructions
+ */
+void Assembler::HandleAdiInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
+  std::cout << "HandleAdiInstruction called with token = " << program[index]
+            << " at index " << index << std::endl;
+}
+/***
+ * Handle ANA instructions
+ */
+void Assembler::HandleAnaInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
+  std::cout << "HandleAnaInstruction called with token = " << program[index]
+            << " at index " << index << std::endl;
+}
+/***
+ * Handle ANI instructions
+ */
+void Assembler::HandleAniInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
+  std::cout << "HandleAniInstruction called with token = " << program[index]
+            << " at index " << index << std::endl;
 }
 
 /**
  * Handle LDA Instructions
  */
-void Assembler::HandleLdaInstructions(std::vector<std::string> &program,
-                                      unsigned int index) {}
+void Assembler::HandleLdaInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
+  std::cout << "HandleLdaInstruction called with token = " << program[index]
+            << " at index " << index << std::endl;
+}
 
 void Assembler::RunFinalProgram(void) {
   if (has_errors) {

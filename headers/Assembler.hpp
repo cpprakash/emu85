@@ -18,17 +18,29 @@ public:
   void ParseLabels();
 
 private:
-  void HandleAciInstructions(std::vector<std::string> &program,
-                             unsigned int index);
+  /**
+   * All instructions with AXX
+   */
+  void HandleAciInstruction(std::vector<std::string> &program,
+                            unsigned int index);
 
-  void HandleAdcInstructions(std::vector<std::string> &program,
-                             unsigned int index);
+  void HandleAdcInstruction(std::vector<std::string> &program,
+                            unsigned int index);
 
-  void HandleAddInstructions(std::vector<std::string> &program,
-                             unsigned int index);
+  void HandleAddInstruction(std::vector<std::string> &program,
+                            unsigned int index);
 
-  void HandleLdaInstructions(std::vector<std::string> &program,
-                             unsigned int index);
+  void HandleAdiInstruction(std::vector<std::string> &program,
+                            unsigned int index);
+
+  void HandleAnaInstruction(std::vector<std::string> &program,
+                            unsigned int index);
+
+  void HandleAniInstruction(std::vector<std::string> &program,
+                            unsigned int index);
+
+  void HandleLdaInstruction(std::vector<std::string> &program,
+                            unsigned int index);
 
   void RunFinalProgram();
 
