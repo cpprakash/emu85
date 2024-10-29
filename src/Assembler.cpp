@@ -168,6 +168,25 @@ void Assembler::HandleAnaInstruction(std::vector<std::string> &program,
                                      unsigned int index) {
   std::cout << "HandleAnaInstruction called with token = " << program[index]
             << " at index " << index << std::endl;
+  if (program[index + 1] == "A") {
+    std::cout << "ANA A instrution is found" << std::endl;
+  } else if (program[index + 1] == "B") {
+    std::cout << "ANA B instrution is found" << std::endl;
+  } else if (program[index + 1] == "C") {
+    std::cout << "ANA C instrution is found" << std::endl;
+  } else if (program[index + 1] == "D") {
+    std::cout << "ANA D instrution is found" << std::endl;
+  } else if (program[index + 1] == "E") {
+    std::cout << "ANA E instrution is found" << std::endl;
+  } else if (program[index + 1] == "H") {
+    std::cout << "ANA H instrution is found" << std::endl;
+  } else if (program[index + 1] == "L") {
+    std::cout << "ANA L instrution is found" << std::endl;
+  } else if (program[index + 1] == "M") {
+    std::cout << "ANA M instrution is found" << std::endl;
+  } else {
+    // Error no instruction found matching ANA X
+  }
 }
 /***
  * Handle ANI instructions
