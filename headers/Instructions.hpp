@@ -12,6 +12,7 @@ public:
 private:
   void FetchNextInstructions(void);
   void FillInstructionTableWithInstructions(void);
+  void FillInstructionTableWithInstructionsTwo(void);
 
 public:
   enum MachineCycleEnum { ONE = 1, TWO, THREE };
@@ -25,6 +26,7 @@ public:
   unsigned char current_instruction_opcode{0x00};
   std::map<std::string, std::pair<unsigned char, MachineCycleEnum>>
       instruction_map;
+  std::map<std::string, unsigned char> instruction_map2;
   /*enum Instruction {
     ACI,
     ADC,
