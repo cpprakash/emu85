@@ -112,34 +112,50 @@ void Assembler::HandleAddInstruction(std::vector<std::string> &program,
   if (program[index + 1] == "A") {
     std::cout << "ADD A instrution is found" << std::endl;
 
-    unsigned char code;
-
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+
+    unsigned char code;
     code = _instructions.instruction_map2.at("INS_ADD_A");
+    std::cout << "Code === " << code << std::endl;
   } else if (program[index + 1] == "B") {
     std::cout << "ADD B instrution is found" << std::endl;
 
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
     // my_map = _instructions.instruction_map.find("INS_ADD_A");
+    unsigned char code;
+    code = _instructions.instruction_map2.at("INS_ADD_B");
+    std::cout << "Code === " << code << std::endl;
   } else if (program[index + 1] == "C") {
     std::cout << "ADD C instrution is found" << std::endl;
 
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    unsigned char code;
+    code = _instructions.instruction_map2.at("INS_ADD_C");
+    std::cout << "Code === " << code << std::endl;
     // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "D") {
     std::cout << "ADD D instrution is found" << std::endl;
 
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    unsigned char code;
+    code = _instructions.instruction_map2.at("INS_ADD_D");
+    std::cout << "Code === " << code << std::endl;
     // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "E") {
     std::cout << "ADD E instrution is found" << std::endl;
 
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    unsigned char code;
+    code = _instructions.instruction_map2.at("INS_ADD_E");
+    std::cout << "Code === " << code << std::endl;
     // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "H") {
     std::cout << "ADD H instrution is found" << std::endl;
 
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
+    unsigned char code;
+    code = _instructions.instruction_map2.at("INS_ADD_H");
+    std::cout << "Code === " << code << std::endl;
     // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "L") {
     std::cout << "ADD L instrution is found" << std::endl;

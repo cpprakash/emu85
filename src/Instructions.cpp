@@ -3,6 +3,7 @@
 Instructions::Instructions(void) {
   std::cout << "Instructions Constructor called" << std::endl;
   FillInstructionTableWithInstructions();
+  FillInstructionTableWithInstructionsTwo();
 }
 
 void Instructions::FetchNextInstructions(void) {
@@ -510,7 +511,7 @@ void Instructions::FillInstructionTableWithInstructions(void) {
  * Trying to fix ENUMS
  */
 void Instructions::FillInstructionTableWithInstructionsTwo(void) {
-  instruction_map2.insert(std::make_pair("INS_ACI_Data", 0xCE));
+  // instruction_map2.insert(std::make_pair("INS_ACI_Data", 0xCE));
 
   instruction_map2.insert(std::make_pair("INS_ACI_Data", 0xCE));
   instruction_map2.insert(std::make_pair("INS_ADC_A", 0x8F));
