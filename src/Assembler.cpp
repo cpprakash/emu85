@@ -10,17 +10,31 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
   }
 
   for (size_t i = 0; i < program.size(); i++) {
+
+    if (program[i] == "NEWLINE") {
+      std::cout << "New line found, will escape" << std::endl;
+      continue;
+    }
+
     std::cout << "Token " << i << " = " << program[i] << std::endl;
+
     // All AXX instructions
     if (program[i] == "ORG") {
       std::cout << "ORG directive found, have to relocate to " << program[i + 1]
                 << std::endl;
+      // each hex num must begin with a 0 and end with H, Decimal D,
+      // Octal Q and Binary with B
       if (program[i + 2] != "H") {
         std::cout << "Error the relocation address is not in hex "
                   << program[i + 2] << std::endl;
         has_errors = true;
       }
-      if (program[i + 3] == ";") {
+    } else if (program[i] == "COMMENT") { // Comment found
+      std::cout << "Comment Found " << std::endl;
+      while (program[i] != "NEWLINE") {
+        std::cout << " Escaping token " << program[i] << " at pos " << i
+                  << std::endl;
+        i++;
       }
     } else if (program[i] == "ACI") {
       std::cout << "ACI " << std::endl;
