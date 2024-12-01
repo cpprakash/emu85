@@ -80,6 +80,108 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     } else if (program[i] == "CZ") {
       std::cout << "CZ " << std::endl;
     }
+
+    // all DXX instructions
+    else if (program[i] == "DAA") {
+      // TODO
+    } else if (program[i] == "DAD") {
+      // TODO handle DAD instructions
+    } else if (program[i] == "DCR") {
+      // TODO handle DCR instructions
+    } else if (program[i] == "DCX") {
+      // TODO handle DCX instructions
+    } else if (program[i] == "DI") {
+      // TODO handle DI instruction
+    }
+
+    // all EXX instructions
+    else if (program[i] == "EI") {
+      // TODO handle EI instruction
+    }
+
+    // HLT instruction
+    else if (program[i] == "HLT") {
+      // TODO handle HLT instruction
+    }
+
+    // handle all IN instrutions
+    else if (program[i] == "IN") {
+      // TODO handle IN Port address instruction
+    }
+
+    // handle all INR instructions
+    else if (program[i] == "INR") {
+      // TODO handle INR instruction
+    }
+
+    // handle all INX instrutions
+    else if (program[i] == "INX") {
+      // TODO handle INX Port address instruction
+    }
+
+    // handle all JC instrutions
+    else if (program[i] == "JC") {
+      // TODO handle JC Port address instruction
+    }
+
+    // handle all JM instrutions
+    else if (program[i] == "JM") {
+      // TODO handle JM Port address instruction
+    }
+    // handle all JMP instrutions
+    else if (program[i] == "JMP") {
+      // TODO handle JMP instruction
+    }
+    // handle all JNC instrutions
+    else if (program[i] == "JNC") {
+      // TODO handle JNC instruction
+    }
+    // handle all JNZ instrutions
+    else if (program[i] == "JNZ") {
+      // TODO handle JNZ instruction
+    }
+    // handle all JP instrutions
+    else if (program[i] == "JP") {
+      // TODO handle JP instruction
+    }
+    // handle all JPE instrutions
+    else if (program[i] == "JPE") {
+      // TODO handle JPE instruction
+    }
+    // handle all JPO instrutions
+    else if (program[i] == "JPO") {
+      // TODO handle JPO instruction
+    }
+    // handle all JZ instrutions
+    else if (program[i] == "JZ") {
+      // TODO handle JZ instruction
+    }
+    // handle all LDA instrutions
+    else if (program[i] == "LDA") {
+      // TODO handle LDA instruction
+    }
+    // handle all LDAXX instrutions
+    else if (program[i] == "LDAX") {
+      // TODO handle LDAX B, D instruction
+    }
+    // handle all LHLD instrutions
+    else if (program[i] == "LHLD") {
+      // TODO handle LHLD instruction
+    }
+    // handle all LXIXX instrutions
+    else if (program[i] == "LXI") {
+      // TODO handle LXI instruction
+    }
+
+    // handle all MOV XX instrutions
+    else if (program[i] == "MOV") {
+      // TODO handle MOV instruction
+    }
+
+    // handle all MVI instrutions
+    else if (program[i] == "MVI") {
+      // TODO handle MVI instruction
+    }
   }
 }
 /***
