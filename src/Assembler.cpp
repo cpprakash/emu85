@@ -4,7 +4,7 @@
  * Assemble the progrm
  */
 void Assembler::AssembleProgram(std::vector<std::string> program) {
-  if (program.size() == 0) {
+  if (program.size() == 0) { // Empty program
     std::cout << "Program is empty, cant assemble it." << std::endl;
     return;
   }

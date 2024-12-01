@@ -12,13 +12,13 @@
 class FileHandler {
 public:
   FileHandler() {}
-  FileHandler(std::string file_path) {
+  FileHandler(const std::string &file_path) {
     std::cout << "File path = " << file_path << std::endl;
   }
   void ReadFile(char *file);
 
 private:
-  void GenerateTokens(std::string file_text);
+  void GenerateTokens(const std::string &file_text);
 
 private:
   Assembler _assembler;
@@ -70,10 +70,10 @@ void FileHandler::ReadFile(char *file_path) {
 /***
  * Generates the tokens based on the file content of the <program>.asm file
  */
-void FileHandler::GenerateTokens(std::string file_text) {
+void FileHandler::GenerateTokens(const std::string &file_text) {
   // std::cout << file_text << std::endl;
   for (unsigned int i = 0; i < file_text.length(); i++) {
-    if (file_text[i] == '\n' || file_text[i] == '\r') {
+    if (file_text[i] == '\n' || file_text[i] == '\r') { // newline character
       tokens.push_back("NEWLINE");
       continue;
     }
