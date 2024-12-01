@@ -182,6 +182,163 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     else if (program[i] == "MVI") {
       // TODO handle MVI instruction
     }
+
+    // handle all NOP instrutions
+    else if (program[i] == "NOP") {
+      // TODO handle NOP instruction
+    }
+
+    // handle all ORA XX instrutions
+    else if (program[i] == "ORA") {
+      // TODO handle ORA instruction
+    }
+
+    // handle all ORI instrutions
+    else if (program[i] == "ORI") {
+      // TODO handle ORI instruction
+    }
+    // handle all OUT instrutions
+    else if (program[i] == "OUT") {
+      // TODO handle OUT instruction
+    }
+
+    // handle all PCHL instrutions
+    else if (program[i] == "PCHL") {
+      // TODO handle PCHL instruction
+    }
+
+    // handle all POP XX instrutions
+    else if (program[i] == "POP") {
+      // TODO handle POP instruction
+    }
+
+    // handle all PUSH instrutions
+    else if (program[i] == "PUSH") {
+      // TODO handle PUSH instruction
+    }
+
+    // handle all RAL instrutions
+    else if (program[i] == "RAL") {
+      // TODO handle RAL instruction
+    }
+
+    // handle all RAR instrutions
+    else if (program[i] == "RAR") {
+      // TODO handle RAR instruction
+    }
+
+    // handle all RC instrutions
+    else if (program[i] == "RC") {
+      // TODO handle RC instruction
+    }
+    // handle all RET instrutions
+    else if (program[i] == "RET") {
+      // TODO handle RET instruction
+    }
+    // handle all RIM instrutions
+    else if (program[i] == "RIM") {
+      // TODO handle RIM instruction
+    }
+    // handle all RLC instrutions
+    else if (program[i] == "RLC") {
+      // TODO handle RLC instruction
+    }
+    // handle all RM instrutions
+    else if (program[i] == "RM") {
+      // TODO handle RM instruction
+    }
+    // handle all RNC instrutions
+    else if (program[i] == "RNC") {
+      // TODO handle RNC instruction
+    }
+    // handle all RNZ instrutions
+    else if (program[i] == "RNZ") {
+      // TODO handle RNZ instruction
+    }
+    // handle all RP instrutions
+    else if (program[i] == "RP") {
+      // TODO handle RP instruction
+    }
+    // handle all RPE instrutions
+    else if (program[i] == "RPE") {
+      // TODO handle RPE instruction
+    }
+    // handle all RPO instrutions
+    else if (program[i] == "RPO") {
+      // TODO handle RPO instruction
+    }
+    // handle all RRC instrutions
+    else if (program[i] == "RRC") {
+      // TODO handle RRC instruction
+    }
+    // handle all RST instrutions
+    else if (program[i] == "RST") {
+      // TODO handle RST instruction
+    }
+    // handle all RZ instrutions
+    else if (program[i] == "RZ") {
+      // TODO handle RZ instruction
+    }
+    // handle all SBB XX instrutions
+    else if (program[i] == "SBB") {
+      // TODO handle SBB instruction
+    }
+    // handle all SBI instrutions
+    else if (program[i] == "SBI") {
+      // TODO handle SBI instruction
+    }
+    // handle all SHLD instrutions
+    else if (program[i] == "SHLD") {
+      // TODO handle SHLD instruction
+    }
+    // handle all SIM instrutions
+    else if (program[i] == "SIM") {
+      // TODO handle SIM instruction
+    }
+    // handle all SPHL instrutions
+    else if (program[i] == "SPHL") {
+      // TODO handle SPHL instruction
+    }
+    // handle all STA instrutions
+    else if (program[i] == "STA") {
+      // TODO handle STA instruction
+    }
+    // handle all STAX X instrutions
+    else if (program[i] == "STAX") {
+      // TODO handle STAX instruction
+    }
+    // handle all STC instrutions
+    else if (program[i] == "STC") {
+      // TODO handle STC instruction
+    }
+    // handle all SUB XX instrutions
+    else if (program[i] == "SUB") {
+      // TODO handle SUB instruction
+    }
+    // handle all SUI instrutions
+    else if (program[i] == "SUI") {
+      // TODO handle SUI instruction
+    }
+    // handle all XCHG instrutions
+    else if (program[i] == "XCHG") {
+      // TODO handle XCHG instruction
+    }
+    // handle all XRA XX instrutions
+    else if (program[i] == "XRA") {
+      // TODO handle XRA instruction
+    }
+    // handle all XRI instrutions
+    else if (program[i] == "XRI") {
+      // TODO handle XRI instruction
+    }
+    // handle all XTHL instrutions
+    else if (program[i] == "XTHL") {
+      // TODO handle XTHL instruction
+    } else {
+      // No matching instruction found, throw unkown instruction error
+      std::cout << "Error: Instruction " << program[i] << " is not recognized!"
+                << std::endl;
+    }
   }
 }
 /***
