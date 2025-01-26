@@ -12,10 +12,11 @@ BUILD_DIR=build
 MAIN=$(BUILD_DIR)/main.o
 INSTRUCTIONS=$(BUILD_DIR)/Instructions.o
 ASSEMBLER=$(BUILD_DIR)/Assembler.o
-MAIN_WINDOW=$(BUILD_DIR)/Main_Window.o
+MAIN_APP=$(BUILD_DIR)/MainApp.o
+MAIN_FRAME=$(BUILD_DIR)/MainFrame.o
 
-emu8085: createdir Main_Window.o main.o Instructions.o Assembler.o
-	$(PROJECT) $(BUILD_DIR)/Main_Window.o main.o $(INSTRUCTIONS) $(WX_WIDGET) $(ASSEMBLER)
+emu8085: createdir MainApp.o main.o Instructions.o Assembler.o MainFrame.o
+	$(PROJECT) $(BUILD_DIR)/MainApp.o main.o $(INSTRUCTIONS) $(WX_WIDGET) $(ASSEMBLER) $(MAIN_FRAME)
 
 createdir: clean
 	mkdir $(BUILD_DIR)
@@ -29,8 +30,11 @@ Assembler.o: src/Assembler.cpp headers/Assembler.hpp
 main.o: main.cpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) -c main.cpp -o main.o
 
-Main_Window.o: main_window.cpp
-	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(WX_WIDGET) -c main_window.cpp -o $(MAIN_WINDOW)
+MainFrame.o: MainFrame.cpp MainFrame.hpp
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(WX_WIDGET) -c MainFrame.cpp -o $(MAIN_FRAME)
+
+MainApp.o: MainApp.cpp MainApp.hpp
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(WX_WIDGET) -c MainApp.cpp -o $(MAIN_APP)
 
 clean:
 	rm -rf $(BUILD_DIR)
