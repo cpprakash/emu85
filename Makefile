@@ -5,7 +5,7 @@ COMPILER_OPTIONS= -Werror -Wreorder -Wsign-compare -Waddress -Wcomment -Wformat 
 COMPILER_INCLUDES=-I./src./headers
 WX_WIDGET=`wx-config --cxxflags --libs`
 
-PROJECT=$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -o emu8085
+PROJECT=$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -o build/emu8085
 
 BUILD_DIR=build
 
