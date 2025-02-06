@@ -10,7 +10,7 @@ private:
   wxMenuBar *m_pMainMenu;
   wxBoxSizer *outer_box;
 
-  wxTextCtrl *code_window; // Main Text Control for code
+  wxTextCtrl *m_pCodeWindow; // Main Text Control for code
 
 private:
   void CreateMenuBar(void);     // Create MenuBar
