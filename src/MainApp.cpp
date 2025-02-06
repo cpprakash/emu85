@@ -5,8 +5,8 @@
 #include "wx/wx.h"
 #endif
 
-#include "MainApp.hpp"
-#include "MainFrame.hpp"
+#include "../includes/MainApp.hpp"
+#include "../includes/MainFrame.hpp"
 
 // This is executed upon startup, like 'main()' in non-wxWidgets programs.
 bool MainApp::OnInit() {

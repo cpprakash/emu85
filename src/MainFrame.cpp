@@ -1,4 +1,4 @@
-#include "./MainFrame.hpp"
+#include "../includes/MainFrame.hpp"
 
 MainFrame::MainFrame()
     : wxFrame(nullptr, wxID_ANY, "8085 Microporcessor Emulator",

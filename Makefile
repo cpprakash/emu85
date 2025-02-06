@@ -21,20 +21,20 @@ emu8085: createdir MainApp.o main.o Instructions.o Assembler.o MainFrame.o
 createdir: clean
 	mkdir $(BUILD_DIR)
 
-Instructions.o: src/Instructions.cpp headers/Instructions.hpp
+Instructions.o: src/Instructions.cpp includes/Instructions.hpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c src/Instructions.cpp -o $(INSTRUCTIONS)
 
-Assembler.o: src/Assembler.cpp headers/Assembler.hpp
+Assembler.o: src/Assembler.cpp includes/Assembler.hpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c src/Assembler.cpp -o $(ASSEMBLER)
 
 main.o: main.cpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) -c main.cpp -o main.o
 
-MainFrame.o: MainFrame.cpp MainFrame.hpp
-	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(WX_WIDGET) -c MainFrame.cpp -o $(MAIN_FRAME)
+MainFrame.o: src/MainFrame.cpp includes/MainFrame.hpp
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(WX_WIDGET) -c src/MainFrame.cpp -o $(MAIN_FRAME)
 
-MainApp.o: MainApp.cpp MainApp.hpp
-	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(WX_WIDGET) -c MainApp.cpp -o $(MAIN_APP)
+MainApp.o: src/MainApp.cpp includes/MainApp.hpp
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(WX_WIDGET) -c src/MainApp.cpp -o $(MAIN_APP)
 
 clean:
 	rm -rf $(BUILD_DIR)
