@@ -38,3 +38,6 @@ MainApp.o: src/MainApp.cpp includes/MainApp.hpp
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+console: createdir main.o Instructions.o Assembler.o
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES)  -o emu8085 main.o $(INSTRUCTIONS) $(ASSEMBLER)

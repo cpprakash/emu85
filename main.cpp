@@ -3,8 +3,10 @@
 #include <string>
 #include <vector>
 
-#include "headers/Assembler.hpp"
-#include "headers/Instructions.hpp"
+#include "includes/Assembler.hpp"
+#include "includes/Instructions.hpp"
+
+#define DEBUG = 1
 
 /***
  * class to handle file read
@@ -31,7 +33,8 @@ public:
  * Main function, takes the filepath of the assembly as the argument
  * and then calls the ReadFile method from FileHandler class
  */
-int v_main(int argc, char *argv[]) {
+#ifdef DEBUG
+int main(int argc, char *argv[]) {
   std::cout << "Hello World from 8085 Emulator argc=" << argc << argv[1]
             << std::endl;
   FileHandler file_handler;
@@ -41,6 +44,7 @@ int v_main(int argc, char *argv[]) {
 
   return 0;
 }
+#endif
 
 /***
  * Reads the file based on the parameters passed from the main function
