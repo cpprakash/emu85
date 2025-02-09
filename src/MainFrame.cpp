@@ -13,6 +13,9 @@ MainFrame::MainFrame()
   this->SetMinClientSize(wxSize(800, 600));
 }
 
+/***
+ * The menu bar for the app
+ */
 void MainFrame::CreateMenuBar() {
   this->m_pMainMenu = new wxMenuBar();
   this->m_pMainMenu->Append(new wxMenu("File"), "FileMenu");
@@ -22,6 +25,10 @@ void MainFrame::CreateMenuBar() {
 
 void MainFrame::CreateBoxSizers() { outer_box = new wxBoxSizer(wxVERTICAL); }
 
+/***
+ * Create all GUI Controls in this function
+ * gets called in the main frame constructor
+ */
 void MainFrame::CreateGUIControls() {
   this->m_pCodeWindow =
       new wxTextCtrl(this, wxID_ANY, "Hola", wxPoint(100, 100),
