@@ -12,18 +12,19 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     return;
   }
 
-  for (size_t i = 0; i < program.size(); i++) {
+  /*for (size_t i = 0; i < program.size(); i++) {
     std::cout << "Token " << i << " = " << program[i] << std::endl;
-  }
+  }*/
   for (unsigned long i = 0; i < program.size(); i++) {
-    std::cout << "Index is " << i << std::endl;
+
+    std::cout << "Token " << i << " = " << program[i] << std::endl;
+
     if (program[i] == "NEWLINE") {
       std::cout << "New line found, will escape" << std::endl;
       continue;
     }
 
-    std::cout << "Token " << i << " = " << program[i] << std::endl;
-
+    // EOF is the last token in the file
     if (program[i] == "EOF") {
       std::cout << "The end of file reached. Will return. " << std::endl;
       return;
@@ -357,6 +358,7 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
       // No matching instruction found, throw unkown instruction error
       std::cout << "Error: Instruction " << program[i] << " is not recognized!"
                 << std::endl;
+      this->SetErrorInProgram();
     }
   }
 }
@@ -592,4 +594,14 @@ bool Assembler::CheckIfAddressInRange(const std::string &address) {
   if ((std::stoi(address) < this->MAX_ADDRESS) && std::stoi(address) > 0)
     return true;
   return false;
+}
+
+/***
+ * Set that the program that we are parsing contains error
+ * so that the program cant be assembled
+ * more info has to be supplied about error to the user TODO
+ */
+void Assembler::SetErrorInProgram(void) {
+  if (!this->has_errors)
+    this->has_errors = true;
 }

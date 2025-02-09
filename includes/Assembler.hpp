@@ -55,12 +55,22 @@ private:
 
   bool CheckIfAddressInRange(const std::string &address);
 
+  void SetErrorInProgram(void);
+
 public:
   std::vector<unsigned char> final_program;
   unsigned short start_address;
   bool has_errors;
 
 private:
+  struct ErrorMessage {
+    unsigned int token_line_number;  // line number where error occured
+    std::string current_token_value; // current token which caused error
+    std::string last_token_value;    // last valid token
+    std::string next_token_Value;    // next token for parsing
+    unsigned int token_number;       // index of token
+  };
+  std::vector<ErrorMessage> ErrorMessages; // vector of error messages
   unsigned short MAX_ADDRESS = 0xFFFF;
   Instructions _instructions;
   char m_cAccumulator; // Accumulator Register
