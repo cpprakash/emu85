@@ -18,7 +18,7 @@ public:
   void ParseLabels();
 
   const char &GetAccumulator();
-  void SetAccumulator(const char &value);
+  void SetAccumulator(const char *value);
 
 private:
   /**

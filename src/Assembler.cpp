@@ -514,7 +514,7 @@ void Assembler::HandleMviInstruction(std::vector<std::string> &program,
               << " register." << " with the value of " << std::hex
               << program[index + 3] << "H"
               << " and stoi = " << std::stoi(program[index + 3]) << std::endl;
-    this->SetAccumulator(std::stoi(program[index + 3]));
+    this->SetAccumulator(program[index + 3].c_str());
   }
 }
 
@@ -546,8 +546,8 @@ void Assembler::RunFinalProgram(void) {
  * Set the value of the accumulator
  */
 
-void Assembler::SetAccumulator(const char &value) {
-  // this->m_cAccumulator = static_cast<char>(value);
+void Assembler::SetAccumulator(const char *value) {
+  this->m_cAccumulator = atoi(value);
   std::cout << "Assembler::SetAccumulator::Set the value of Acc to= "
             << this->m_cAccumulator << std::endl;
 }
