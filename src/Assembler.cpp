@@ -1,5 +1,7 @@
 #include "../includes/Assembler.hpp"
 
+#include <bitset>
+
 /***
  * Assemble the progrm
  */
@@ -181,6 +183,7 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     // handle all MVI instrutions
     else if (program[i] == "MVI") {
       // TODO handle MVI instruction
+      HandleMviInstruction(program, i);
     }
 
     // handle all NOP instrutions
@@ -302,6 +305,7 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     // handle all STA instrutions
     else if (program[i] == "STA") {
       // TODO handle STA instruction
+      this->HandleStaInstruction(program, i);
     }
     // handle all STAX X instrutions
     else if (program[i] == "STAX") {
@@ -497,6 +501,38 @@ void Assembler::HandleLdaInstruction(std::vector<std::string> &program,
             << " at index " << index << std::endl;
 }
 
+/**
+ * Handle MVI Instructions
+ */
+void Assembler::HandleMviInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
+  std::cout << "HandleMviInstruction called with token = " << program[index]
+            << " at index " << index << std::endl;
+  if (program[index + 1] == "A") {
+    const char temp = static_cast<char>(program[index + 3][0]);
+    std::cout << "HandleMviInstruction called for = " << program[index + 1]
+              << " register." << " with the value of " << std::hex
+              << program[index + 3] << "H"
+              << " and stoi = " << std::stoi(program[index + 3]) << std::endl;
+    this->SetAccumulator(std::stoi(program[index + 3]));
+  }
+}
+
+/***
+ * Handle STA instructions
+ * STA <Address> 16 bits
+ */
+void Assembler::HandleStaInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
+  std::cout << "Assembler::HandleStaInstruction() called with token = "
+            << program[index] << " at index " << index << " value at "
+            << program[index + 1] << std::endl;
+  int temp = std::stoi(program[index + 1]);
+  final_program[temp] = static_cast<unsigned char>(this->GetAccumulator());
+  std::cout << "final_prog at index " << index + 1 << " = "
+            << this->GetAccumulator() << std::endl;
+}
+
 void Assembler::RunFinalProgram(void) {
   if (has_errors) {
     std::cout
@@ -505,3 +541,18 @@ void Assembler::RunFinalProgram(void) {
     return;
   }
 }
+
+/**
+ * Set the value of the accumulator
+ */
+
+void Assembler::SetAccumulator(const char &value) {
+  this->m_cAccumulator = static_cast<char>(value);
+  std::cout << "Assembler::SetAccumulator::Set the value of Acc to= "
+            << this->m_cAccumulator << std::endl;
+}
+
+/***
+ * Get the value of the accumulator register
+ */
+const char &Assembler::GetAccumulator() { return this->m_cAccumulator; }

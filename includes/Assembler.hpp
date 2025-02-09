@@ -17,6 +17,9 @@ public:
 
   void ParseLabels();
 
+  const char &GetAccumulator();
+  void SetAccumulator(const char &value);
+
 private:
   /**
    * All instructions with AXX
@@ -42,6 +45,12 @@ private:
   void HandleLdaInstruction(std::vector<std::string> &program,
                             unsigned int index);
 
+  void HandleMviInstruction(std::vector<std::string> &program,
+                            unsigned int index);
+
+  void HandleStaInstruction(std::vector<std::string> &program,
+                            unsigned int index);
+
   void RunFinalProgram();
 
 public:
@@ -51,6 +60,7 @@ public:
 
 private:
   Instructions _instructions;
+  char m_cAccumulator; // Accumulator Register
 };
 
 #endif
