@@ -528,9 +528,9 @@ void Assembler::HandleStaInstruction(std::vector<std::string> &program,
             << program[index] << " at index " << index << " value at "
             << program[index + 1] << std::endl;
   int temp = std::stoi(program[index + 1]);
-  final_program[temp] = static_cast<unsigned char>(this->GetAccumulator());
-  std::cout << "final_prog at index " << index + 1 << " = "
-            << this->GetAccumulator() << std::endl;
+  // final_program[temp] = static_cast<unsigned char>(this->GetAccumulator());
+  /*std::cout << "final_prog at index " << index + 1 << " = "
+            << this->GetAccumulator() << std::endl;*/
 }
 
 void Assembler::RunFinalProgram(void) {
@@ -547,7 +547,7 @@ void Assembler::RunFinalProgram(void) {
  */
 
 void Assembler::SetAccumulator(const char &value) {
-  this->m_cAccumulator = static_cast<char>(value);
+  // this->m_cAccumulator = static_cast<char>(value);
   std::cout << "Assembler::SetAccumulator::Set the value of Acc to= "
             << this->m_cAccumulator << std::endl;
 }
