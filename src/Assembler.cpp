@@ -6,6 +6,7 @@
  * Assemble the progrm
  */
 void Assembler::AssembleProgram(std::vector<std::string> program) {
+
   if (program.size() == 0) { // Empty program
     std::cout << "Program is empty, cant assemble it." << std::endl;
     return;
@@ -14,14 +15,19 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
   for (size_t i = 0; i < program.size(); i++) {
     std::cout << "Token " << i << " = " << program[i] << std::endl;
   }
-  for (size_t i = 0; i < program.size(); i++) {
-
+  for (unsigned long i = 0; i < program.size(); i++) {
+    std::cout << "Index is " << i << std::endl;
     if (program[i] == "NEWLINE") {
       std::cout << "New line found, will escape" << std::endl;
       continue;
     }
 
     std::cout << "Token " << i << " = " << program[i] << std::endl;
+
+    if (program[i] == "EOF") {
+      std::cout << "The end of file reached. Will return. " << std::endl;
+      return;
+    }
 
     // All AXX instructions
     if (program[i] == "ORG") {

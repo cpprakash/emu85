@@ -115,4 +115,5 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
     }
     // std::cout << file_text[i] << std::endl;
   }
+  tokens.push_back("EOF"); // end of file
 }

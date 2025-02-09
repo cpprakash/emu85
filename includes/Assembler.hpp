@@ -53,7 +53,7 @@ private:
 
   void RunFinalProgram();
 
-  bool CheckIfAddressInRange(const std::string &value);
+  bool CheckIfAddressInRange(const std::string &address);
 
 public:
   std::vector<unsigned char> final_program;
