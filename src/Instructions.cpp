@@ -1,4 +1,4 @@
-#include "../headers/Instructions.hpp"
+#include "../includes/Instructions.hpp"
 
 Instructions::Instructions(void) {
   std::cout << "Instructions Constructor called" << std::endl;

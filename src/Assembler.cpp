@@ -1,22 +1,33 @@
-#include "../headers/Assembler.hpp"
+#include "../includes/Assembler.hpp"
+
+#include <bitset>
 
 /***
  * Assemble the progrm
  */
 void Assembler::AssembleProgram(std::vector<std::string> program) {
+
   if (program.size() == 0) { // Empty program
     std::cout << "Program is empty, cant assemble it." << std::endl;
     return;
   }
 
   for (size_t i = 0; i < program.size(); i++) {
-
+    std::cout << "Token " << i << " = " << program[i] << std::endl;
+  }
+  for (unsigned long i = 0; i < program.size(); i++) {
+    std::cout << "Index is " << i << std::endl;
     if (program[i] == "NEWLINE") {
       std::cout << "New line found, will escape" << std::endl;
       continue;
     }
 
     std::cout << "Token " << i << " = " << program[i] << std::endl;
+
+    if (program[i] == "EOF") {
+      std::cout << "The end of file reached. Will return. " << std::endl;
+      return;
+    }
 
     // All AXX instructions
     if (program[i] == "ORG") {
@@ -102,6 +113,7 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     // HLT instruction
     else if (program[i] == "HLT") {
       // TODO handle HLT instruction
+      std::cout << "HLT instruction found. Will halt the CPU" << std::endl;
     }
 
     // handle all IN instrutions
@@ -181,6 +193,9 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     // handle all MVI instrutions
     else if (program[i] == "MVI") {
       // TODO handle MVI instruction
+      HandleMviInstruction(program, i);
+      i += 4; // ["MVI", "A", "," , "DATA", "H"]
+      std::cout << "New index after MVI is " << i << std::endl;
     }
 
     // handle all NOP instrutions
@@ -302,6 +317,10 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     // handle all STA instrutions
     else if (program[i] == "STA") {
       // TODO handle STA instruction
+      this->HandleStaInstruction(program, i);
+      // TODO update only if the line parsed correctly
+      i += 2; // skip 3 tokens ["STA", "ADDRESS", "H"]
+      std::cout << "New index after STA is " << i << std::endl;
     }
     // handle all STAX X instrutions
     else if (program[i] == "STAX") {
@@ -497,6 +516,49 @@ void Assembler::HandleLdaInstruction(std::vector<std::string> &program,
             << " at index " << index << std::endl;
 }
 
+/**
+ * Handle MVI Instructions
+ */
+void Assembler::HandleMviInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
+  std::cout << "HandleMviInstruction called with token = " << program[index]
+            << " at index " << index << std::endl;
+  if (program[index + 1] == "A") {
+    const char temp = static_cast<char>(program[index + 3][0]);
+    std::cout << "HandleMviInstruction called for = " << program[index + 1]
+              << " register." << " with the value of " << std::hex
+              << program[index + 3] << "H"
+              << " and stoi = " << std::stoi(program[index + 3]) << std::endl;
+    this->SetAccumulator(program[index + 3].c_str());
+  }
+}
+
+/***
+ * Handle STA instructions
+ * STA <Address> 16 bits
+ * return true if the instruction was parsed
+ * return false otherwise
+ */
+bool Assembler::HandleStaInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
+  std::cout << "Assembler::HandleStaInstruction() called with token = "
+            << program[index] << " at index " << index << " value at "
+            << program[index + 1] << std::endl;
+  int temp = std::stoi(program[index + 1]);
+  if (this->CheckIfAddressInRange(program[index + 1])) {
+    // address is in range, save the value of accumulator into this address
+    std::cout << "Assembler::HandleStaInstruction()::Valid address, storing "
+                 "accumulator value to  "
+              << program[index + 1] << "H" << std::endl;
+    // final_program[temp] = static_cast<unsigned char>(this->GetAccumulator());
+    return true;
+  } else {
+    // address is invalid, program has erros
+    std::cout << "Invalid address " << program[index + 1] << std::endl;
+  }
+  return false;
+}
+
 void Assembler::RunFinalProgram(void) {
   if (has_errors) {
     std::cout
@@ -504,4 +566,30 @@ void Assembler::RunFinalProgram(void) {
         << std::endl;
     return;
   }
+}
+
+/**
+ * Set the value of the accumulator
+ */
+
+void Assembler::SetAccumulator(const char *value) {
+  this->m_cAccumulator = atoi(value);
+  std::cout << "Assembler::SetAccumulator::Set the value of Acc to= "
+            << this->m_cAccumulator << std::endl;
+}
+
+/***
+ * Get the value of the accumulator register
+ */
+const char &Assembler::GetAccumulator() { return this->m_cAccumulator; }
+
+/**
+ * check if the address provided for the instruction is valid
+ * return true if the address is valid
+ * false otherwise
+ */
+bool Assembler::CheckIfAddressInRange(const std::string &address) {
+  if ((std::stoi(address) < this->MAX_ADDRESS) && std::stoi(address) > 0)
+    return true;
+  return false;
 }

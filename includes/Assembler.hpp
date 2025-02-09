@@ -17,6 +17,9 @@ public:
 
   void ParseLabels();
 
+  const char &GetAccumulator();
+  void SetAccumulator(const char *value);
+
 private:
   /**
    * All instructions with AXX
@@ -42,7 +45,15 @@ private:
   void HandleLdaInstruction(std::vector<std::string> &program,
                             unsigned int index);
 
+  void HandleMviInstruction(std::vector<std::string> &program,
+                            unsigned int index);
+
+  bool HandleStaInstruction(std::vector<std::string> &program,
+                            unsigned int index);
+
   void RunFinalProgram();
+
+  bool CheckIfAddressInRange(const std::string &address);
 
 public:
   std::vector<unsigned char> final_program;
@@ -50,7 +61,9 @@ public:
   bool has_errors;
 
 private:
+  unsigned short MAX_ADDRESS = 0xFFFF;
   Instructions _instructions;
+  char m_cAccumulator; // Accumulator Register
 };
 
 #endif
