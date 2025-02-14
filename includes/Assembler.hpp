@@ -42,6 +42,10 @@ private:
   void HandleAniInstruction(std::vector<std::string> &program,
                             unsigned int index);
 
+  void HandleHltInstruction(std::vector<std::string> &program,
+                            unsigned int index,
+                            const std::map<std::string, unsigned char> &map);
+
   void HandleLdaInstruction(std::vector<std::string> &program,
                             unsigned int index);
 

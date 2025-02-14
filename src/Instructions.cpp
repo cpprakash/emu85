@@ -510,9 +510,12 @@ void Instructions::FillInstructionTableWithInstructions(void) {
 /***
  * Trying to fix ENUMS
  */
-void Instructions::FillInstructionTableWithInstructionsTwo(void) {
+const std::map<std::string, unsigned char> &
+Instructions::FillInstructionTableWithInstructionsTwo(void) {
   // instruction_map2.insert(std::make_pair("INS_ACI_Data", 0xCE));
-
+  std::cout << "FillInstructionTableWithInstructionsTwo called" << std::endl;
+  std::cout << "FillInstructionTableWithInstructionsTwo called size ="
+            << instruction_map2.size() << std::endl;
   instruction_map2.insert(std::make_pair("INS_ACI_Data", 0xCE));
   instruction_map2.insert(std::make_pair("INS_ADC_A", 0x8F));
   instruction_map2.insert(std::make_pair("INS_ADC_B", 0x88));
@@ -759,4 +762,7 @@ void Instructions::FillInstructionTableWithInstructionsTwo(void) {
   instruction_map2.insert(std::make_pair("INS_XRA_M", 0xAE));
   instruction_map2.insert(std::make_pair("INS_XRI_Data", 0xEE));
   instruction_map2.insert(std::make_pair("INS_XTHL", 0xE3));
+  std::cout << "FillInstructionTableWithInstructionsTwo called size ="
+            << instruction_map2.size() << std::endl;
+  return instruction_map2;
 }

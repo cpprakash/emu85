@@ -12,6 +12,12 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     return;
   }
 
+  Instructions _inst;
+  std::map<std::string, unsigned char> insMap;
+
+  _inst.instruction_map2.clear();
+  insMap = _inst.FillInstructionTableWithInstructionsTwo();
+
   /*for (size_t i = 0; i < program.size(); i++) {
     std::cout << "Token " << i << " = " << program[i] << std::endl;
   }*/
@@ -115,6 +121,7 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     else if (program[i] == "HLT") {
       // TODO handle HLT instruction
       std::cout << "HLT instruction found. Will halt the CPU" << std::endl;
+      this->HandleHltInstruction(program, i, insMap);
     }
 
     // handle all IN instrutions
@@ -507,6 +514,24 @@ void Assembler::HandleAniInstruction(std::vector<std::string> &program,
                                      unsigned int index) {
   std::cout << "HandleAniInstruction called with token = " << program[index]
             << " at index " << index << std::endl;
+}
+
+/***
+ * Handle HLT instructions
+ */
+void Assembler::HandleHltInstruction(
+    std::vector<std::string> &program, unsigned int index,
+    const std::map<std::string, unsigned char> &map) {
+  std::cout << "HandleHltInstruction called with token = " << program[index]
+            << " at index " << index << std::endl;
+  // unsigned char code;
+  std::cout << "Size = " << map.size() << std::endl;
+  auto code = map.find("INS_HLT");
+  if (code != map.end())
+    std::cout << "Code === " << code->second << std::endl;
+  else
+    std::cout << "Error in retreiving key" << std::endl;
+  // this->final_program.push_back(Instructions_Enum::HLT);
 }
 
 /**

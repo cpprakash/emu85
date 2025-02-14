@@ -8,11 +8,12 @@
 class Instructions {
 public:
   Instructions(void);
+  const std::map<std::string, unsigned char> &
+  FillInstructionTableWithInstructionsTwo(void);
 
 private:
   void FetchNextInstructions(void);
   void FillInstructionTableWithInstructions(void);
-  void FillInstructionTableWithInstructionsTwo(void);
 
 public:
   enum MachineCycleEnum { ONE = 1, TWO, THREE };
