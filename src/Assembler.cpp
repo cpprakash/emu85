@@ -11,12 +11,7 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     std::cout << "Program is empty, cant assemble it." << std::endl;
     return;
   }
-
-  Instructions _inst;
   std::map<std::string, unsigned char> insMap;
-
-  _inst.instruction_map2.clear();
-  insMap = _inst.FillInstructionTableWithInstructionsTwo();
 
   /*for (size_t i = 0; i < program.size(); i++) {
     std::cout << "Token " << i << " = " << program[i] << std::endl;
@@ -415,49 +410,21 @@ void Assembler::HandleAddInstruction(std::vector<std::string> &program,
 
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
 
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_A");
-    std::cout << "Code === " << code << std::endl;
   } else if (program[index + 1] == "B") {
     std::cout << "ADD B instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_B");
-    std::cout << "Code === " << code << std::endl;
   } else if (program[index + 1] == "C") {
     std::cout << "ADD C instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_C");
-    std::cout << "Code === " << code << std::endl;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "D") {
     std::cout << "ADD D instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_D");
-    std::cout << "Code === " << code << std::endl;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "E") {
     std::cout << "ADD E instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_E");
-    std::cout << "Code === " << code << std::endl;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "H") {
     std::cout << "ADD H instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_H");
-    std::cout << "Code === " << code << std::endl;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "L") {
     std::cout << "ADD L instrution is found" << std::endl;
 
@@ -525,12 +492,15 @@ void Assembler::HandleHltInstruction(
   std::cout << "HandleHltInstruction called with token = " << program[index]
             << " at index " << index << std::endl;
   // unsigned char code;
-  std::cout << "Size = " << map.size() << std::endl;
-  auto code = map.find("INS_HLT");
-  if (code != map.end())
-    std::cout << "Code === " << code->second << std::endl;
-  else
+  this->final_program.push_back(this->GetHexCodeFromInstruction("INS_HLT"));
+  /* std::cout << "Size = " << map.size() << std::endl;
+  const auto code = map.find("INS_HLT");
+  if (code != map.end()) {
+    std::cout << "Code === " << std::hex << code->second << std::endl;
+
+  } else
     std::cout << "Error in retreiving key" << std::endl;
+  */
   // this->final_program.push_back(Instructions_Enum::HLT);
 }
 
@@ -553,9 +523,9 @@ void Assembler::HandleMviInstruction(std::vector<std::string> &program,
   if (program[index + 1] == "A") {
     const char temp = static_cast<char>(program[index + 3][0]);
     std::cout << "HandleMviInstruction called for = " << program[index + 1]
-              << " register." << " with the value of " << std::hex
-              << program[index + 3] << "H"
-              << " and stoi = " << std::stoi(program[index + 3]) << std::endl;
+              << " register." << " with the value of " << program[index + 3]
+              << "H" << " and stoi = " << std::stoi(program[index + 3])
+              << std::endl;
     this->SetAccumulator(program[index + 3].c_str());
   }
 }
@@ -577,7 +547,8 @@ bool Assembler::HandleStaInstruction(std::vector<std::string> &program,
     std::cout << "Assembler::HandleStaInstruction()::Valid address, storing "
                  "accumulator value to  "
               << program[index + 1] << "H" << std::endl;
-    // final_program[temp] = static_cast<unsigned char>(this->GetAccumulator());
+    // final_program[temp] = static_cast<unsigned
+    // char>(this->GetAccumulator());
     return true;
   } else {
     // address is invalid, program has erros
@@ -629,4 +600,29 @@ bool Assembler::CheckIfAddressInRange(const std::string &address) {
 void Assembler::SetErrorInProgram(void) {
   if (!this->has_errors)
     this->has_errors = true;
+}
+/*Instructions _inst;
+std::map<std::string, unsigned char> insMap;
+  _inst.instruction_map2.clear();
+  insMap = _inst.FillInstructionTableWithInstructionsTwo();*/
+unsigned char
+Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
+  std::cout << "Assembler::GetHexCodeFromInstruction called inst ="
+            << instruction << std::endl;
+  Instructions m_inst;
+  if (this->inst_map.size() != 246) {
+
+    this->inst_map = m_inst.FillInstructionTableWithInstructionsTwo();
+    std::cout
+        << "Assembler::GetHexCodeFromInstruction inside leaving if with size ="
+        << this->inst_map.size() << std::endl;
+  }
+  const auto code = m_inst.instruction_map2.find(instruction);
+  if (code != m_inst.instruction_map2.end()) {
+    std::cout << "Code === " << code->second << std::endl;
+    return code->second;
+  } else {
+    std::cout << "Error in retreiving key" << std::endl;
+    return 0x76; // return halt as of now
+  }
 }

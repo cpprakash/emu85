@@ -8,8 +8,11 @@
 class Instructions {
 public:
   Instructions(void);
-  const std::map<std::string, unsigned char> &
+  /*const std::map<std::string, unsigned char> &
+  FillInstructionTableWithInstructionsTwo(void);*/
+  std::map<std::string, unsigned char>
   FillInstructionTableWithInstructionsTwo(void);
+  // unsigned char GetHexCodeFromInstruction(const std::string &instruction);
 
 private:
   void FetchNextInstructions(void);

@@ -61,6 +61,8 @@ private:
 
   void SetErrorInProgram(void);
 
+  unsigned char GetHexCodeFromInstruction(const std::string &instruction);
+
 public:
   std::vector<unsigned char> final_program;
   unsigned short start_address;
@@ -76,7 +78,8 @@ private:
   };
   std::vector<ErrorMessage> ErrorMessages; // vector of error messages
   unsigned short MAX_ADDRESS = 0xFFFF;
-  Instructions _instructions;
+  // Instructions _instructions;
+  std::map<std::string, unsigned char> inst_map;
   char m_cAccumulator; // Accumulator Register
 };
 
