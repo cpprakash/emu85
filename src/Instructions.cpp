@@ -513,11 +513,9 @@ void Instructions::FillInstructionTableWithInstructions(void) {
 std::map<std::string, unsigned char>
 Instructions::FillInstructionTableWithInstructionsTwo(void) {
   // instruction_map2.insert(std::make_pair("INS_ACI_Data", 0xCE));
-  std::cout << "FillInstructionTableWithInstructionsTwo called" << std::endl;
-  std::cout << "FillInstructionTableWithInstructionsTwo called size ="
-            << instruction_map2.size() << std::endl;
-  /*if (this->instruction_map2.size() == 246)
-    return this->instruction_map2;*/
+  std::cout << "Instructions::FillInstructionTableWithInstructionsTwo called"
+            << std::endl;
+
   instruction_map2.insert(std::make_pair("INS_ACI_Data", 0xCE));
   instruction_map2.insert(std::make_pair("INS_ADC_A", 0x8F));
   instruction_map2.insert(std::make_pair("INS_ADC_B", 0x88));
@@ -764,25 +762,6 @@ Instructions::FillInstructionTableWithInstructionsTwo(void) {
   instruction_map2.insert(std::make_pair("INS_XRA_M", 0xAE));
   instruction_map2.insert(std::make_pair("INS_XRI_Data", 0xEE));
   instruction_map2.insert(std::make_pair("INS_XTHL", 0xE3));
-  std::cout << "FillInstructionTableWithInstructionsTwo called size ="
-            << instruction_map2.size() << std::endl;
+
   return this->instruction_map2;
 }
-
-/*unsigned char
-Instructions::GetHexCodeFromInstruction(const std::string &instruction) {
-  std::cout << "GetHexCodeFromInstruction called inst =" << instruction
-            << std::endl;
-  std::cout << this->FillInstructionTableWithInstructionsTwo().size()
-            << std::endl;
-  std::cout << "GetHexCodeFromInstruction called inst =" << instruction
-            << std::endl;
-  const auto code = this->instruction_map2.find(instruction);
-  if (code != this->instruction_map2.end()) {
-    std::cout << "Code === " << std::hex << code->second << std::endl;
-    return code->second;
-  } else {
-    std::cout << "Error in retreiving key" << std::endl;
-    return 0x76; // return halt as of now
-  }
-}*/

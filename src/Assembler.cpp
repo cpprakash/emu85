@@ -601,21 +601,21 @@ void Assembler::SetErrorInProgram(void) {
   if (!this->has_errors)
     this->has_errors = true;
 }
-/*Instructions _inst;
-std::map<std::string, unsigned char> insMap;
-  _inst.instruction_map2.clear();
-  insMap = _inst.FillInstructionTableWithInstructionsTwo();*/
+
+/***
+ * get the hex code based on the instruction passed
+ * if the local map is empty, then make a call to the instructions class
+ * fucntion to get a fresh copy of the instruction map
+ * save this for later use and search in this map for the hex code
+ * as of now if no code is found return the HLT code back
+ */
 unsigned char
 Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
   std::cout << "Assembler::GetHexCodeFromInstruction called inst ="
             << instruction << std::endl;
   Instructions m_inst;
-  if (this->inst_map.size() != 246) {
-
+  if (this->inst_map.size() != 246) { // Total instructions are 246
     this->inst_map = m_inst.FillInstructionTableWithInstructionsTwo();
-    std::cout
-        << "Assembler::GetHexCodeFromInstruction inside leaving if with size ="
-        << this->inst_map.size() << std::endl;
   }
   const auto code = m_inst.instruction_map2.find(instruction);
   if (code != m_inst.instruction_map2.end()) {
