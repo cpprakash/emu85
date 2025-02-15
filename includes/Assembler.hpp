@@ -62,6 +62,9 @@ private:
 
   unsigned char GetHexCodeFromInstruction(const std::string &instruction);
 
+  bool ParseMviInstruction(std::vector<std::string> &program,
+                           unsigned int index);
+
 public:
   std::vector<unsigned char> final_program;
   unsigned short start_address;
