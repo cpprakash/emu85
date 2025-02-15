@@ -1,0 +1,11 @@
+#Memory Address 	Mnemonics 	Comment
+#2000 	LDA 2050 	A<-[2050]
+#2003 	MOV H, A 	H<-A
+#2004 	LDA 2051 	A<-[2051]
+#2007 	ADD H 	A<-A+H
+#2008 	MOV L, A 	L←A
+#2009 	MVI A 00 	A←00
+#200B 	ADC A 	A←A+A+carry
+#200C 	MOV H, A 	H←A
+#200D 	SHLD 3050 	H→3051, L→3050
+#2010 	HLT 	 
