@@ -2,6 +2,7 @@
 #define __HEADERS_ASSEMBLER_HPP__
 
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -10,15 +11,23 @@
 
 class Assembler {
 public:
-  Assembler() : start_address{0x0000}, has_errors{false} {}
+  Assembler() : start_address{0x0000}, has_errors{false} {
+    for (auto i = 0; i < 0xFFFF; i++) {
+      m_final_program[i] = 0x00;
+    }
+    // std::fill(final_program.begin(), final_program.end(), 0x00);
+  }
   void AssembleProgram(std::vector<std::string> program);
   void RelocateAddress(unsigned short new_address);
   void UpdateCurrentAssembleAddress(unsigned short &address);
 
   void ParseLabels();
 
+  unsigned short IncrementProgramAddress(void);
+
   const char &GetAccumulator();
   void SetAccumulator(const char *value);
+  void WriteBinFile(void);
 
 private:
   /**
@@ -42,6 +51,9 @@ private:
   void HandleAniInstruction(std::vector<std::string> &program,
                             unsigned int index);
 
+  void HandleHltInstruction(std::vector<std::string> &program,
+                            unsigned int index);
+
   void HandleLdaInstruction(std::vector<std::string> &program,
                             unsigned int index);
 
@@ -55,14 +67,31 @@ private:
 
   bool CheckIfAddressInRange(const std::string &address);
 
+  void SetErrorInProgram(void);
+
+  unsigned char GetHexCodeFromInstruction(const std::string &instruction);
+
+  bool ParseMviInstruction(std::vector<std::string> &program,
+                           unsigned int index);
+
 public:
-  std::vector<unsigned char> final_program;
+  std::vector<unsigned char> final_program[65 * 1024];
+  unsigned char m_final_program[0xFFFF];
   unsigned short start_address;
   bool has_errors;
 
 private:
+  struct ErrorMessage {
+    unsigned int token_line_number;  // line number where error occured
+    std::string current_token_value; // current token which caused error
+    std::string last_token_value;    // last valid token
+    std::string next_token_Value;    // next token for parsing
+    unsigned int token_number;       // index of token
+  };
+  std::vector<ErrorMessage> ErrorMessages; // vector of error messages
   unsigned short MAX_ADDRESS = 0xFFFF;
-  Instructions _instructions;
+  // Instructions _instructions;
+  std::map<std::string, unsigned char> inst_map;
   char m_cAccumulator; // Accumulator Register
 };
 

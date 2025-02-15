@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "includes/Assembler.hpp"
-#include "includes/Instructions.hpp"
 
 #define DEBUG = 1
 
@@ -66,6 +65,7 @@ void FileHandler::ReadFile(char *file_path) {
 
     delete[] memblock;
     _assembler.AssembleProgram(tokens);
+    _assembler.WriteBinFile();
   } else {
     std::cout << "Unable to open file" << std::endl;
   }
