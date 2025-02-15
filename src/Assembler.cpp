@@ -6,19 +6,29 @@
  * Assemble the progrm
  */
 void Assembler::AssembleProgram(std::vector<std::string> program) {
+
   if (program.size() == 0) { // Empty program
     std::cout << "Program is empty, cant assemble it." << std::endl;
     return;
   }
 
-  for (size_t i = 0; i < program.size(); i++) {
+  /*for (size_t i = 0; i < program.size(); i++) {
+    std::cout << "Token " << i << " = " << program[i] << std::endl;
+  }*/
+  for (unsigned long i = 0; i < program.size(); i++) {
+
+    std::cout << "Token " << i << " = " << program[i] << std::endl;
 
     if (program[i] == "NEWLINE") {
       std::cout << "New line found, will escape" << std::endl;
       continue;
     }
 
-    std::cout << "Token " << i << " = " << program[i] << std::endl;
+    // EOF is the last token in the file
+    if (program[i] == "EOF") {
+      std::cout << "The end of file reached. Will return. " << std::endl;
+      return;
+    }
 
     // All AXX instructions
     if (program[i] == "ORG") {
@@ -104,6 +114,8 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     // HLT instruction
     else if (program[i] == "HLT") {
       // TODO handle HLT instruction
+      std::cout << "HLT instruction found. Will halt the CPU" << std::endl;
+      this->HandleHltInstruction(program, i);
     }
 
     // handle all IN instrutions
@@ -184,6 +196,8 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     else if (program[i] == "MVI") {
       // TODO handle MVI instruction
       HandleMviInstruction(program, i);
+      i += 4; // ["MVI", "A", "," , "DATA", "H"]
+      std::cout << "New index after MVI is " << i << std::endl;
     }
 
     // handle all NOP instrutions
@@ -306,6 +320,9 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     else if (program[i] == "STA") {
       // TODO handle STA instruction
       this->HandleStaInstruction(program, i);
+      // TODO update only if the line parsed correctly
+      i += 2; // skip 3 tokens ["STA", "ADDRESS", "H"]
+      std::cout << "New index after STA is " << i << std::endl;
     }
     // handle all STAX X instrutions
     else if (program[i] == "STAX") {
@@ -342,6 +359,7 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
       // No matching instruction found, throw unkown instruction error
       std::cout << "Error: Instruction " << program[i] << " is not recognized!"
                 << std::endl;
+      this->SetErrorInProgram();
     }
   }
 }
@@ -391,49 +409,21 @@ void Assembler::HandleAddInstruction(std::vector<std::string> &program,
 
     std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
 
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_A");
-    std::cout << "Code === " << code << std::endl;
   } else if (program[index + 1] == "B") {
     std::cout << "ADD B instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_B");
-    std::cout << "Code === " << code << std::endl;
   } else if (program[index + 1] == "C") {
     std::cout << "ADD C instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_C");
-    std::cout << "Code === " << code << std::endl;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "D") {
     std::cout << "ADD D instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_D");
-    std::cout << "Code === " << code << std::endl;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "E") {
     std::cout << "ADD E instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_E");
-    std::cout << "Code === " << code << std::endl;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "H") {
     std::cout << "ADD H instrution is found" << std::endl;
 
-    std::map<std::string, std::pair<unsigned char, unsigned char>> my_map;
-    unsigned char code;
-    code = _instructions.instruction_map2.at("INS_ADD_H");
-    std::cout << "Code === " << code << std::endl;
-    // my_map = _instructions.instruction_map.find("INS_ADD_A");
   } else if (program[index + 1] == "L") {
     std::cout << "ADD L instrution is found" << std::endl;
 
@@ -492,6 +482,18 @@ void Assembler::HandleAniInstruction(std::vector<std::string> &program,
             << " at index " << index << std::endl;
 }
 
+/***
+ * Handle HLT instructions
+ */
+void Assembler::HandleHltInstruction(std::vector<std::string> &program,
+                                     unsigned int index) {
+  std::cout << "HandleHltInstruction called with token = " << program[index]
+            << " at index " << index << std::endl;
+
+  this->m_final_program[this->IncrementProgramAddress()] =
+      (this->GetHexCodeFromInstruction("INS_HLT"));
+}
+
 /**
  * Handle LDA Instructions
  */
@@ -501,6 +503,32 @@ void Assembler::HandleLdaInstruction(std::vector<std::string> &program,
             << " at index " << index << std::endl;
 }
 
+bool Assembler::ParseMviInstruction(std::vector<std::string> &program,
+                                    unsigned int index) {
+  // parse if only allowed registers are used in instructions
+  if (!(program[index + 1] == "A" || program[index + 1] == "B" ||
+        program[index + 1] == "C" || program[index + 1] == "D" ||
+        program[index + 1] == "E" || program[index + 1] == "H" ||
+        program[index + 1] == "L" || program[index + 1] == "M")) {
+    std::cout << "The MVI Instruction contains invalid register (only "
+                 "registers are allowed A,B,C,D,E,H,L,M). Please check"
+              << std::endl
+              << program[index] << " " << program[index + 1] << " " << std::endl
+              << "  ^^^" << std::endl;
+    return false;
+  }
+  if (program[index + 2] != "COMMA") {
+    std::cout << "The MVI Instruction doesnt contain comma after register. "
+                 "Please check"
+              << std::endl
+              << program[index] << " " << program[index + 1] << " "
+              << program[index + 2] << " " << std::endl
+              << "   ^^^" << std::endl;
+    return false;
+  }
+  return true;
+}
+
 /**
  * Handle MVI Instructions
  */
@@ -508,29 +536,78 @@ void Assembler::HandleMviInstruction(std::vector<std::string> &program,
                                      unsigned int index) {
   std::cout << "HandleMviInstruction called with token = " << program[index]
             << " at index " << index << std::endl;
-  if (program[index + 1] == "A") {
-    const char temp = static_cast<char>(program[index + 3][0]);
+  if (!this->ParseMviInstruction(program, index)) {
+    return;
+  }
+  if (program[index + 1] == "A") { // MVI A 8bit data
+    // const char temp = static_cast<char>(program[index + 3][0]);
     std::cout << "HandleMviInstruction called for = " << program[index + 1]
-              << " register." << " with the value of " << std::hex
-              << program[index + 3] << "H"
-              << " and stoi = " << std::stoi(program[index + 3]) << std::endl;
-    this->SetAccumulator(program[index + 3].c_str());
+              << " register." << " with the value of " << program[index + 3]
+              << "H" << " and stoi = " << std::stoi(program[index + 3])
+              << std::endl;
+    // this->SetAccumulator(program[index + 3].c_str());
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_A_Data"));
+    this->final_program.push_back(std::stoi(program[index + 3]));*/
+
+    // std::cout << IncrementProgramAddress() << std::endl;
+    this->m_final_program[IncrementProgramAddress()] =
+        this->GetHexCodeFromInstruction("INS_MVI_A_Data");
+    this->m_final_program[IncrementProgramAddress()] =
+        std::stoi(program[index + 3]);
+
+  } else if (program[index + 1] == "B") { // MVI A 8bit data
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_B_Data"));*/
+  } else if (program[index + 1] == "C") { // MVI A 8bit data
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_C_Data"));*/
+  } else if (program[index + 1] == "D") { // MVI A 8bit data
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_D_Data"));*/
+  } else if (program[index + 1] == "E") { // MVI A 8bit data
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_E_Data"));
+  } else if (program[index + 1] == "H") { // MVI A 8bit data*/
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_H_Data"));
+  } else if (program[index + 1] == "L") { // MVI A 8bit data*/
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_L_Data"));*/
+  } else if (program[index + 1] == "M") { // MVI A 8bit data
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_M_Data"));*/
+  } else { // invalid instruction for MVI
+    std::cout << "Invalid instruction found for MVI" << std::endl;
+    this->SetErrorInProgram();
   }
 }
 
 /***
  * Handle STA instructions
  * STA <Address> 16 bits
+ * return true if the instruction was parsed
+ * return false otherwise
  */
-void Assembler::HandleStaInstruction(std::vector<std::string> &program,
+bool Assembler::HandleStaInstruction(std::vector<std::string> &program,
                                      unsigned int index) {
   std::cout << "Assembler::HandleStaInstruction() called with token = "
             << program[index] << " at index " << index << " value at "
             << program[index + 1] << std::endl;
   int temp = std::stoi(program[index + 1]);
-  // final_program[temp] = static_cast<unsigned char>(this->GetAccumulator());
-  /*std::cout << "final_prog at index " << index + 1 << " = "
-            << this->GetAccumulator() << std::endl;*/
+  if (this->CheckIfAddressInRange(program[index + 1])) {
+    // address is in range, save the value of accumulator into this address
+    std::cout << "Assembler::HandleStaInstruction()::Valid address, storing "
+                 "accumulator value to  "
+              << program[index + 1] << "H" << std::endl;
+    // final_program[temp] = static_cast<unsigned
+    // char>(this->GetAccumulator());
+    return true;
+  } else {
+    // address is invalid, program has erros
+    std::cout << "Invalid address " << program[index + 1] << std::endl;
+  }
+  return false;
 }
 
 void Assembler::RunFinalProgram(void) {
@@ -547,8 +624,10 @@ void Assembler::RunFinalProgram(void) {
  */
 
 void Assembler::SetAccumulator(const char *value) {
+  std::cout << "Assembler::SetAccumulator::Old value of Acc= "
+            << this->m_cAccumulator << std::endl;
   this->m_cAccumulator = atoi(value);
-  std::cout << "Assembler::SetAccumulator::Set the value of Acc to= "
+  std::cout << "Assembler::SetAccumulator::New value of Acc= "
             << this->m_cAccumulator << std::endl;
 }
 
@@ -556,3 +635,78 @@ void Assembler::SetAccumulator(const char *value) {
  * Get the value of the accumulator register
  */
 const char &Assembler::GetAccumulator() { return this->m_cAccumulator; }
+
+/**
+ * check if the address provided for the instruction is valid
+ * return true if the address is valid
+ * false otherwise
+ */
+bool Assembler::CheckIfAddressInRange(const std::string &address) {
+  if ((std::stoi(address) < this->MAX_ADDRESS) && std::stoi(address) > 0)
+    return true;
+  return false;
+}
+
+/***
+ * Set that the program that we are parsing contains error
+ * so that the program cant be assembled
+ * more info has to be supplied about error to the user TODO
+ */
+void Assembler::SetErrorInProgram(void) {
+  if (!this->has_errors)
+    this->has_errors = true;
+}
+
+/***
+ * get the hex code based on the instruction passed
+ * if the local map is empty, then make a call to the instructions class
+ * fucntion to get a fresh copy of the instruction map
+ * save this for later use and search in this map for the hex code
+ * as of now if no code is found return the HLT code back
+ */
+unsigned char
+Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
+  std::cout << "Assembler::GetHexCodeFromInstruction called inst ="
+            << instruction << std::endl;
+  // Instructions m_inst;
+  if (this->inst_map.size() != 246) { // Total instructions are 246
+    std::cout << "Assembler::GetHexCodeFromInstruction called inside if ="
+              << instruction << std::endl;
+    Instructions m_inst;
+    this->inst_map = m_inst.FillInstructionTableWithInstructionsTwo();
+  }
+  std::cout << "Assembler::GetHexCodeFromInstruction called outside if ="
+            << instruction << std::endl;
+  const auto code = this->inst_map.find(instruction);
+  if (code != this->inst_map.end()) {
+    std::cout << "GetHexCodeFromInstruction:: returning code === "
+              << code->second << std::endl;
+    return code->second;
+  } else {
+    std::cout << "Error in retreiving key" << std::endl;
+    return 0x76; // return halt as of now
+  }
+}
+
+/***
+ * Write the bin file for the 8085
+ * it contains the opcode which can be executed on the CPU
+ */
+void Assembler::WriteBinFile(void) {
+
+  std::ofstream out_file;
+  out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
+  if (!out_file.is_open()) {
+    std::cout << "Could not write to the file, please try again later!"
+              << std::endl;
+    return;
+  }
+  out_file.write((char *)&final_program, sizeof(final_program));
+  out_file.close();
+}
+
+unsigned short Assembler::IncrementProgramAddress(void) {
+  std::cout << "Old value = " << start_address << std::endl;
+  std::cout << "new value = " << start_address++ << std::endl;
+  return start_address++;
+}
