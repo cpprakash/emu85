@@ -542,17 +542,17 @@ void Assembler::HandleMviInstruction(std::vector<std::string> &program,
   if (program[index + 1] == "A") { // MVI A 8bit data
     // const char temp = static_cast<char>(program[index + 3][0]);
     std::cout << "HandleMviInstruction called for = " << program[index + 1]
-              << " register." << " with the value of " << program[index + 3]
-              << "H" << " and stoi = " << std::stoi(program[index + 3])
-              << std::endl;
+              << " register."
+              << " with the value of " << program[index + 3] << "H"
+              << " and stoi = " << std::stoi(program[index + 3]) << std::endl;
     // this->SetAccumulator(program[index + 3].c_str());
     /*this->final_program.push_back(
         this->GetHexCodeFromInstruction("INS_MVI_A_Data"));
     this->final_program.push_back(std::stoi(program[index + 3]));*/
 
-    // std::cout << IncrementProgramAddress() << std::endl;
     this->m_final_program[IncrementProgramAddress()] =
         this->GetHexCodeFromInstruction("INS_MVI_A_Data");
+
     this->m_final_program[IncrementProgramAddress()] =
         std::stoi(program[index + 3]);
 
@@ -701,12 +701,12 @@ void Assembler::WriteBinFile(void) {
               << std::endl;
     return;
   }
-  out_file.write((char *)&final_program, sizeof(final_program));
+  std::cout << "Writing bin file with a data size of ="
+            << sizeof(m_final_program) << std::endl;
+  out_file.write((char *)&m_final_program, sizeof(m_final_program));
   out_file.close();
 }
 
 unsigned short Assembler::IncrementProgramAddress(void) {
-  std::cout << "Old value = " << start_address << std::endl;
-  std::cout << "new value = " << start_address++ << std::endl;
-  return start_address++;
+  return this->start_address++;
 }
