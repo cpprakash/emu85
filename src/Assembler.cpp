@@ -545,10 +545,6 @@ void Assembler::HandleMviInstruction(std::vector<std::string> &program,
               << " register."
               << " with the value of " << program[index + 3] << "H"
               << " and stoi = " << std::stoi(program[index + 3]) << std::endl;
-    // this->SetAccumulator(program[index + 3].c_str());
-    /*this->final_program.push_back(
-        this->GetHexCodeFromInstruction("INS_MVI_A_Data"));
-    this->final_program.push_back(std::stoi(program[index + 3]));*/
 
     this->m_final_program[IncrementProgramAddress()] =
         this->GetHexCodeFromInstruction("INS_MVI_A_Data");
@@ -594,14 +590,22 @@ bool Assembler::HandleStaInstruction(std::vector<std::string> &program,
   std::cout << "Assembler::HandleStaInstruction() called with token = "
             << program[index] << " at index " << index << " value at "
             << program[index + 1] << std::endl;
-  int temp = std::stoi(program[index + 1]);
+
   if (this->CheckIfAddressInRange(program[index + 1])) {
-    // address is in range, save the value of accumulator into this address
-    std::cout << "Assembler::HandleStaInstruction()::Valid address, storing "
-                 "accumulator value to  "
-              << program[index + 1] << "H" << std::endl;
-    // final_program[temp] = static_cast<unsigned
-    // char>(this->GetAccumulator());
+    // address is in range
+    this->m_final_program[IncrementProgramAddress()] =
+        this->GetHexCodeFromInstruction("INS_STA_Address");
+    if (program[index + 1].length() == 2) { // the address is one bytes
+    } else if (program[index + 1].length() ==
+               3) { // the address is one and half bytes
+    } else if (program[index + 1].length() == 4) { // the address is two bytes
+      this->m_final_program[IncrementProgramAddress()] =
+          std::stoi(program[index + 1].substr(2, 2));
+      this->m_final_program[IncrementProgramAddress()] =
+          std::stoi(program[index + 1].substr(0, 2));
+    } else {
+      // invalid address again
+    }
     return true;
   } else {
     // address is invalid, program has erros
@@ -670,19 +674,13 @@ Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
             << instruction << std::endl;
   // Instructions m_inst;
   if (this->inst_map.size() != 246) { // Total instructions are 246
-    std::cout << "Assembler::GetHexCodeFromInstruction called inside if ="
-              << instruction << std::endl;
     Instructions m_inst;
     this->inst_map = m_inst.FillInstructionTableWithInstructionsTwo();
   }
-  std::cout << "Assembler::GetHexCodeFromInstruction called outside if ="
-            << instruction << std::endl;
   const auto code = this->inst_map.find(instruction);
-  if (code != this->inst_map.end()) {
-    std::cout << "GetHexCodeFromInstruction:: returning code === "
-              << code->second << std::endl;
+  if (code != this->inst_map.end()) { // the instruction is in map
     return code->second;
-  } else {
+  } else { // instruction was not found in the map, wrong instruction
     std::cout << "Error in retreiving key" << std::endl;
     return 0x76; // return halt as of now
   }
