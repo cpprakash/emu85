@@ -595,17 +595,8 @@ bool Assembler::HandleStaInstruction(std::vector<std::string> &program,
     // address is in range
     this->m_final_program[IncrementProgramAddress()] =
         this->GetHexCodeFromInstruction("INS_STA_Address");
-    if (program[index + 1].length() == 2) { // the address is one bytes
-    } else if (program[index + 1].length() ==
-               3) { // the address is one and half bytes
-    } else if (program[index + 1].length() == 4) { // the address is two bytes
-      this->m_final_program[IncrementProgramAddress()] =
-          std::stoi(program[index + 1].substr(2, 2));
-      this->m_final_program[IncrementProgramAddress()] =
-          std::stoi(program[index + 1].substr(0, 2));
-    } else {
-      // invalid address again
-    }
+    if (!StoreLowAndHighAddress(program[index + 1]))
+      return false;
     return true;
   } else {
     // address is invalid, program has erros
@@ -707,4 +698,27 @@ void Assembler::WriteBinFile(void) {
 
 unsigned short Assembler::IncrementProgramAddress(void) {
   return this->start_address++;
+}
+
+/***
+ * Store low and high byte of the 16 bits address to the
+ * final program array
+ * rertun true if the address is valid
+ * false otherwise
+ */
+bool Assembler::StoreLowAndHighAddress(std::string &address) {
+  if (address.length() == 2) {        // the address is one bytes
+  } else if (address.length() == 3) { // the address is one and half bytes
+  } else if (address.length() == 4) { // the address is two bytes
+    this->m_final_program[IncrementProgramAddress()] =
+        std::stoi(address.substr(2, 2));
+    this->m_final_program[IncrementProgramAddress()] =
+        std::stoi(address.substr(0, 2));
+  } else {
+    std::cout << "[Assembler][StoreLowAndHighAddress]:: Error in the address. "
+                 "Please check it again."
+              << std::endl;
+    return false;
+  }
+  return true;
 }

@@ -74,6 +74,8 @@ private:
   bool ParseMviInstruction(std::vector<std::string> &program,
                            unsigned int index);
 
+  bool StoreLowAndHighAddress(std::string &address);
+
 public:
   std::vector<unsigned char> final_program[65 * 1024];
   unsigned char m_final_program[0xFFFF];
