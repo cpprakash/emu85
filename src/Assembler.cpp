@@ -490,7 +490,8 @@ void Assembler::HandleHltInstruction(std::vector<std::string> &program,
   std::cout << "HandleHltInstruction called with token = " << program[index]
             << " at index " << index << std::endl;
 
-  this->final_program.push_back(this->GetHexCodeFromInstruction("INS_HLT"));
+  this->m_final_program[this->IncrementProgramAddress()] =
+      (this->GetHexCodeFromInstruction("INS_HLT"));
 }
 
 /**
@@ -538,38 +539,44 @@ void Assembler::HandleMviInstruction(std::vector<std::string> &program,
   if (!this->ParseMviInstruction(program, index)) {
     return;
   }
-  if (program[index + 1] == "A" && program[index + 2] == "COMMA" &&
-      program[index + 3] == "" &&
-      program[index + 4] == "NEWLINE") { // MVI A 8bit data
-    const char temp = static_cast<char>(program[index + 3][0]);
+  if (program[index + 1] == "A") { // MVI A 8bit data
+    // const char temp = static_cast<char>(program[index + 3][0]);
     std::cout << "HandleMviInstruction called for = " << program[index + 1]
               << " register." << " with the value of " << program[index + 3]
               << "H" << " and stoi = " << std::stoi(program[index + 3])
               << std::endl;
-    this->SetAccumulator(program[index + 3].c_str());
-    this->final_program.push_back(
+    // this->SetAccumulator(program[index + 3].c_str());
+    /*this->final_program.push_back(
         this->GetHexCodeFromInstruction("INS_MVI_A_Data"));
+    this->final_program.push_back(std::stoi(program[index + 3]));*/
+
+    // std::cout << IncrementProgramAddress() << std::endl;
+    this->m_final_program[IncrementProgramAddress()] =
+        this->GetHexCodeFromInstruction("INS_MVI_A_Data");
+    this->m_final_program[IncrementProgramAddress()] =
+        std::stoi(program[index + 3]);
+
   } else if (program[index + 1] == "B") { // MVI A 8bit data
-    this->final_program.push_back(
-        this->GetHexCodeFromInstruction("INS_MVI_B_Data"));
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_B_Data"));*/
   } else if (program[index + 1] == "C") { // MVI A 8bit data
-    this->final_program.push_back(
-        this->GetHexCodeFromInstruction("INS_MVI_C_Data"));
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_C_Data"));*/
   } else if (program[index + 1] == "D") { // MVI A 8bit data
-    this->final_program.push_back(
-        this->GetHexCodeFromInstruction("INS_MVI_D_Data"));
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_D_Data"));*/
   } else if (program[index + 1] == "E") { // MVI A 8bit data
-    this->final_program.push_back(
+    /*this->final_program.push_back(
         this->GetHexCodeFromInstruction("INS_MVI_E_Data"));
-  } else if (program[index + 1] == "H") { // MVI A 8bit data
-    this->final_program.push_back(
+  } else if (program[index + 1] == "H") { // MVI A 8bit data*/
+    /*this->final_program.push_back(
         this->GetHexCodeFromInstruction("INS_MVI_H_Data"));
-  } else if (program[index + 1] == "L") { // MVI A 8bit data
-    this->final_program.push_back(
-        this->GetHexCodeFromInstruction("INS_MVI_L_Data"));
+  } else if (program[index + 1] == "L") { // MVI A 8bit data*/
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_L_Data"));*/
   } else if (program[index + 1] == "M") { // MVI A 8bit data
-    this->final_program.push_back(
-        this->GetHexCodeFromInstruction("INS_MVI_M_Data"));
+    /*this->final_program.push_back(
+        this->GetHexCodeFromInstruction("INS_MVI_M_Data"));*/
   } else { // invalid instruction for MVI
     std::cout << "Invalid instruction found for MVI" << std::endl;
     this->SetErrorInProgram();
@@ -617,8 +624,10 @@ void Assembler::RunFinalProgram(void) {
  */
 
 void Assembler::SetAccumulator(const char *value) {
+  std::cout << "Assembler::SetAccumulator::Old value of Acc= "
+            << this->m_cAccumulator << std::endl;
   this->m_cAccumulator = atoi(value);
-  std::cout << "Assembler::SetAccumulator::Set the value of Acc to= "
+  std::cout << "Assembler::SetAccumulator::New value of Acc= "
             << this->m_cAccumulator << std::endl;
 }
 
@@ -659,10 +668,15 @@ unsigned char
 Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
   std::cout << "Assembler::GetHexCodeFromInstruction called inst ="
             << instruction << std::endl;
-  Instructions m_inst;
+  // Instructions m_inst;
   if (this->inst_map.size() != 246) { // Total instructions are 246
+    std::cout << "Assembler::GetHexCodeFromInstruction called inside if ="
+              << instruction << std::endl;
+    Instructions m_inst;
     this->inst_map = m_inst.FillInstructionTableWithInstructionsTwo();
   }
+  std::cout << "Assembler::GetHexCodeFromInstruction called outside if ="
+            << instruction << std::endl;
   const auto code = this->inst_map.find(instruction);
   if (code != this->inst_map.end()) {
     std::cout << "GetHexCodeFromInstruction:: returning code === "
@@ -672,4 +686,27 @@ Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
     std::cout << "Error in retreiving key" << std::endl;
     return 0x76; // return halt as of now
   }
+}
+
+/***
+ * Write the bin file for the 8085
+ * it contains the opcode which can be executed on the CPU
+ */
+void Assembler::WriteBinFile(void) {
+
+  std::ofstream out_file;
+  out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
+  if (!out_file.is_open()) {
+    std::cout << "Could not write to the file, please try again later!"
+              << std::endl;
+    return;
+  }
+  out_file.write((char *)&final_program, sizeof(final_program));
+  out_file.close();
+}
+
+unsigned short Assembler::IncrementProgramAddress(void) {
+  std::cout << "Old value = " << start_address << std::endl;
+  std::cout << "new value = " << start_address++ << std::endl;
+  return start_address++;
 }

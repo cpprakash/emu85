@@ -65,6 +65,7 @@ void FileHandler::ReadFile(char *file_path) {
 
     delete[] memblock;
     _assembler.AssembleProgram(tokens);
+    _assembler.WriteBinFile();
   } else {
     std::cout << "Unable to open file" << std::endl;
   }

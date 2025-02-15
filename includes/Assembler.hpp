@@ -2,6 +2,7 @@
 #define __HEADERS_ASSEMBLER_HPP__
 
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -10,15 +11,23 @@
 
 class Assembler {
 public:
-  Assembler() : start_address{0x0000}, has_errors{false} {}
+  Assembler() : start_address{0x0000}, has_errors{false} {
+    for (auto i = 0; i < 0xFFFF; i++) {
+      m_final_program[i] = 0x00;
+    }
+    // std::fill(final_program.begin(), final_program.end(), 0x00);
+  }
   void AssembleProgram(std::vector<std::string> program);
   void RelocateAddress(unsigned short new_address);
   void UpdateCurrentAssembleAddress(unsigned short &address);
 
   void ParseLabels();
 
+  unsigned short IncrementProgramAddress(void);
+
   const char &GetAccumulator();
   void SetAccumulator(const char *value);
+  void WriteBinFile(void);
 
 private:
   /**
@@ -66,7 +75,8 @@ private:
                            unsigned int index);
 
 public:
-  std::vector<unsigned char> final_program;
+  std::vector<unsigned char> final_program[65 * 1024];
+  unsigned char m_final_program[0xFFFF];
   unsigned short start_address;
   bool has_errors;
 

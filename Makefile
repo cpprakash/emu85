@@ -41,3 +41,6 @@ clean:
 
 console: createdir main.o Instructions.o Assembler.o
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES)  -o emu8085 main.o $(INSTRUCTIONS) $(ASSEMBLER)
+
+debug: createdir main.o Instructions.o Assembler.o
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -g -o emu8085 main.o $(INSTRUCTIONS) $(ASSEMBLER)
