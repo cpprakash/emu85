@@ -3,7 +3,6 @@
 Instructions::Instructions(void) {
   std::cout << "Instructions Constructor called" << std::endl;
   FillInstructionTableWithInstructions();
-  // FillInstructionTableWithInstructionsTwo();
 }
 
 void Instructions::FetchNextInstructions(void) {
@@ -512,7 +511,6 @@ void Instructions::FillInstructionTableWithInstructions(void) {
  */
 std::map<std::string, unsigned char>
 Instructions::FillInstructionTableWithInstructionsTwo(void) {
-  // instruction_map2.insert(std::make_pair("INS_ACI_Data", 0xCE));
   std::cout << "Instructions::FillInstructionTableWithInstructionsTwo called"
             << std::endl;
 

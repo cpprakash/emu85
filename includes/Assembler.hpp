@@ -15,7 +15,6 @@ public:
     for (auto i = 0; i < 0xFFFF; i++) {
       m_final_program[i] = 0x00;
     }
-    // std::fill(final_program.begin(), final_program.end(), 0x00);
   }
   void AssembleProgram(std::vector<std::string> program);
   void RelocateAddress(unsigned short new_address);
