@@ -15,7 +15,6 @@ public:
     for (auto i = 0; i < 0xFFFF; i++) {
       m_final_program[i] = 0x00;
     }
-    // std::fill(final_program.begin(), final_program.end(), 0x00);
   }
   void AssembleProgram(std::vector<std::string> program);
   void RelocateAddress(unsigned short new_address);
@@ -54,7 +53,7 @@ private:
   void HandleHltInstruction(std::vector<std::string> &program,
                             unsigned int index);
 
-  void HandleLdaInstruction(std::vector<std::string> &program,
+  void HandleLdaInstruction(const std::vector<std::string> &program,
                             unsigned int index);
 
   void HandleMviInstruction(std::vector<std::string> &program,
@@ -73,6 +72,12 @@ private:
 
   bool ParseMviInstruction(std::vector<std::string> &program,
                            unsigned int index);
+
+  bool StoreLowAndHighAddress(const std::string &address,
+                              unsigned char base = 'd');
+
+  bool ParseInstAddressInstructions(const std::vector<std::string> &program,
+                                    const unsigned int index);
 
 public:
   std::vector<unsigned char> final_program[65 * 1024];
