@@ -172,7 +172,8 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
     }
     // handle all LDA instrutions
     else if (program[i] == "LDA") {
-      // TODO handle LDA instruction
+      this->HandleLdaInstruction(program, i);
+      i += 2; // skip two tokens
     }
     // handle all LDAXX instrutions
     else if (program[i] == "LDAX") {
@@ -483,10 +484,13 @@ void Assembler::HandleHltInstruction(std::vector<std::string> &program,
 /**
  * Handle LDA Instructions
  */
-void Assembler::HandleLdaInstruction(std::vector<std::string> &program,
+void Assembler::HandleLdaInstruction(const std::vector<std::string> &program,
                                      unsigned int index) {
   std::cout << "HandleLdaInstruction called with token = " << program[index]
             << " at index " << index << std::endl;
+  if (this->ParseInstAddressInstructions(program, index)) {
+    std::cout << "HandleLdaInstruction finished" << std::endl;
+  }
 }
 
 bool Assembler::ParseMviInstruction(std::vector<std::string> &program,
@@ -704,10 +708,28 @@ unsigned short Assembler::IncrementProgramAddress(void) {
  * final program array
  * rertun true if the address is valid
  * false otherwise
+ * also has to convert the address or data as per the base
+ * d (decimal) is the default base
  */
-bool Assembler::StoreLowAndHighAddress(std::string &address) {
-  if (address.length() == 2) {        // the address is one bytes
+bool Assembler::StoreLowAndHighAddress(const std::string &address,
+                                       unsigned char base) {
+
+  /*switch (base) {
+  case 'h':
+    break;
+  case 'o':
+    break;
+  case 'd':
+  default:
+    break;
+  }*/
+
+  if (address.length() == 2) { // the address is one bytes
+    this->m_final_program[IncrementProgramAddress()] =
+        std::stoi(address.substr(0, 2));
   } else if (address.length() == 3) { // the address is one and half bytes
+    this->m_final_program[IncrementProgramAddress()] =
+        std::stoi(address.substr(1, 2));
   } else if (address.length() == 4) { // the address is two bytes
     this->m_final_program[IncrementProgramAddress()] =
         std::stoi(address.substr(2, 2));
@@ -720,4 +742,25 @@ bool Assembler::StoreLowAndHighAddress(std::string &address) {
     return false;
   }
   return true;
+}
+
+/**
+ * function to parser instructions which are in the format
+ * instruction <16 bit address>
+ * for example. LDA 1000H
+ */
+bool Assembler::ParseInstAddressInstructions(
+    const std::vector<std::string> &program, const unsigned int index) {
+
+  if (program[index] == "LDA") { // LDA <16 bit address>
+    if (this->CheckIfAddressInRange(program[index + 1])) {
+      this->m_final_program[IncrementProgramAddress()] =
+          this->GetHexCodeFromInstruction("INS_LDA_Address");
+      if (!StoreLowAndHighAddress(program[index + 1]))
+        return false;
+
+      return true;
+    }
+  }
+  return false;
 }
