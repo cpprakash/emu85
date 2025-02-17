@@ -39,7 +39,7 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
       if (program[i + 2] != "H") {
         std::cout << "Error the relocation address is not in hex "
                   << program[i + 2] << std::endl;
-        has_errors = true;
+        this->m_bHasErrors = true;
       }
     } else if (program[i] == "COMMENT") { // Comment found
       std::cout << "Comment Found " << std::endl;
@@ -630,7 +630,7 @@ bool Assembler::HandleStaInstruction(std::vector<std::string> &program,
 }
 
 void Assembler::RunFinalProgram(void) {
-  if (has_errors) {
+  if (this->m_bHasErrors) {
     std::cout
         << "Program contains error, please fix them before running it again. "
         << std::endl;
@@ -672,8 +672,8 @@ bool Assembler::CheckIfAddressInRange(const std::string &address) {
  * more info has to be supplied about error to the user TODO
  */
 void Assembler::SetErrorInProgram(void) {
-  if (!this->has_errors)
-    this->has_errors = true;
+  if (!this->m_bHasErrors)
+    this->m_bHasErrors = true;
 }
 
 /***
@@ -696,7 +696,8 @@ Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
   if (code != this->inst_map.end()) { // the instruction is in map
     return code->second;
   } else { // instruction was not found in the map, wrong instruction
-    std::cout << "Error in retreiving key" << std::endl;
+    std::cout << "Assembler::GetHexCodeFromInstruction::Error in retreiving key"
+              << std::endl;
     return 0x76; // return halt as of now
   }
 }
@@ -706,7 +707,7 @@ Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
  * it contains the opcode which can be executed on the CPU
  */
 void Assembler::WriteBinFile(void) {
-  if (this->has_errors) {
+  if (this->m_bHasErrors) {
     std::cout << "The program contains errors, please finx them first"
               << std::endl;
     return;

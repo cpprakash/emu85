@@ -11,7 +11,7 @@
 
 class Assembler {
 public:
-  Assembler() : start_address{0x0000}, has_errors{false} {
+  Assembler() : start_address{0x0000}, m_bHasErrors{false} {
     for (auto i = 0; i < 0xFFFF; i++) {
       m_final_program[i] = 0x00;
     }
@@ -83,7 +83,7 @@ public:
   std::vector<unsigned char> final_program[65 * 1024];
   unsigned char m_final_program[0xFFFF];
   unsigned short start_address;
-  bool has_errors;
+  bool m_bHasErrors;
 
 private:
   struct ErrorMessage {
