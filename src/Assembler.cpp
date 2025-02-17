@@ -685,7 +685,11 @@ Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
  * it contains the opcode which can be executed on the CPU
  */
 void Assembler::WriteBinFile(void) {
-
+  if (this->has_errors) {
+    std::cout << "The program contains errors, please finx them first"
+              << std::endl;
+    return;
+  }
   std::ofstream out_file;
   out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
   if (!out_file.is_open()) {
@@ -710,19 +714,22 @@ unsigned short Assembler::IncrementProgramAddress(void) {
  * false otherwise
  * also has to convert the address or data as per the base
  * d (decimal) is the default base
+ * Hexadecimal Data:- Each hexadecimal number must begin with a numeric digit (0
+ * through 9) and must be followed by the letter H.
  */
 bool Assembler::StoreLowAndHighAddress(const std::string &address,
                                        unsigned char base) {
 
-  /*switch (base) {
+  switch (base) {
   case 'h':
+    // this->ConvertToBinary(address)
     break;
   case 'o':
     break;
   case 'd':
   default:
     break;
-  }*/
+  }
 
   if (address.length() == 2) { // the address is one bytes
     this->m_final_program[IncrementProgramAddress()] =
