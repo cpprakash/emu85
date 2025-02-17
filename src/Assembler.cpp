@@ -507,6 +507,7 @@ bool Assembler::ParseMviInstruction(std::vector<std::string> &program,
               << "  ^^^" << std::endl;
     return false;
   }
+  // check if the comma is between instruction and operand
   if (program[index + 2] != "COMMA") {
     std::cout << "The MVI Instruction doesnt contain comma after register. "
                  "Please check"
@@ -516,8 +517,27 @@ bool Assembler::ParseMviInstruction(std::vector<std::string> &program,
               << "   ^^^" << std::endl;
     return false;
   }
+  // find out which type of number was provided hex, dec, octal or binary
+  if (program[index + 4] == "H" || program[index + 4] == "h") { // hex number
+    this->m_charCurrentNumberSystem = 'H';
+  } else if (program[index + 4] == "D" || program[index + 4] == "d" ||
+             program[index + 4] == "NEWLINE") { // decimal number
+    this->m_charCurrentNumberSystem = 'D';
+  } else if (program[index + 4] == "Q" || program[index + 4] == "q" ||
+             program[index + 4] == "O" ||
+             program[index + 4] == "o") { // octal number
+    this->m_charCurrentNumberSystem = 'O';
+  } else if (program[index + 4] == "B" ||
+             program[index + 4] == "b") { // binary number
+    this->m_charCurrentNumberSystem = 'B';
+  }
+  std::cout << "The MVI Instruction setting the number system to "
+            << this->m_charCurrentNumberSystem << std::endl;
   return true;
 }
+
+void ConvertDecimalToHex(std::string &num) {}
+void ConvertHexToDecimal(std::string &num) {}
 
 /**
  * Handle MVI Instructions
@@ -532,7 +552,8 @@ void Assembler::HandleMviInstruction(std::vector<std::string> &program,
   if (program[index + 1] == "A") { // MVI A 8bit data
     std::cout << "HandleMviInstruction called for = " << program[index + 1]
               << " register."
-              << " with the value of " << program[index + 3] << "H"
+              << " with the value of " << program[index + 3]
+              << program[index + 4]
               << " and stoi = " << std::stoi(program[index + 3]) << std::endl;
 
     this->m_final_program[IncrementProgramAddress()] =
@@ -720,13 +741,14 @@ unsigned short Assembler::IncrementProgramAddress(void) {
 bool Assembler::StoreLowAndHighAddress(const std::string &address,
                                        unsigned char base) {
 
-  switch (base) {
-  case 'h':
-    // this->ConvertToBinary(address)
+  switch (this->m_charCurrentNumberSystem) {
+  case 'H':
     break;
-  case 'o':
+  case 'O':
     break;
-  case 'd':
+  case 'B':
+    break;
+  case 'D':
   default:
     break;
   }

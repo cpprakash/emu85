@@ -98,6 +98,8 @@ private:
   // Instructions _instructions;
   std::map<std::string, unsigned char> inst_map;
   char m_cAccumulator; // Accumulator Register
+  unsigned char m_charCurrentNumberSystem{'d'};
+  std::string m_strCurrentNumberLength;
 };
 
 #endif
