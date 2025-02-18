@@ -18,7 +18,6 @@ private:
 
 private:
 public:
-  // std::vector<std::string> tokens;
   std::vector<m_Token> m_vectTokens;
 };
 

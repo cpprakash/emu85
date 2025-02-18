@@ -26,8 +26,6 @@ public:
 
   unsigned short IncrementProgramAddress(void);
 
-  const char &GetAccumulator();
-  void SetAccumulator(const char *value);
   void WriteBinFile(void);
 
 private:
@@ -97,9 +95,7 @@ private:
   };
   std::vector<ErrorMessage> ErrorMessages; // vector of error messages
   unsigned short MAX_ADDRESS = 0xFFFF;
-  // Instructions _instructions;
   std::map<std::string, unsigned char> inst_map;
-  char m_cAccumulator; // Accumulator Register
   unsigned char m_charCurrentNumberSystem{'d'};
   std::string m_strCurrentNumberLength;
   unsigned int m_iLineNumber = 0;

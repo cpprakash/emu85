@@ -660,23 +660,6 @@ void Assembler::RunFinalProgram(void) {
 }
 
 /**
- * Set the value of the accumulator
- */
-
-void Assembler::SetAccumulator(const char *value) {
-  std::cout << "Assembler::SetAccumulator::Old value of Acc= "
-            << this->m_cAccumulator << std::endl;
-  this->m_cAccumulator = atoi(value);
-  std::cout << "Assembler::SetAccumulator::New value of Acc= "
-            << this->m_cAccumulator << std::endl;
-}
-
-/***
- * Get the value of the accumulator register
- */
-const char &Assembler::GetAccumulator() { return this->m_cAccumulator; }
-
-/**
  * check if the address provided for the instruction is valid
  * return true if the address is valid
  * false otherwise

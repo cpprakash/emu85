@@ -7,11 +7,14 @@ public:
 
 private:
   void GetProgramCounter();
+  const char &GetAccumulator();
+  void SetAccumulator(const char *value);
 
 public:
   unsigned short m_usProgramCounter;
 
 private:
+  char m_cAccumulator; // Accumulator Register
   unsigned short m_usMem;
   unsigned char m_cAccumulator; // accumulator
   unsigned char m_ucRegB;       // register B
