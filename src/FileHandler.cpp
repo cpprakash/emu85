@@ -25,7 +25,6 @@ void FileHandler::ReadFile(char *file_path) {
     Assembler m_assembler;
 
     delete[] memblock;
-    //_assembler.AssembleProgram(tokens);
     m_assembler.AssembleProgram(this->m_vectTokens);
     m_assembler.WriteBinFile();
   } else {
@@ -45,7 +44,6 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
   // std::cout << file_text << std::endl;
   for (unsigned int i = 0; i < file_text.length(); i++) {
     if (file_text[i] == '\n' || file_text[i] == '\r') { // newline character
-      tokens.push_back("NEWLINE");
       cur_pos = 0;
       this->m_vectTokens.push_back({line_number, 0, 0, 0, "NEWLINE"});
       line_number++;
@@ -66,9 +64,7 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       end_pos = i;
       m_vectTokens.push_back({line_number, start_pos + 1, end_pos,
                               temp_string.length(), temp_string});
-      tokens.push_back(temp_string); // store the token
       i--;
-      // std::cout << "Tempstring = " << temp_string << std::endl;
     } else if (isdigit(file_text[i])) { // check if token starts with a digit
       start_pos = i;
       cur_pos++;
@@ -80,27 +76,18 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       end_pos = i;
       this->m_vectTokens.push_back(
           {line_number, start_pos, end_pos - 1, temp_num.length(), temp_num});
-      tokens.push_back(temp_num);
       i--;
       // std::cout << "TempNumber = " << temp_num << std::endl;
     } else if (file_text[i] == ',') {
       this->m_vectTokens.push_back({line_number, i, i + 1, 1, "COMMA"});
-      tokens.push_back("COMMA");
-      // std::cout << "Token is comma" << std::endl;
     } else if (file_text[i] == ':') {
       this->m_vectTokens.push_back({line_number, i, i + 1, 1, "COLON"});
-      tokens.push_back("COLON");
-      // std::cout << "Token is comma" << std::endl;
     } else if (file_text[i] == ';') {
-      tokens.push_back("COMMENT");
       this->m_vectTokens.push_back({line_number, i, i + 1, 1, "COMMENT"});
-      // std::cout << "Token is comma" << std::endl;
     } else {
       this->m_vectTokens.push_back({line_number, i, i + 1, 1, "COMMENT"});
       std::cout << "Unknow token|" << file_text[i] << "|" << std::endl;
     }
-    // std::cout << file_text[i] << std::endl;
   }
-  tokens.push_back("EOF"); // end of file
   this->m_vectTokens.push_back({line_number, 1, 3, 3, "EOF"});
 }
