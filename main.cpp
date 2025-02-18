@@ -1,4 +1,3 @@
-#include "includes/Assembler.hpp"
 #include "includes/FileHandler.hpp"
 
 #define DEBUG = 1
@@ -14,8 +13,7 @@ int main(int argc, char *argv[]) {
   FileHandler file_handler;
   if (argc == 2) {
     file_handler.ReadFile(argv[1]);
+    return 0;
   }
-
-  return 0;
 }
 #endif

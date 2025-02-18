@@ -16,7 +16,7 @@ MAIN_APP=$(BUILD_DIR)/MainApp.o
 MAIN_FRAME=$(BUILD_DIR)/MainFrame.o
 FILE_HANDLER=$(BUILD_DIR)/FileHandler.o
 
-emu8085: createdir MainApp.o main.o Instructions.o Assembler.o MainFrame.o FileHandler.o
+emu8085: createdir MainApp.o main.o FileHandler.o Instructions.o Assembler.o MainFrame.o
 	$(PROJECT) $(BUILD_DIR)/MainApp.o main.o $(INSTRUCTIONS) $(WX_WIDGET) $(ASSEMBLER) $(MAIN_FRAME)
 
 createdir: clean
@@ -44,7 +44,7 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 console: createdir main.o Instructions.o Assembler.o FileHandler.o
-	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES)  -o emu8085 main.o $(INSTRUCTIONS) $(ASSEMBLER) $(FILE_HANDLER)
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES)  -o emu8085 main.o $(INSTRUCTIONS) $(FILE_HANDLER) $(ASSEMBLER)
 
 debug: createdir main.o Instructions.o Assembler.o FileHandler.o
-	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -g -o emu8085 main.o $(INSTRUCTIONS) $(ASSEMBLER) $(FILE_HANDLER)
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -g -o emu8085 main.o $(INSTRUCTIONS) $(FILE_HANDLER) $(ASSEMBLER) 

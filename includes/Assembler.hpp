@@ -7,7 +7,9 @@
 #include <string>
 #include <vector>
 
+#include "FileHandler.hpp"
 #include "Instructions.hpp"
+#include "Types.hpp"
 
 class Assembler {
 public:
@@ -16,7 +18,7 @@ public:
       m_final_program[i] = 0x00;
     }
   }
-  void AssembleProgram(std::vector<std::string> program);
+  void AssembleProgram(std::vector<m_Token> program);
   void RelocateAddress(unsigned short new_address);
   void UpdateCurrentAssembleAddress(unsigned short &address);
 
@@ -32,34 +34,34 @@ private:
   /**
    * All instructions with AXX
    */
-  void HandleAciInstruction(std::vector<std::string> &program,
+  void HandleAciInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAdcInstruction(std::vector<std::string> &program,
+  void HandleAdcInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAddInstruction(std::vector<std::string> &program,
+  void HandleAddInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAdiInstruction(std::vector<std::string> &program,
+  void HandleAdiInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAnaInstruction(std::vector<std::string> &program,
+  void HandleAnaInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAniInstruction(std::vector<std::string> &program,
+  void HandleAniInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleHltInstruction(std::vector<std::string> &program,
+  void HandleHltInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleLdaInstruction(const std::vector<std::string> &program,
+  void HandleLdaInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleMviInstruction(std::vector<std::string> &program,
+  void HandleMviInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  bool HandleStaInstruction(std::vector<std::string> &program,
+  bool HandleStaInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
   void RunFinalProgram();
@@ -70,13 +72,13 @@ private:
 
   unsigned char GetHexCodeFromInstruction(const std::string &instruction);
 
-  bool ParseMviInstruction(std::vector<std::string> &program,
+  bool ParseMviInstruction(const std::vector<m_Token> &program,
                            unsigned int index);
 
   bool StoreLowAndHighAddress(const std::string &address,
                               unsigned char base = 'd');
 
-  bool ParseInstAddressInstructions(const std::vector<std::string> &program,
+  bool ParseInstAddressInstructions(const std::vector<m_Token> &program,
                                     const unsigned int index);
 
 public:
