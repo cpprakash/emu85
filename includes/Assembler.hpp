@@ -11,7 +11,7 @@
 
 class Assembler {
 public:
-  Assembler() : start_address{0x0000}, m_bHasErrors{false} {
+  Assembler() : start_address{0x0000}, m_bHasErrors{false}, m_iLineNumber{0} {
     for (auto i = 0; i < 0xFFFF; i++) {
       m_final_program[i] = 0x00;
     }
@@ -100,6 +100,7 @@ private:
   char m_cAccumulator; // Accumulator Register
   unsigned char m_charCurrentNumberSystem{'d'};
   std::string m_strCurrentNumberLength;
+  unsigned int m_iLineNumber = 0;
 };
 
 #endif

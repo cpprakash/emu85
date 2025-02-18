@@ -18,6 +18,8 @@ void Assembler::AssembleProgram(std::vector<std::string> program) {
   for (unsigned long i = 0; i < program.size(); i++) {
 
     if (program[i] == "NEWLINE") {
+      std::cout << "Processing the line " << this->m_iLineNumber << std::endl;
+      this->m_iLineNumber++;
       // std::cout << "New line found, will escape" << std::endl;
       continue;
     }
@@ -514,7 +516,8 @@ bool Assembler::ParseMviInstruction(std::vector<std::string> &program,
               << std::endl
               << program[index] << " " << program[index + 1] << " "
               << program[index + 2] << " " << std::endl
-              << "   ^^^" << std::endl;
+              << "   ^^^"
+              << " at line number =" << this->m_iLineNumber << std::endl;
     return false;
   }
   // find out which type of number was provided hex, dec, octal or binary
