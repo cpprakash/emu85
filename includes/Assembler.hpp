@@ -7,16 +7,18 @@
 #include <string>
 #include <vector>
 
+#include "FileHandler.hpp"
 #include "Instructions.hpp"
+#include "Types.hpp"
 
 class Assembler {
 public:
-  Assembler() : start_address{0x0000}, has_errors{false} {
+  Assembler() : start_address{0x0000}, m_bHasErrors{false}, m_iLineNumber{0} {
     for (auto i = 0; i < 0xFFFF; i++) {
       m_final_program[i] = 0x00;
     }
   }
-  void AssembleProgram(std::vector<std::string> program);
+  void AssembleProgram(std::vector<m_Token> program);
   void RelocateAddress(unsigned short new_address);
   void UpdateCurrentAssembleAddress(unsigned short &address);
 
@@ -24,42 +26,40 @@ public:
 
   unsigned short IncrementProgramAddress(void);
 
-  const char &GetAccumulator();
-  void SetAccumulator(const char *value);
   void WriteBinFile(void);
 
 private:
   /**
    * All instructions with AXX
    */
-  void HandleAciInstruction(std::vector<std::string> &program,
+  void HandleAciInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAdcInstruction(std::vector<std::string> &program,
+  void HandleAdcInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAddInstruction(std::vector<std::string> &program,
+  void HandleAddInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAdiInstruction(std::vector<std::string> &program,
+  void HandleAdiInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAnaInstruction(std::vector<std::string> &program,
+  void HandleAnaInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleAniInstruction(std::vector<std::string> &program,
+  void HandleAniInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleHltInstruction(std::vector<std::string> &program,
+  void HandleHltInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleLdaInstruction(const std::vector<std::string> &program,
+  void HandleLdaInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  void HandleMviInstruction(std::vector<std::string> &program,
+  void HandleMviInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
-  bool HandleStaInstruction(std::vector<std::string> &program,
+  bool HandleStaInstruction(const std::vector<m_Token> &program,
                             unsigned int index);
 
   void RunFinalProgram();
@@ -70,20 +70,20 @@ private:
 
   unsigned char GetHexCodeFromInstruction(const std::string &instruction);
 
-  bool ParseMviInstruction(std::vector<std::string> &program,
+  bool ParseMviInstruction(const std::vector<m_Token> &program,
                            unsigned int index);
 
   bool StoreLowAndHighAddress(const std::string &address,
                               unsigned char base = 'd');
 
-  bool ParseInstAddressInstructions(const std::vector<std::string> &program,
+  bool ParseInstAddressInstructions(const std::vector<m_Token> &program,
                                     const unsigned int index);
 
 public:
   std::vector<unsigned char> final_program[65 * 1024];
   unsigned char m_final_program[0xFFFF];
   unsigned short start_address;
-  bool has_errors;
+  bool m_bHasErrors;
 
 private:
   struct ErrorMessage {
@@ -95,9 +95,10 @@ private:
   };
   std::vector<ErrorMessage> ErrorMessages; // vector of error messages
   unsigned short MAX_ADDRESS = 0xFFFF;
-  // Instructions _instructions;
   std::map<std::string, unsigned char> inst_map;
-  char m_cAccumulator; // Accumulator Register
+  unsigned char m_charCurrentNumberSystem{'d'};
+  std::string m_strCurrentNumberLength;
+  unsigned int m_iLineNumber = 0;
 };
 
 #endif
