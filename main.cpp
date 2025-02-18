@@ -1,6 +1,6 @@
 #include "includes/FileHandler.hpp"
-
-#define DEBUG = 1
+#include <iostream>
+#define DEBUG 1
 
 /***
  * Main function, takes the filepath of the assembly as the argument

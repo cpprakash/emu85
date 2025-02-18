@@ -715,8 +715,17 @@ void Assembler::WriteBinFile(void) {
     std::cout << "The program contains errors, please finx them first"
               << std::endl;
     return;
+  } else {
+    FileHandler m_fileHandler;
+    if (m_fileHandler.WriteBinFile("./tests/prog.bin", m_final_program,
+                                   sizeof(m_final_program))) {
+      std::cout << "Program file created." << std::endl;
+    } else {
+      std::cout << "Program file could not be created. Try again" << std::endl;
+    }
   }
-  std::ofstream out_file;
+
+  /*std::ofstream out_file;
   out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
   if (!out_file.is_open()) {
     std::cout << "Could not write to the file, please try again later!"
@@ -726,7 +735,7 @@ void Assembler::WriteBinFile(void) {
   std::cout << "Writing bin file with a data size of ="
             << sizeof(m_final_program) << std::endl;
   out_file.write((char *)&m_final_program, sizeof(m_final_program));
-  out_file.close();
+  out_file.close();*/
 }
 
 unsigned short Assembler::IncrementProgramAddress(void) {

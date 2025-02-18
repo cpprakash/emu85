@@ -91,3 +91,18 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
   }
   this->m_vectTokens.push_back({line_number, 1, 3, 3, "EOF"});
 }
+
+bool FileHandler::WriteBinFile(const std::string &file,
+                               const unsigned char data[], unsigned long size) {
+  std::ofstream out_file;
+  out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
+  if (!out_file.is_open()) {
+    std::cout << "Could not write to the file, please try again later!"
+              << std::endl;
+    return false;
+  }
+  std::cout << "Writing bin file with a data size of =" << size << std::endl;
+  out_file.write((char *)&data, size);
+  out_file.close();
+  return true;
+}
