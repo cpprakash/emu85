@@ -24,11 +24,13 @@ void FileHandler::ReadFile(char *file_path) {
 
     GenerateTokens(memblock);
     Assembler m_assembler;
+    Parser m_parser;
 
-    delete[] memblock;
-    m_assembler.AssembleProgram(this->m_vectTokens);
-
-    m_assembler.WriteBinFile();
+    delete[] memblock; // frre up the memory
+    // m_assembler.AssembleProgram(this->m_vectTokens);
+    m_parser.ParseProgram(this->m_vectTokens);
+    // m_assembler.WriteBinFile(); // TODO fix it to call the function from
+    // itself
   } else {
     std::cout << "Unable to open file" << std::endl;
     return;
@@ -90,6 +92,10 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       this->m_vectTokens.push_back({line_number, i, i + 1, 1, "COMMENT"});
       std::cout << "Unknow token|" << file_text[i] << "|" << std::endl;
     }
+  }
+  if (this->m_vectTokens[this->m_vectTokens.size()].m_tokenValue != "NEWLINE") {
+    this->m_vectTokens.push_back(
+        {line_number, 1, 8, 8, "NEWLINE"}); // add newline
   }
   this->m_vectTokens.push_back({line_number, 1, 3, 3, "EOF"});
 }

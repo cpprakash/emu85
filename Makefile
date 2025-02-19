@@ -15,8 +15,9 @@ ASSEMBLER=$(BUILD_DIR)/Assembler.o
 MAIN_APP=$(BUILD_DIR)/MainApp.o
 MAIN_FRAME=$(BUILD_DIR)/MainFrame.o
 FILE_HANDLER=$(BUILD_DIR)/FileHandler.o
+PARSER=$(BUILD_DIR)/Parser.o
 
-emu8085: createdir MainApp.o main.o FileHandler.o Instructions.o Assembler.o MainFrame.o
+emu8085: createdir MainApp.o main.o FileHandler.o Parser.o Instructions.o Assembler.o MainFrame.o
 	$(PROJECT) $(BUILD_DIR)/MainApp.o $(MAIN) $(INSTRUCTIONS) $(WX_WIDGET) $(ASSEMBLER) $(MAIN_FRAME)
 
 createdir: clean
@@ -31,6 +32,9 @@ Assembler.o: src/Assembler.cpp includes/Assembler.hpp
 FileHandler.o: src/FileHandler.cpp includes/FileHandler.hpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c src/FileHandler.cpp -o $(FILE_HANDLER)
 
+Parser.o: src/Parser.cpp includes/Parser.hpp
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c src/Parser.cpp -o $(PARSER)
+
 main.o: main.cpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) -c main.cpp -o $(MAIN)
 
@@ -43,8 +47,8 @@ MainApp.o: src/MainApp.cpp includes/MainApp.hpp
 clean:
 	rm -rf $(BUILD_DIR)
 
-console: createdir main.o Instructions.o Assembler.o FileHandler.o
-	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES)  -o build/emu8085 $(MAIN) $(INSTRUCTIONS) $(FILE_HANDLER) $(ASSEMBLER)
+console: createdir main.o Instructions.o Assembler.o FileHandler.o Parser.o
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES)  -o build/emu8085 $(MAIN) $(INSTRUCTIONS) $(FILE_HANDLER) $(ASSEMBLER) $(PARSER)
 
 debug: createdir main.o Instructions.o Assembler.o FileHandler.o
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -g -o build/emu8085 main.o $(INSTRUCTIONS) $(FILE_HANDLER) $(ASSEMBLER) 
