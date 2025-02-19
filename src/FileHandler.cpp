@@ -1,5 +1,6 @@
 #include "../includes/FileHandler.hpp"
 #include "../includes/Assembler.hpp"
+#include "../includes/Parser.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -23,10 +24,13 @@ void FileHandler::ReadFile(char *file_path) {
 
     GenerateTokens(memblock);
     Assembler m_assembler;
+    Parser m_parser;
 
-    delete[] memblock;
-    m_assembler.AssembleProgram(this->m_vectTokens);
-    m_assembler.WriteBinFile();
+    delete[] memblock; // frre up the memory
+    // m_assembler.AssembleProgram(this->m_vectTokens);
+    m_parser.ParseProgram(this->m_vectTokens);
+    // m_assembler.WriteBinFile(); // TODO fix it to call the function from
+    // itself
   } else {
     std::cout << "Unable to open file" << std::endl;
     return;
@@ -89,5 +93,24 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       std::cout << "Unknow token|" << file_text[i] << "|" << std::endl;
     }
   }
+  if (this->m_vectTokens[this->m_vectTokens.size()].m_tokenValue != "NEWLINE") {
+    this->m_vectTokens.push_back(
+        {line_number, 1, 8, 8, "NEWLINE"}); // add newline
+  }
   this->m_vectTokens.push_back({line_number, 1, 3, 3, "EOF"});
+}
+
+bool FileHandler::WriteBinFile(const std::string &file,
+                               const unsigned char data[], unsigned long size) {
+  std::ofstream out_file;
+  out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
+  if (!out_file.is_open()) {
+    std::cout << "Could not write to the file, please try again later!"
+              << std::endl;
+    return false;
+  }
+  std::cout << "Writing bin file with a data size of =" << size << std::endl;
+  out_file.write((char *)(&data), size);
+  out_file.close();
+  return true;
 }
