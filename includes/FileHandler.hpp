@@ -20,7 +20,7 @@ private:
 
 private:
 public:
-  std::vector<m_Token> m_vectTokens;
+  std::vector<TokenStruct> m_vectTokens;
 };
 
 #endif

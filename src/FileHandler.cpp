@@ -1,5 +1,6 @@
 #include "../includes/FileHandler.hpp"
 #include "../includes/Assembler.hpp"
+#include "../includes/Parser.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -26,6 +27,7 @@ void FileHandler::ReadFile(char *file_path) {
 
     delete[] memblock;
     m_assembler.AssembleProgram(this->m_vectTokens);
+
     m_assembler.WriteBinFile();
   } else {
     std::cout << "Unable to open file" << std::endl;
@@ -102,7 +104,7 @@ bool FileHandler::WriteBinFile(const std::string &file,
     return false;
   }
   std::cout << "Writing bin file with a data size of =" << size << std::endl;
-  out_file.write((char *)&data, size);
+  out_file.write((char *)(&data), size);
   out_file.close();
   return true;
 }

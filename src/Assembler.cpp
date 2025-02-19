@@ -5,7 +5,13 @@
 /***
  * Assemble the progrm
  */
-void Assembler::AssembleProgram(std::vector<m_Token> program) {
+void Assembler::AssembleProgram(std::vector<TokenStruct> program) {
+  /***
+   * clear the final program array
+   */
+  for (auto i = 0; i <= 0xFFFF; i++) {
+    this->m_final_program[i] = 0x00;
+  }
 
   if (program.size() == 0) { // Empty program
     std::cout << "Program is empty, cant assemble it." << std::endl;
@@ -24,7 +30,8 @@ void Assembler::AssembleProgram(std::vector<m_Token> program) {
       continue;
     }
 
-    std::cout << "Token " << i << " = " << program[i].m_tokenValue << std::endl;
+    // std::cout << "Token " << i << " = " << program[i].m_tokenValue <<
+    // std::endl;
 
     // EOF is the last token in the file
     if (program[i].m_tokenValue == "EOF") {
@@ -46,8 +53,9 @@ void Assembler::AssembleProgram(std::vector<m_Token> program) {
     } else if (program[i].m_tokenValue == "COMMENT") { // Comment found
       std::cout << "Comment Found " << std::endl;
       while (program[i].m_tokenValue != "NEWLINE") {
-        std::cout << " Escaping token " << program[i].m_tokenValue << " at pos "
-                  << i << std::endl;
+        /*std::cout << " Escaping token " << program[i].m_tokenValue << " at pos
+           "
+                  << i << std::endl;*/
         i++;
       }
     } else if (program[i].m_tokenValue == "ACI") {
@@ -391,19 +399,19 @@ void Assembler::ParseLabels() {}
 /**
  * Handle ACI Instructions
  */
-void Assembler::HandleAciInstruction(const std::vector<m_Token> &program,
+void Assembler::HandleAciInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {}
 
 /***
  * Handle ADC instructions
  */
-void Assembler::HandleAdcInstruction(const std::vector<m_Token> &program,
+void Assembler::HandleAdcInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {}
 
 /***
  * Handle ADD instructions
  */
-void Assembler::HandleAddInstruction(const std::vector<m_Token> &program,
+void Assembler::HandleAddInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {
   std::cout << "HandleAddInstructions called with token = "
             << program[index].m_tokenValue << " at index " << index
@@ -431,7 +439,7 @@ void Assembler::HandleAddInstruction(const std::vector<m_Token> &program,
 /***
  * Handle ADI instructions
  */
-void Assembler::HandleAdiInstruction(const std::vector<m_Token> &program,
+void Assembler::HandleAdiInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {
   std::cout << "HandleAdiInstruction called with token = "
             << program[index].m_tokenValue << " at index " << index
@@ -440,7 +448,7 @@ void Assembler::HandleAdiInstruction(const std::vector<m_Token> &program,
 /***
  * Handle ANA instructions
  */
-void Assembler::HandleAnaInstruction(const std::vector<m_Token> &program,
+void Assembler::HandleAnaInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {
   std::cout << "HandleAnaInstruction called with token = "
             << program[index].m_tokenValue << " at index " << index
@@ -468,7 +476,7 @@ void Assembler::HandleAnaInstruction(const std::vector<m_Token> &program,
 /***
  * Handle ANI instructions
  */
-void Assembler::HandleAniInstruction(const std::vector<m_Token> &program,
+void Assembler::HandleAniInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {
   std::cout << "HandleAniInstruction called with token = "
             << program[index].m_tokenValue << " at index " << index
@@ -478,7 +486,7 @@ void Assembler::HandleAniInstruction(const std::vector<m_Token> &program,
 /***
  * Handle HLT instructions
  */
-void Assembler::HandleHltInstruction(const std::vector<m_Token> &program,
+void Assembler::HandleHltInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {
   std::cout << "HandleHltInstruction called with token = "
             << program[index].m_tokenValue << " at index " << index
@@ -491,7 +499,7 @@ void Assembler::HandleHltInstruction(const std::vector<m_Token> &program,
 /**
  * Handle LDA Instructions
  */
-void Assembler::HandleLdaInstruction(const std::vector<m_Token> &program,
+void Assembler::HandleLdaInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {
   std::cout << "HandleLdaInstruction called with token = "
             << program[index].m_tokenValue << " at index " << index
@@ -501,7 +509,7 @@ void Assembler::HandleLdaInstruction(const std::vector<m_Token> &program,
   }
 }
 
-bool Assembler::ParseMviInstruction(const std::vector<m_Token> &program,
+bool Assembler::ParseMviInstruction(const std::vector<TokenStruct> &program,
                                     unsigned int index) {
   // parse if only allowed registers are used in instructions
   if (!(program[index + 1].m_tokenValue == "A" ||
@@ -560,7 +568,7 @@ void ConvertHexToDecimal(std::string &num) {}
 /**
  * Handle MVI Instructions
  */
-void Assembler::HandleMviInstruction(const std::vector<m_Token> &program,
+void Assembler::HandleMviInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {
   std::cout << "HandleMviInstruction called with token = "
             << program[index].m_tokenValue << " at index " << index
@@ -629,7 +637,7 @@ void Assembler::HandleMviInstruction(const std::vector<m_Token> &program,
  * return true if the instruction was parsed
  * return false otherwise
  */
-bool Assembler::HandleStaInstruction(const std::vector<m_Token> &program,
+bool Assembler::HandleStaInstruction(const std::vector<TokenStruct> &program,
                                      unsigned int index) {
   std::cout << "Assembler::HandleStaInstruction() called with token = "
             << program[index].m_tokenValue << " at index " << index
@@ -793,7 +801,7 @@ bool Assembler::StoreLowAndHighAddress(const std::string &address,
  * for example. LDA 1000H
  */
 bool Assembler::ParseInstAddressInstructions(
-    const std::vector<m_Token> &program, const unsigned int index) {
+    const std::vector<TokenStruct> &program, const unsigned int index) {
 
   if (program[index].m_tokenValue == "LDA") { // LDA <16 bit address>
     if (this->CheckIfAddressInRange(program[index + 1].m_tokenValue)) {

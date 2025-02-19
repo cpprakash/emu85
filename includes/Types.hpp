@@ -6,7 +6,7 @@
 /***
  * Token struct
  */
-struct m_Token {
+struct TokenStruct {
   unsigned int m_lineNumber;   // line of the token
   unsigned int m_startPos;     // start pos of the token
   unsigned int m_endPos;       // end pos of token
