@@ -19,35 +19,20 @@ private:
   /**
    * All instructions with AXX
    */
-  void HandleAciInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAdcInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAddInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAdiInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAnaInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAniInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleHltInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleLdaInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleMviInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  bool HandleStaInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
+  bool HandleAciInstruction(const TokenStruct &token);
+  bool HandleAdcInstruction(const TokenStruct &token);
+  bool HandleAddInstruction(const TokenStruct &token);
+  bool HandleAdiInstruction(const TokenStruct &token);
+  bool HandleAnaInstruction(const TokenStruct &token);
+  bool HandleAniInstruction(const TokenStruct &token);
+  // HLT Instruction
+  bool HandleHltInstruction(const TokenStruct &token);
+  // LDA Instruction
+  bool HandleLdaInstruction(const TokenStruct &token);
+  // All MVI Instruction
+  bool HandleMviInstruction(const TokenStruct &token);
+  // All STA Instruction
+  bool HandleStaInstruction(const TokenStruct &token);
 
 private:
   unsigned long m_currentIndex;
