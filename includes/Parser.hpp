@@ -15,6 +15,8 @@ public:
 private:
   void ParseSingleLine(const TokenStruct &token);
   std::string GetNextToken();
+  std::vector<std::string> GetNextNTokens(unsigned int howMany);
+  std::string PeekNextToken(unsigned long howMany = 1);
 
   /**
    * All instructions with AXX
@@ -40,6 +42,21 @@ private:
 
 public:
   std::vector<TokenStruct> m_vectTokens;
+  std::vector<AstStruct> m_astVectTokens;
 }; // end class Parser
 
 #endif // end __HEADERS_PARSER_HPP__
+
+/***
+ * struct AstStruct {
+  unsigned int lineNumber;   // line of the token
+  unsigned int startPos;     // start pos of the token
+  unsigned int endPos;       // end pos of token
+  unsigned long totalLength; // length of the token
+  std::string instruction;   // actual value
+  std::string operandOne;    // actual value
+  std::string operandTwo;    // actual value
+  u_BYTE numberBase;
+  bool hasErrors;
+};
+ */

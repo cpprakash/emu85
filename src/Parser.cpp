@@ -1,5 +1,7 @@
 #include "../includes/Parser.hpp"
+#include "../includes/Helper.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -13,7 +15,7 @@ void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
   for (this->m_currentIndex = 0ul;
        this->m_currentIndex < this->m_vectTokens.size();) {
     this->ParseSingleLine(this->m_vectTokens[this->m_currentIndex]);
-    this->m_currentIndex++;
+    this->m_currentIndex++; // increment counter variable here
   }
 }
 
@@ -26,13 +28,31 @@ void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
 std::string Parser::GetNextToken() {
   std::cout << "Parser::GetNextTokenCalled" << std::endl;
   this->m_currentIndex++;
-  std::cout << "Parser::GetNextTokenCalled currentIndex = " << m_currentIndex
-            << std::endl;
-  std::cout << "Parser::GetNextTokenCalled size of mvet = "
-            << this->m_vectTokens.size() << std::endl;
-  std::cout << "Parser::GetNextTokenCalled m[vectToken] at curInxdex  = "
+  std::cout << "Parser::GetNextTokenCalled returnning "
             << this->m_vectTokens[m_currentIndex].m_tokenValue << std::endl;
   return this->m_vectTokens[m_currentIndex].m_tokenValue;
+}
+
+/***
+ * returns N tokens based on howMany
+ */
+std::vector<std::string> Parser::GetNextNTokens(unsigned int howMany = 1) {
+  std::vector<std::string> temp;
+  std::cout << "How many current index start = " << this->m_currentIndex
+            << std::endl;
+  this->m_currentIndex++;
+  for (unsigned int i = this->m_currentIndex; i < howMany; i++) {
+    temp.emplace_back(this->m_vectTokens[i].m_tokenValue);
+  }
+  this->m_currentIndex += howMany - 2;
+  std::cout << "How many current index end  = " << this->m_currentIndex
+            << std::endl;
+  return temp;
+}
+
+std::string Parser::PeekNextToken(unsigned long howMany) {
+  std::cout << "Parser::PeekNextToken called" << std::endl;
+  return this->m_vectTokens[m_currentIndex + howMany].m_tokenValue;
 }
 
 /***
@@ -70,8 +90,6 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
   }
   // here deal with all MVI instructions
   else if (token.m_tokenValue == "MVI") {
-    std::cout << "MVI with token = " << token.m_endPos << token.m_lineNumber
-              << token.m_startPos << token.m_totalLength << std::endl;
     if (this->HandleMviInstruction(token) == false) {
       std::cout << "Parsing MVI Instruction failed." << std::endl;
     } else {
@@ -102,13 +120,82 @@ bool Parser::HandleLdaInstruction(const TokenStruct &token) { return false; }
  * e.g MVI <A|B|C|D|E|H|L|M>, Data <8 bit> <ENDL>+
  */
 bool Parser::HandleMviInstruction(const TokenStruct &token) {
+  std::string num = "0x1ff";
+  unsigned char strtonum =
+      std::stoi(num, nullptr, static_cast<std::size_t>(16));
+  std::cout << "TEST for NUMBER = "
+            << std::stoi(num, nullptr, static_cast<std::size_t>(16))
+            << " strtonum" << strtonum << std::endl;
   std::cout << "HAndle mvi inst" << std::endl;
-  if (token.m_tokenValue == "MVI") {
-    std::string nextToken = this->GetNextToken();
-    std::cout << "Next token for MVI is = " << nextToken << std::endl;
+  std::string nextTokenRegister = "";
+  std::string nextTokenComma = "";
+  std::string nextTokenValue = "";
+  std::string peekTokenBase = "";
+  std::string strInstruction = "";
+  unsigned char dataValue;
+  if (token.m_tokenValue == "MVI") { // we already know but still make it sure
+    std::vector<std::string> temp = this->GetNextNTokens(6);
+    // if ()
+    for (unsigned int i = 0; i < temp.size(); i++) {
+      std::cout << temp[i] << std::endl;
+    }
+    nextTokenRegister = temp[0];
+    std::cout << "Next token for MVI is = " << nextTokenRegister << std::endl;
+    if (!Helper::CheckIfRegistersAreValid(nextTokenRegister)) {
+      return false;
+    } // check for register, if not a valid register return false
+
+    // check for COMMA
+    nextTokenComma = temp[1];
+    if (nextTokenComma != "COMMA") {
+      return false;
+    }
+
+    // check next token to be a value followed by either H, D, B or O
+    nextTokenValue = temp[2];
+    if (!(std::stoi(nextTokenValue) >= 0) ||
+        !(std::stoi(nextTokenValue) < 255)) {
+      return false;
+    }
+
+    std::cout << "Value is in range" << std::endl;
+    peekTokenBase = temp[3];
+    std::cout << "Peektoken is " << peekTokenBase << std::endl;
+    if (!Helper::CheckIfBaseIsValid(peekTokenBase)) { // base is wrong
+      return false;
+    }
+
+    std::cout << "base also is in range" << std::endl;
+    if (peekTokenBase == "H" || peekTokenBase == "h") {
+      dataValue = std::stoi(nextTokenValue, nullptr, 16);
+    }
+    // this->GetNextToken(); // call it to get the next correct token
+    std::string nextTokenNewline = temp[4];
+    if (nextTokenNewline != "NEWLINE") { // check if the next token is newline,
+      return false;
+    }
+
+    std::cout << "MVI sucesful all parameters are corect" << std::endl;
+    strInstruction = "INS_" + token.m_tokenValue + "_" + nextTokenRegister;
+    AstStruct astStruckt;
+    astStruckt.lineNumber = token.m_lineNumber;
+    astStruckt.startPos = token.m_startPos;
+    astStruckt.endPos = token.m_endPos;
+    astStruckt.totalLength = token.m_totalLength;
+    astStruckt.instruction = strInstruction;
+    astStruckt.opcode = 0x76; // fill it later at the first pass of assembler
+    // Helper::GetHexCodeForInstruction(strInstruction);
+    astStruckt.operandOne = nextTokenRegister;
+    astStruckt.operandTwo = dataValue;
+    astStruckt.numberBase = peekTokenBase;
+    astStruckt.hasErrors = false;
+    this->m_astVectTokens.push_back(astStruckt
+                  /*{token.m_lineNumber, token.m_startPos, token.m_endPos,
+                   token.m_totalLength, token.m_tokenValue, nextTokenRegister,
+                   dataValue, peekTokenBase, false}*/);
     return true;
   }
-  return false;
+  return false; // instruction is not MVI return fail
 }
 
 // handle STA instructions

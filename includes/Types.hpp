@@ -30,10 +30,11 @@ struct AstStruct {
   unsigned int startPos;     // start pos of the token
   unsigned int endPos;       // end pos of token
   unsigned long totalLength; // length of the token
-  std::string instruction;   // actual value
-  std::string operandOne;    // actual value
-  std::string operandTwo;    // actual value
-  u_BYTE numberBase;
+  std::string instruction;   // actual instruction
+  unsigned char opcode;      // opcode for the instruction
+  std::string operandOne;    // first operand if any
+  unsigned char operandTwo;  // second operand if any
+  std::string numberBase;
   bool hasErrors;
 };
 #endif

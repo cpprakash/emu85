@@ -99,9 +99,15 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
   }
   this->m_vectTokens.push_back({line_number, 1, 3, 3, "EOF"});
 }
-
+/***
+ * write the bin ROM file with the program
+ * takes argument file name
+ * unsigned char array of data
+ * and the fiel size, default is 1kBx8
+ */
 bool FileHandler::WriteBinFile(const std::string &file,
-                               const unsigned char data[], unsigned long size) {
+                               const unsigned char data[],
+                               unsigned long size = 1024ul) {
   std::ofstream out_file;
   out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
   if (!out_file.is_open()) {
