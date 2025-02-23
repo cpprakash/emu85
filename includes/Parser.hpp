@@ -13,41 +13,34 @@ public:
   void ParseProgram(const std::vector<TokenStruct> &tokens);
 
 private:
+  TokenType ReturnTokenType(unsigned long index);
+  void HandleAllInstructions(const TokenStruct &token);
   void ParseSingleLine(const TokenStruct &token);
   std::string GetNextToken();
+  std::vector<std::string> GetNextNTokens(unsigned int howMany);
+  std::string PeekNextToken(unsigned long howMany = 1);
 
   /**
    * All instructions with AXX
    */
-  void HandleAciInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAdcInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAddInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAdiInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAnaInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAniInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleHltInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleLdaInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleMviInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  bool HandleStaInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
+  bool HandleAciInstruction(const TokenStruct &token);
+  bool HandleAdcInstruction(const TokenStruct &token);
+  bool HandleAddInstruction(const TokenStruct &token);
+  bool HandleAdiInstruction(const TokenStruct &token);
+  bool HandleAnaInstruction(const TokenStruct &token);
+  bool HandleAniInstruction(const TokenStruct &token);
+  // HLT Instruction
+  bool HandleHltInstruction(const TokenStruct &token);
+  // LDA Instruction
+  bool HandleLdaInstruction(const TokenStruct &token);
+  // LDA Instruction
+  bool HandleMovInstruction(const TokenStruct &token);
+  // All MVI Instruction
+  bool HandleMviInstruction(const TokenStruct &token);
+  // SHLD Instruction
+  bool HandleShldInstruction(const TokenStruct &token);
+  // All STA Instruction
+  bool HandleStaInstruction(const TokenStruct &token);
 
 private:
   unsigned long m_currentIndex;
@@ -55,6 +48,21 @@ private:
 
 public:
   std::vector<TokenStruct> m_vectTokens;
+  std::vector<AstStruct> m_astVectTokens;
 }; // end class Parser
 
 #endif // end __HEADERS_PARSER_HPP__
+
+/***
+ * struct AstStruct {
+  unsigned int lineNumber;   // line of the token
+  unsigned int startPos;     // start pos of the token
+  unsigned int endPos;       // end pos of token
+  unsigned long totalLength; // length of the token
+  std::string instruction;   // actual value
+  std::string operandOne;    // actual value
+  std::string operandTwo;    // actual value
+  u_BYTE numberBase;
+  bool hasErrors;
+};
+ */

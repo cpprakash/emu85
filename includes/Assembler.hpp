@@ -29,39 +29,6 @@ public:
   void WriteBinFile(void);
 
 private:
-  /**
-   * All instructions with AXX
-   */
-  void HandleAciInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAdcInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAddInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAdiInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAnaInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleAniInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleHltInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleLdaInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  void HandleMviInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
-  bool HandleStaInstruction(const std::vector<TokenStruct> &program,
-                            unsigned int index);
-
   void RunFinalProgram();
 
   bool CheckIfAddressInRange(const std::string &address);
@@ -69,9 +36,6 @@ private:
   void SetErrorInProgram(void);
 
   unsigned char GetHexCodeFromInstruction(const std::string &instruction);
-
-  bool ParseMviInstruction(const std::vector<TokenStruct> &program,
-                           unsigned int index);
 
   bool StoreLowAndHighAddress(const std::string &address,
                               unsigned char base = 'd');
