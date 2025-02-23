@@ -13,6 +13,8 @@ public:
   void ParseProgram(const std::vector<TokenStruct> &tokens);
 
 private:
+  TokenType ReturnTokenType(unsigned long index);
+  void HandleAllInstructions(const TokenStruct &token);
   void ParseSingleLine(const TokenStruct &token);
   std::string GetNextToken();
   std::vector<std::string> GetNextNTokens(unsigned int howMany);
@@ -31,8 +33,12 @@ private:
   bool HandleHltInstruction(const TokenStruct &token);
   // LDA Instruction
   bool HandleLdaInstruction(const TokenStruct &token);
+  // LDA Instruction
+  bool HandleMovInstruction(const TokenStruct &token);
   // All MVI Instruction
   bool HandleMviInstruction(const TokenStruct &token);
+  // SHLD Instruction
+  bool HandleShldInstruction(const TokenStruct &token);
   // All STA Instruction
   bool HandleStaInstruction(const TokenStruct &token);
 

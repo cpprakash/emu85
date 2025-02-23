@@ -28,6 +28,12 @@ bool Helper::CheckIfBaseIsValid(const std::string &base) {
   return false;
 }
 
+bool Helper::CheckIfAddressInRange(const std::string &add) {
+  if (std::stoi(add, nullptr, 16) < 0xFFFF)
+    return true;
+  return false;
+}
+
 int ConvertHexToDecimal(const std::string &num) { return 0; }
 
 unsigned char Helper::GetHexCodeForInstruction(const std::string &instruction) {
