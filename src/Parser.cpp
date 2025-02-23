@@ -108,7 +108,16 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << std::endl;
     }
   }
-  // parser STA instruction
+  // Parse SHLD Instruction
+  else if (token.m_tokenValue == "SHLD") {
+    if (!this->HandleShldInstruction(token)) {
+      std::cout << "Parsing SHLD Instruction failed." << std::endl;
+    } else {
+      std::cout << "Successfully parsed SHLD instruction at line "
+                << token.m_lineNumber << std::endl;
+    }
+  }
+  // Parse STA instruction
   else if (token.m_tokenValue == "STA") {
     if (this->HandleStaInstruction(token) == false) {
       std::cout << "Parsing STA Instruction failed." << std::endl;
