@@ -50,7 +50,8 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
   for (unsigned int i = 0; i < file_text.length(); i++) {
     if (file_text[i] == '\n' || file_text[i] == '\r') { // newline character
       cur_pos = 0;
-      this->m_vectTokens.push_back({line_number, 0, 0, 0, NEWLINE, "NEWLINE"});
+      this->m_vectTokens.push_back(
+          {line_number, 0, 0, 0, TOKEN_NEWLINE, "NEWLINE"});
       line_number++;
       continue;
     }
@@ -71,11 +72,12 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
                     this->m_arrAllInstructions.end(),
                     temp_string) != std::end(this->m_arrAllInstructions)) {
         m_vectTokens.push_back({line_number, start_pos + 1, end_pos,
-                                temp_string.length(), INSTRUCTION,
+                                temp_string.length(), TOKEN_INSTRUCTION,
                                 temp_string});
       } else {
         m_vectTokens.push_back({line_number, start_pos + 1, end_pos,
-                                temp_string.length(), LABEL, temp_string});
+                                temp_string.length(), TOKEN_LABEL,
+                                temp_string});
       }
 
       i--;
@@ -89,27 +91,29 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       }
       end_pos = i;
       this->m_vectTokens.push_back({line_number, start_pos, end_pos - 1,
-                                    temp_num.length(), NUMBER, temp_num});
+                                    temp_num.length(), TOKEN_NUMBER, temp_num});
       i--;
       // std::cout << "TempNumber = " << temp_num << std::endl;
     } else if (file_text[i] == ',') {
-      this->m_vectTokens.push_back({line_number, i, i + 1, 1, COMMA, "COMMA"});
+      this->m_vectTokens.push_back(
+          {line_number, i, i + 1, 1, TOKEN_COMMA, "COMMA"});
     } else if (file_text[i] == ':') {
-      this->m_vectTokens.push_back({line_number, i, i + 1, 1, COLON, "COLON"});
+      this->m_vectTokens.push_back(
+          {line_number, i, i + 1, 1, TOKEN_COLON, "COLON"});
     } else if (file_text[i] == ';') {
       this->m_vectTokens.push_back(
-          {line_number, i, i + 1, 1, COMMENT, "COMMENT"});
+          {line_number, i, i + 1, 1, TOKEN_COMMENT, "COMMENT"});
     } else {
       this->m_vectTokens.push_back(
-          {line_number, i, i + 1, 1, UNKNOWN, "UNKNWON"});
+          {line_number, i, i + 1, 1, TOKEN_UNKNOWN, "UNKNWON"});
       std::cout << "Unknow token|" << file_text[i] << "|" << std::endl;
     }
   }
   if (this->m_vectTokens[this->m_vectTokens.size()].m_tokenValue != "NEWLINE") {
     this->m_vectTokens.push_back(
-        {line_number, 1, 8, 8, NEWLINE, "NEWLINE"}); // add newline
+        {line_number, 1, 8, 8, TOKEN_NEWLINE, "NEWLINE"}); // add newline
   }
-  this->m_vectTokens.push_back({line_number, 1, 3, 3, FILEEND, "EOF"});
+  this->m_vectTokens.push_back({line_number, 1, 3, 3, TOKEN_EOF, "EOF"});
 }
 /***
  * write the bin ROM file with the program
