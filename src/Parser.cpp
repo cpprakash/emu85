@@ -146,56 +146,56 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
             << this->m_vectTokens.size() << ")]" << std::endl;
 
   switch (token.m_tokenType) {
-  case INSTRUCTION:
+  case TOKEN_INSTRUCTION:
     this->HandleAllInstructions(token);
     break;
-  case LABEL:
+  case TOKEN_LABEL:
     // HandleLabel();
     std::cout << "[Parser]::[ParseSingleLine]::[A label found at "
               << token.m_lineNumber << " with value = " << token.m_tokenValue
               << "]" << std::endl;
     break;
-  case ADDDRESS:
+  case TOKEN_ADDDRESS:
     // Handle16BitAddress();
     break;
-  case DATA:
+  case TOKEN_DATA:
     // Handle8BitData();
     break;
-  case REGISTER:
+  case TOKEN_REGISTER:
     // HandleRegister();
     break;
-  case NEWLINE:
+  case TOKEN_NEWLINE:
     // HandleNewline();
     std::cout << "[Parser]::[ParseSingleLine]::[A newline found at line number "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case FILEEND: // token parsing is complete or no more tokens are there
+  case TOKEN_EOF: // token parsing is complete or no more tokens are there
     // HandleFileEnd();
     std::cout << "[Parser]::[ParseSingleLine]::[An EOF found at "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case COMMENT:
+  case TOKEN_COMMENT:
     // HandleComment();
     std::cout << "[Parser]::[ParseSingleLine]::[A comment found at "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case COMMA:
+  case TOKEN_COMMA:
     // HandleComma();
     std::cout << "[Parser]::[ParseSingleLine]::[A comma found at "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case COLON:
+  case TOKEN_COLON:
     // HandleColon();
     std::cout << "[Parser]::[ParseSingleLine]::[colon found at line number "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case NUMBER:
+  case TOKEN_NUMBER:
     // HandleNumber();
     std::cout << "[Parser]::[ParseSingleLine]::[A Number found at line number "
               << token.m_lineNumber << " with value " << token.m_tokenValue
               << "]" << std::endl;
     break;
-  case UNKNOWN:
+  case TOKEN_UNKNOWN:
   default:
     std::cout
         << "[Parser]::[ParseSingleLine]::[Wrong Instruction found. Please "
@@ -229,11 +229,11 @@ bool Parser::HandleLdaInstruction(const TokenStruct &token) {
 
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
   std::cout << temp[0] << std::endl;
-  if (type == NUMBER && !Helper::CheckIfAddressInRange(temp[0])) {
+  if (type == TOKEN_NUMBER && !Helper::CheckIfAddressInRange(temp[0])) {
     std::cout << "[Parser]::[HandleLdaInstruction]:[address is invalid "
               << temp[0] << "]" << std::endl;
     return false;
-  } else if (type == LABEL) { // TODO handle label
+  } else if (type == TOKEN_LABEL) { // TODO handle label
   }
   if (temp[1] != "NEWLINE") {
     return false;
