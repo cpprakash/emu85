@@ -13,7 +13,7 @@ typedef short WORD;
 enum BASE { b, d, h, o };
 
 // Token type
-enum TokenType {
+enum TOKEN_TYPES {
   TOKEN_INSTRUCTION,
   TOKEN_LABEL,
   TOKEN_ADDDRESS,
@@ -28,6 +28,16 @@ enum TokenType {
   TOKEN_NUMBER
 };
 
+enum ERROR_TYPES {
+  ERROR_ILLEGAL_INSTRUCTION,
+  ERROR_MISSING_COLON,
+  ERROR_MISSING_HEX,
+  ERROR_ADDRESS_OUT_OF_RANGE,
+  ERROR_DATA_OUT_OF_RANGE,
+  ERROR_NO_NEWLINE_FOUND,
+  ERROR_UNKNOW
+};
+
 /***
  * Token struct used for initial token generation from the file
  */
@@ -36,7 +46,7 @@ struct TokenStruct {
   unsigned int m_startPos;     // start pos of the token
   unsigned int m_endPos;       // end pos of token
   unsigned long m_totalLength; // length of the token
-  TokenType m_tokenType;       // type of toke: INST, LABEL etc..
+  TOKEN_TYPES m_tokenType;     // type of toke: INST, LABEL etc..
   std::string m_tokenValue;    // actual value
 };
 

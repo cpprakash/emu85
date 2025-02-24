@@ -13,7 +13,9 @@ public:
   void ParseProgram(const std::vector<TokenStruct> &tokens);
 
 private:
-  TokenType ReturnTokenType(unsigned long index);
+  void HandleAndSaveError(const TokenStruct &token, ERROR_TYPES error_type,
+                          const std::string &reason);
+  TOKEN_TYPES ReturnTokenType(unsigned long index);
   void HandleAllInstructions(const TokenStruct &token);
 
   void HandleTokenLabel(const TokenStruct &token);

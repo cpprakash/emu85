@@ -22,9 +22,57 @@ void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
 //************************PRIVATE FUNCTIONS START******************************
 
 /***
+ * Handle and write erros in the vector
+ * and display them at the end
+ * save line number
+ * possible error
+ * current token
+ * next token
+ * expected resolution
+ */
+void Parser::HandleAndSaveError(const TokenStruct &token,
+                                ERROR_TYPES error_type,
+                                const std::string &reason) {
+  std::string e_type = "";
+  switch (error_type) {
+  case ERROR_ILLEGAL_INSTRUCTION:
+    e_type = "[ILLEGAL INSTRUCTION FOUND]";
+    break;
+  case ERROR_MISSING_COLON:
+    e_type = "[MISSING COLON]";
+    break;
+
+  case ERROR_MISSING_HEX:
+    e_type = "[MISSING HEX AT THE END]";
+    break;
+
+  case ERROR_ADDRESS_OUT_OF_RANGE:
+    e_type = "[ADDRESS CANT BE MORE THAN 16BITS]";
+    break;
+
+  case ERROR_DATA_OUT_OF_RANGE:
+    e_type = "[DATA CANT BE MORE THAN 8BITS]";
+    break;
+
+  case ERROR_NO_NEWLINE_FOUND:
+    e_type = "[EXPECTING A NEWLINE HERE]";
+    break;
+
+  default:
+    e_type = "[UNKNOWN ERROR OCCURED. PLEASE TRY AGAIN]";
+    break;
+  }
+  std::cout << "[Parser]::[HandleAndSaveError]::[called with  = "
+            << token.m_tokenValue << " at line number " << token.m_lineNumber
+            << "]::[Reason]::[" << reason << "][ERROR]::[" << e_type << "]"
+            << std::endl;
+  // TODO save error in a struct
+  return;
+}
+/***
  * returns token type of supplid by index
  */
-TokenType Parser::ReturnTokenType(unsigned long index) {
+TOKEN_TYPES Parser::ReturnTokenType(unsigned long index) {
   return this->m_vectTokens[index].m_tokenType;
 }
 
@@ -126,8 +174,10 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << token.m_lineNumber << std::endl;
     }
   } else { // hopefully it never comes here
-    std::cout << "Unknow Instruction found at line " << token.m_lineNumber
-              << " with value " << token.m_tokenValue << std::endl;
+    this->HandleAndSaveError(token, ERROR_ILLEGAL_INSTRUCTION,
+                             "Unknow instruction found");
+    /*std::cout << "Unknow Instruction found at line " << token.m_lineNumber
+              << " with value " << token.m_tokenValue << std::endl;*/
   }
 }
 
@@ -256,7 +306,7 @@ bool Parser::HandleHltInstruction(const TokenStruct &token) { return false; }
  * 3 byte instruction
  */
 bool Parser::HandleLdaInstruction(const TokenStruct &token) {
-  TokenType type = this->ReturnTokenType(this->m_currentIndex + 1);
+  TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
   std::cout << "[Parser]::[HandleLdaInstruction]:[type of the current token is "
             << type << "]" << std::endl;
 
