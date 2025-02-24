@@ -132,6 +132,42 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
 }
 
 /***
+ * Handle the label
+ */
+void Parser::HandleTokenLabel(const TokenStruct &token) {
+  std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label found at "
+            << token.m_lineNumber << " with value = " << token.m_tokenValue
+            << "]" << std::endl;
+  if (token.m_tokenValue.length() > 6) { // check if label is less than 6 char
+    std::cout << "[Parser]::[HandleTokenLabel]::[A label  cannot have more "
+                 "than 6 characters "
+              << token.m_tokenValue << "]" << std::endl;
+    return;
+  }
+  // case check label if has only one char, then its not any illegal char
+  if (token.m_tokenValue.length() == 1 &&
+      (Helper::CheckIfRegistersAreValid(token.m_tokenValue) ||
+       token.m_tokenValue.substr(1, 1) == "?" ||
+       token.m_tokenValue.substr(1, 1) == "@" ||
+       isdigit(token.m_tokenValue[0]))) {
+    std::cout << "[Parser]::[HandleTokenLabel]::[A label cannot have one "
+                 "character with either @,?, a register name or with a digit "
+              << token.m_tokenValue << "]" << std::endl;
+    return;
+  }
+  if (this->PeekNextToken() == "COLON") {
+    std::cout << "[Parser]::[HandleTokenLabel]::[A label found at "
+              << token.m_lineNumber << " with value = " << token.m_tokenValue
+              << "]" << std::endl;
+    this->GetNextToken(); // advance tokens by one
+    return;
+  }
+  std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label failed "
+            << token.m_lineNumber << " with value = " << token.m_tokenValue
+            << " is not a label]" << std::endl;
+}
+
+/***
  * struct TokenStruct {
   unsigned int m_lineNumber;   // line of the token
   unsigned int m_startPos;     // start pos of the token
@@ -150,10 +186,7 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
     this->HandleAllInstructions(token);
     break;
   case TOKEN_LABEL:
-    // HandleLabel();
-    std::cout << "[Parser]::[ParseSingleLine]::[A label found at "
-              << token.m_lineNumber << " with value = " << token.m_tokenValue
-              << "]" << std::endl;
+    this->HandleTokenLabel(token);
     break;
   case TOKEN_ADDDRESS:
     // Handle16BitAddress();

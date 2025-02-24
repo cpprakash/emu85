@@ -15,6 +15,9 @@ public:
 private:
   TokenType ReturnTokenType(unsigned long index);
   void HandleAllInstructions(const TokenStruct &token);
+
+  void HandleTokenLabel(const TokenStruct &token);
+
   void ParseSingleLine(const TokenStruct &token);
   std::string GetNextToken();
   std::vector<std::string> GetNextNTokens(unsigned int howMany);
