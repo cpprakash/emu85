@@ -59,10 +59,10 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       cur_pos++;
       continue;
     }
-    if (isalpha(file_text[i])) { // check if token starts with character
+    if (isalnum(file_text[i])) { // check if token starts with character
       start_pos = i;
       std::string temp_string;
-      while (isalpha(file_text[i])) { // collect the token
+      while (isalnum(file_text[i])) { // collect the token
         cur_pos++;
         temp_string += file_text[i];
         i++;
