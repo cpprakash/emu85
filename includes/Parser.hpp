@@ -19,6 +19,7 @@ private:
   void HandleAllInstructions(const TokenStruct &token);
 
   void HandleTokenLabel(const TokenStruct &token);
+  void HandleTokenComment(const TokenStruct &token);
 
   void ParseSingleLine(const TokenStruct &token);
   std::string GetNextToken();

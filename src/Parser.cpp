@@ -218,6 +218,25 @@ void Parser::HandleTokenLabel(const TokenStruct &token) {
 }
 
 /***
+ * parse a comment
+ */
+void Parser::HandleTokenComment(const TokenStruct &token) {
+  std::string comment = ";";
+  std::string n_token;
+  while (n_token != "NEWLINE") {
+    n_token = this->GetNextToken();
+    if (n_token == "NEWLINE")
+      return;
+    comment += n_token + " ";
+    std::cout << "Comment =" << comment << std::endl;
+  }
+
+  this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
+                                   token.m_endPos, comment.length(), comment,
+                                   0x76, "", "", "", false});
+}
+
+/***
  * struct TokenStruct {
   unsigned int m_lineNumber;   // line of the token
   unsigned int m_startPos;     // start pos of the token
@@ -258,7 +277,7 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
               << token.m_lineNumber << "]" << std::endl;
     break;
   case TOKEN_COMMENT:
-    // HandleComment();
+    this->HandleTokenComment(token);
     std::cout << "[Parser]::[ParseSingleLine]::[A comment found at "
               << token.m_lineNumber << "]" << std::endl;
     break;
