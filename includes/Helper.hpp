@@ -40,6 +40,8 @@ public:
 
   static unsigned char GetHexCodeForInstruction(const std::string &);
 
+  static std::string ConvertToUppercase(std::string input);
+
 private:
   // void InsertInstructionsInMap(void);
 };
