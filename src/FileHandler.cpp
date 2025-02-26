@@ -1,5 +1,6 @@
 #include "../includes/FileHandler.hpp"
 #include "../includes/Assembler.hpp"
+#include "../includes/Helper.hpp"
 #include "../includes/Parser.hpp"
 
 #include <algorithm>
@@ -70,10 +71,11 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       end_pos = i;
       if (std::find(this->m_arrAllInstructions.begin(),
                     this->m_arrAllInstructions.end(),
-                    temp_string) != std::end(this->m_arrAllInstructions)) {
+                    Helper::ConvertToUppercase(temp_string)) !=
+          std::end(this->m_arrAllInstructions)) {
         m_vectTokens.push_back({line_number, start_pos + 1, end_pos,
                                 temp_string.length(), TOKEN_INSTRUCTION,
-                                temp_string});
+                                Helper::ConvertToUppercase(temp_string)});
       } else {
         m_vectTokens.push_back({line_number, start_pos + 1, end_pos,
                                 temp_string.length(), TOKEN_LABEL,

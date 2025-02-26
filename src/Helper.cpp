@@ -35,7 +35,6 @@ std::string Helper::ConvertToUppercase(std::string input) {
   std::string out = "";
   for (unsigned long i = 0; i < input.length(); i++) {
     if (input[i] >= 'a' && input[i] <= 'z') {
-      std::cout << "Okay its a lowercase letter " << input[i] << std::endl;
       switch (input[i]) {
       case 'a':
         out += 'A';
@@ -120,7 +119,6 @@ std::string Helper::ConvertToUppercase(std::string input) {
         break;
       }
     } else {
-      std::cout << "Okay its a uppercase letter " << input[i] << std::endl;
       out += input[i];
     }
   }
