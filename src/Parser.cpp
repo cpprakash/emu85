@@ -340,6 +340,18 @@ bool Parser::HandleLdaInstruction(const TokenStruct &token) {
   if (temp[1] != "NEWLINE") {
     return false;
   }
+  const auto code = types_mapInstruction.find("INS_LDA_Address");
+  if (code != types_mapInstruction.end()) { // the instruction is in map
+    this->m_finalParserProgram->emplace_back(code->second);
+    std::cout << "Final code = " << code->second << std::endl;
+    // return code->second;
+  } else { // instruction was not found in the map, wrong instruction
+    std::cout << "Assembler::GetHexCodeFromInstruction::Error in retreiving key"
+              << std::endl;
+    // return 0x76; // return halt as of now
+  }
+  // this->m_finalParserProgram->emplace_back(code->second);
+
   this->m_astVectTokens.push_back(
       {token.m_lineNumber, token.m_startPos, token.m_endPos,
        token.m_totalLength, "INS_LDA_Address", 0x76, temp[0], "", "", false});

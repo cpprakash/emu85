@@ -55,6 +55,7 @@ private:
 public:
   std::vector<TokenStruct> m_vectTokens;
   std::vector<AstStruct> m_astVectTokens;
+  std::vector<unsigned char> m_finalParserProgram[2048];
 }; // end class Parser
 
 #endif // end __HEADERS_PARSER_HPP__
