@@ -3,3 +3,4 @@ emu8085
 build/
 .vscode
 *.bin
+log

@@ -13,6 +13,7 @@ public:
   void ParseProgram(const std::vector<TokenStruct> &tokens);
 
 private:
+  bool ReturnInstructionHex(const std::string &inst);
   void HandleAndSaveError(const TokenStruct &token, ERROR_TYPES error_type,
                           const std::string &reason);
   TOKEN_TYPES ReturnTokenType(unsigned long index);

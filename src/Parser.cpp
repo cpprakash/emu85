@@ -340,23 +340,11 @@ bool Parser::HandleLdaInstruction(const TokenStruct &token) {
   if (temp[1] != "NEWLINE") {
     return false;
   }
-  const auto code = types_mapInstruction.find("INS_LDA_Address");
-  if (code != types_mapInstruction.end()) { // the instruction is in map
-    this->m_finalParserProgram->emplace_back(code->second);
-    std::cout << "Final code = " << code->second << std::endl;
-    // return code->second;
-  } else { // instruction was not found in the map, wrong instruction
-    std::cout << "Assembler::GetHexCodeFromInstruction::Error in retreiving key"
-              << std::endl;
-    // return 0x76; // return halt as of now
-  }
-  // this->m_finalParserProgram->emplace_back(code->second);
-
+  return this->ReturnInstructionHex("INS_LDA_Address");
+  /*
   this->m_astVectTokens.push_back(
       {token.m_lineNumber, token.m_startPos, token.m_endPos,
-       token.m_totalLength, "INS_LDA_Address", 0x76, temp[0], "", "", false});
-
-  return true;
+       token.m_totalLength, "INS_LDA_Address", 0x76, temp[0], "", "", false});*/
 }
 
 // handle all MVI instructions
@@ -551,6 +539,20 @@ bool Parser::HandleStaInstruction(const TokenStruct &token) {
                                    temp[0], temp[1], false});
   std::cout << "[Parser]::[HandleStaInstruction]::[end]" << std::endl;
   return true;
+}
+
+bool Parser::ReturnInstructionHex(const std::string &inst) {
+  const auto code = types_mapInstruction.find(inst);
+  if (code != types_mapInstruction.end()) { // the instruction is in map
+    this->m_finalParserProgram->emplace_back(code->second);
+    return true;
+    // return code->second;
+  } else { // instruction was not found in the map, wrong instruction
+    std::cout << "Parser::ReturnInstructionHex::Error in retreiving key"
+              << std::endl;
+    // return 0x76; // return halt as of now
+    return false;
+  }
 }
 
 //************************PRIVATE FUNCTIONS END******************************
