@@ -35,13 +35,8 @@ private:
 
   void SetErrorInProgram(void);
 
-  unsigned char GetHexCodeFromInstruction(const std::string &instruction);
-
   bool StoreLowAndHighAddress(const std::string &address,
                               unsigned char base = 'd');
-
-  bool ParseInstAddressInstructions(const std::vector<TokenStruct> &program,
-                                    const unsigned int index);
 
 public:
   std::vector<unsigned char> final_program[65 * 1024];

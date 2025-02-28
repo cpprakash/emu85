@@ -22,9 +22,57 @@ void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
 //************************PRIVATE FUNCTIONS START******************************
 
 /***
+ * Handle and write erros in the vector
+ * and display them at the end
+ * save line number
+ * possible error
+ * current token
+ * next token
+ * expected resolution
+ */
+void Parser::HandleAndSaveError(const TokenStruct &token,
+                                ERROR_TYPES error_type,
+                                const std::string &reason) {
+  std::string e_type = "";
+  switch (error_type) {
+  case ERROR_ILLEGAL_INSTRUCTION:
+    e_type = "[ILLEGAL INSTRUCTION FOUND]";
+    break;
+  case ERROR_MISSING_COLON:
+    e_type = "[MISSING COLON]";
+    break;
+
+  case ERROR_MISSING_HEX:
+    e_type = "[MISSING HEX AT THE END]";
+    break;
+
+  case ERROR_ADDRESS_OUT_OF_RANGE:
+    e_type = "[ADDRESS CANT BE MORE THAN 16BITS]";
+    break;
+
+  case ERROR_DATA_OUT_OF_RANGE:
+    e_type = "[DATA CANT BE MORE THAN 8BITS]";
+    break;
+
+  case ERROR_NO_NEWLINE_FOUND:
+    e_type = "[EXPECTING A NEWLINE HERE]";
+    break;
+
+  default:
+    e_type = "[UNKNOWN ERROR OCCURED. PLEASE TRY AGAIN]";
+    break;
+  }
+  std::cout << "[Parser]::[HandleAndSaveError]::[called with  = "
+            << token.m_tokenValue << " at line number " << token.m_lineNumber
+            << "]::[Reason]::[" << reason << "][ERROR]::[" << e_type << "]"
+            << std::endl;
+  // TODO save error in a struct
+  return;
+}
+/***
  * returns token type of supplid by index
  */
-TokenType Parser::ReturnTokenType(unsigned long index) {
+TOKEN_TYPES Parser::ReturnTokenType(unsigned long index) {
   return this->m_vectTokens[index].m_tokenType;
 }
 
@@ -126,9 +174,66 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << token.m_lineNumber << std::endl;
     }
   } else { // hopefully it never comes here
-    std::cout << "Unknow Instruction found at line " << token.m_lineNumber
-              << " with value " << token.m_tokenValue << std::endl;
+    this->HandleAndSaveError(token, ERROR_ILLEGAL_INSTRUCTION,
+                             "Unknow instruction found");
+    /*std::cout << "Unknow Instruction found at line " << token.m_lineNumber
+              << " with value " << token.m_tokenValue << std::endl;*/
   }
+}
+
+/***
+ * Handle the label
+ */
+void Parser::HandleTokenLabel(const TokenStruct &token) {
+  std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label found at "
+            << token.m_lineNumber << " with value = " << token.m_tokenValue
+            << "]" << std::endl;
+  if (token.m_tokenValue.length() > 6) { // check if label is less than 6 char
+    std::cout << "[Parser]::[HandleTokenLabel]::[A label  cannot have more "
+                 "than 6 characters "
+              << token.m_tokenValue << "]" << std::endl;
+    return;
+  }
+  // case check label if has only one char, then its not any illegal char
+  if (token.m_tokenValue.length() == 1 &&
+      (Helper::CheckIfRegistersAreValid(token.m_tokenValue) ||
+       token.m_tokenValue.substr(1, 1) == "?" ||
+       token.m_tokenValue.substr(1, 1) == "@" ||
+       isdigit(token.m_tokenValue[0]))) {
+    std::cout << "[Parser]::[HandleTokenLabel]::[A label cannot have one "
+                 "character with either @,?, a register name or with a digit "
+              << token.m_tokenValue << "]" << std::endl;
+    return;
+  }
+  if (this->PeekNextToken() == "COLON") {
+    std::cout << "[Parser]::[HandleTokenLabel]::[A label found at "
+              << token.m_lineNumber << " with value = " << token.m_tokenValue
+              << "]" << std::endl;
+    this->GetNextToken(); // advance tokens by one
+    return;
+  }
+  std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label failed "
+            << token.m_lineNumber << " with value = " << token.m_tokenValue
+            << " is not a label]" << std::endl;
+}
+
+/***
+ * parse a comment
+ */
+void Parser::HandleTokenComment(const TokenStruct &token) {
+  std::string comment = ";";
+  std::string n_token;
+  while (n_token != "NEWLINE") {
+    n_token = this->GetNextToken();
+    if (n_token == "NEWLINE")
+      return;
+    comment += n_token + " ";
+    std::cout << "Comment =" << comment << std::endl;
+  }
+
+  this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
+                                   token.m_endPos, comment.length(), comment,
+                                   0x76, "", "", "", false});
 }
 
 /***
@@ -146,56 +251,53 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
             << this->m_vectTokens.size() << ")]" << std::endl;
 
   switch (token.m_tokenType) {
-  case INSTRUCTION:
+  case TOKEN_INSTRUCTION:
     this->HandleAllInstructions(token);
     break;
-  case LABEL:
-    // HandleLabel();
-    std::cout << "[Parser]::[ParseSingleLine]::[A label found at "
-              << token.m_lineNumber << " with value = " << token.m_tokenValue
-              << "]" << std::endl;
+  case TOKEN_LABEL:
+    this->HandleTokenLabel(token);
     break;
-  case ADDDRESS:
+  case TOKEN_ADDDRESS:
     // Handle16BitAddress();
     break;
-  case DATA:
+  case TOKEN_DATA:
     // Handle8BitData();
     break;
-  case REGISTER:
+  case TOKEN_REGISTER:
     // HandleRegister();
     break;
-  case NEWLINE:
+  case TOKEN_NEWLINE:
     // HandleNewline();
     std::cout << "[Parser]::[ParseSingleLine]::[A newline found at line number "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case FILEEND: // token parsing is complete or no more tokens are there
+  case TOKEN_EOF: // token parsing is complete or no more tokens are there
     // HandleFileEnd();
     std::cout << "[Parser]::[ParseSingleLine]::[An EOF found at "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case COMMENT:
-    // HandleComment();
+  case TOKEN_COMMENT:
+    this->HandleTokenComment(token);
     std::cout << "[Parser]::[ParseSingleLine]::[A comment found at "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case COMMA:
+  case TOKEN_COMMA:
     // HandleComma();
     std::cout << "[Parser]::[ParseSingleLine]::[A comma found at "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case COLON:
+  case TOKEN_COLON:
     // HandleColon();
     std::cout << "[Parser]::[ParseSingleLine]::[colon found at line number "
               << token.m_lineNumber << "]" << std::endl;
     break;
-  case NUMBER:
+  case TOKEN_NUMBER:
     // HandleNumber();
     std::cout << "[Parser]::[ParseSingleLine]::[A Number found at line number "
               << token.m_lineNumber << " with value " << token.m_tokenValue
               << "]" << std::endl;
     break;
-  case UNKNOWN:
+  case TOKEN_UNKNOWN:
   default:
     std::cout
         << "[Parser]::[ParseSingleLine]::[Wrong Instruction found. Please "
@@ -223,26 +325,26 @@ bool Parser::HandleHltInstruction(const TokenStruct &token) { return false; }
  * 3 byte instruction
  */
 bool Parser::HandleLdaInstruction(const TokenStruct &token) {
-  TokenType type = this->ReturnTokenType(this->m_currentIndex + 1);
+  TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
   std::cout << "[Parser]::[HandleLdaInstruction]:[type of the current token is "
             << type << "]" << std::endl;
 
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
   std::cout << temp[0] << std::endl;
-  if (type == NUMBER && !Helper::CheckIfAddressInRange(temp[0])) {
+  if (type == TOKEN_NUMBER && !Helper::CheckIfAddressInRange(temp[0])) {
     std::cout << "[Parser]::[HandleLdaInstruction]:[address is invalid "
               << temp[0] << "]" << std::endl;
     return false;
-  } else if (type == LABEL) { // TODO handle label
+  } else if (type == TOKEN_LABEL) { // TODO handle label
   }
   if (temp[1] != "NEWLINE") {
     return false;
   }
+  return this->ReturnInstructionHex("INS_LDA_Address");
+  /*
   this->m_astVectTokens.push_back(
       {token.m_lineNumber, token.m_startPos, token.m_endPos,
-       token.m_totalLength, "INS_LDA_Address", 0x76, temp[0], "", "", false});
-
-  return true;
+       token.m_totalLength, "INS_LDA_Address", 0x76, temp[0], "", "", false});*/
 }
 
 // handle all MVI instructions
@@ -437,6 +539,20 @@ bool Parser::HandleStaInstruction(const TokenStruct &token) {
                                    temp[0], temp[1], false});
   std::cout << "[Parser]::[HandleStaInstruction]::[end]" << std::endl;
   return true;
+}
+
+bool Parser::ReturnInstructionHex(const std::string &inst) {
+  const auto code = types_mapInstruction.find(inst);
+  if (code != types_mapInstruction.end()) { // the instruction is in map
+    this->m_finalParserProgram->emplace_back(code->second);
+    return true;
+    // return code->second;
+  } else { // instruction was not found in the map, wrong instruction
+    std::cout << "Parser::ReturnInstructionHex::Error in retreiving key"
+              << std::endl;
+    // return 0x76; // return halt as of now
+    return false;
+  }
 }
 
 //************************PRIVATE FUNCTIONS END******************************

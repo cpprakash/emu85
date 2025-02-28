@@ -107,7 +107,7 @@ void Assembler::SetErrorInProgram(void) {
  * save this for later use and search in this map for the hex code
  * as of now if no code is found return the HLT code back
  */
-unsigned char
+/*unsigned char
 Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
   std::cout << "Assembler::GetHexCodeFromInstruction called inst ="
             << instruction << std::endl;
@@ -124,7 +124,7 @@ Assembler::GetHexCodeFromInstruction(const std::string &instruction) {
               << std::endl;
     return 0x76; // return halt as of now
   }
-}
+}*/
 
 /***
  * Write the bin file for the 8085
@@ -212,7 +212,7 @@ bool Assembler::StoreLowAndHighAddress(const std::string &address,
  * instruction <16 bit address>
  * for example. LDA 1000H
  */
-bool Assembler::ParseInstAddressInstructions(
+/*bool Assembler::ParseInstAddressInstructions(
     const std::vector<TokenStruct> &program, const unsigned int index) {
 
   if (program[index].m_tokenValue == "LDA") { // LDA <16 bit address>
@@ -226,4 +226,4 @@ bool Assembler::ParseInstAddressInstructions(
     }
   }
   return false;
-}
+}*/

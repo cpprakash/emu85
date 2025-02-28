@@ -6,6 +6,7 @@
 
 class Helper {
 
+public:
 private:
   unsigned char MIN_CHAR_DATA{0};
   unsigned char MIN_BOOL_DATA{0b0000};
@@ -39,6 +40,8 @@ public:
   static int ConvertHexToDecimal(const std::string &num);
 
   static unsigned char GetHexCodeForInstruction(const std::string &);
+
+  static std::string ConvertToUppercase(std::string input);
 
 private:
   // void InsertInstructionsInMap(void);

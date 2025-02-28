@@ -13,8 +13,15 @@ public:
   void ParseProgram(const std::vector<TokenStruct> &tokens);
 
 private:
-  TokenType ReturnTokenType(unsigned long index);
+  bool ReturnInstructionHex(const std::string &inst);
+  void HandleAndSaveError(const TokenStruct &token, ERROR_TYPES error_type,
+                          const std::string &reason);
+  TOKEN_TYPES ReturnTokenType(unsigned long index);
   void HandleAllInstructions(const TokenStruct &token);
+
+  void HandleTokenLabel(const TokenStruct &token);
+  void HandleTokenComment(const TokenStruct &token);
+
   void ParseSingleLine(const TokenStruct &token);
   std::string GetNextToken();
   std::vector<std::string> GetNextNTokens(unsigned int howMany);
@@ -49,6 +56,7 @@ private:
 public:
   std::vector<TokenStruct> m_vectTokens;
   std::vector<AstStruct> m_astVectTokens;
+  std::vector<unsigned char> m_finalParserProgram[2048];
 }; // end class Parser
 
 #endif // end __HEADERS_PARSER_HPP__
