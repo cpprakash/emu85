@@ -122,6 +122,19 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
   } else if (token.m_tokenValue == "ANI") {
     std::cout << "ANI " << std::endl;
   }
+
+  // handle HLT instruction
+  else if (token.m_tokenValue == "HLT") {
+    if (this->HandleHltInstruction(token) == false) {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing HLT "
+                   "Instruction failed.]"
+                << std::endl;
+    } else {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
+                   "HLT at line "
+                << token.m_lineNumber << "]" << std::endl;
+    }
+  }
   // here deal with LDA instructions
   else if (token.m_tokenValue == "LDA") {
     if (this->HandleLdaInstruction(token) == false) {
@@ -316,7 +329,24 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
 }
 // All AXX instructions
 bool Parser::HandleAciInstruction(const TokenStruct &token) { return false; }
-bool Parser::HandleAdcInstruction(const TokenStruct &token) { return false; }
+
+// Handle ADC_<A|B|C|D|E|H|L|M> instructions
+bool Parser::HandleAdcInstruction(const TokenStruct &token) {
+  std::cout << "[Parser]::[HandleAdcInstruction]:[start]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
+  if (!Helper::CheckIfRegistersAreValid(temp[0])) {
+    std::cout
+        << "[Parser]::[HandleAdcInstruction]::[first operand is not valid]"
+        << std::endl;
+    return false;
+  }
+  if (temp[1] != "NEWLINE") {
+    return false;
+  }
+  std::cout << "[Parser]::[HandleAdcInstruction]:[end]" << std::endl;
+  return this->ReturnInstructionHex("ADC_" + temp[0]);
+}
+
 bool Parser::HandleAddInstruction(const TokenStruct &token) {
   std::cout << "[Parser]::[HandleAddInstruction]:[start]" << std::endl;
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
@@ -337,7 +367,17 @@ bool Parser::HandleAnaInstruction(const TokenStruct &token) { return false; }
 bool Parser::HandleAniInstruction(const TokenStruct &token) { return false; }
 
 // handle HLT instruction
-bool Parser::HandleHltInstruction(const TokenStruct &token) { return false; }
+bool Parser::HandleHltInstruction(const TokenStruct &token) {
+  std::cout << "[Parser]::[HandleHltInstruction]:[start]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 1
+  if (temp[0] != "NEWLINE") {
+    std::cout << "[Parser]::[HandleHltInstruction]::[expecting newline]"
+              << std::endl;
+    return false;
+  }
+  std::cout << "[Parser]::[HandleHltInstruction]:[end]" << std::endl;
+  return this->ReturnInstructionHex(token.m_tokenValue);
+}
 
 /***
  * handle LDA instruction
@@ -408,7 +448,7 @@ bool Parser::HandleMovInstruction(const TokenStruct &token) {
               << std::endl;
     return false;
   }
-
+  std::cout << "[Parser]::[HandleMovInstruction]::[end]" << std::endl;
   return this->ReturnInstructionHex("MOV_" + temp[0] + "_" + temp[2]);
 }
 
@@ -429,7 +469,7 @@ bool Parser::HandleMviInstruction(const TokenStruct &token) {
   // unsigned char dataValue;
   std::vector<std::string> temp = this->GetNextNTokens(5); // will get only 4
 
-  std::vector<std::string> temp = this->GetNextNTokens(6); // will get only 5
+  // std::vector<std::string> temp = this->GetNextNTokens(6); // will get only 5
 
   /*for (unsigned long i = 0; i < temp.size(); i++)
     std::cout << temp[i] << std::endl;*/
@@ -463,7 +503,7 @@ bool Parser::HandleMviInstruction(const TokenStruct &token) {
     return false;
   }
 
-  std::cout << "MVI sucesful all parameters are corect" << std::endl;
+  std::cout << "[Parser]::[HandleMviInstruction]::[end]" << std::endl;
   strInstruction = token.m_tokenValue + "_" + nextTokenRegister;
 
   /*this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
@@ -492,12 +532,14 @@ bool Parser::HandleShldInstruction(const TokenStruct &token) {
     return false;
   }
 
-  this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
+  /*this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
                                    token.m_endPos, token.m_totalLength,
                                    token.m_tokenValue, 0x76, "", temp[0],
                                    temp[1], false});
   std::cout << "[Parser]::[HandleShldInstruction]::[end]" << std::endl;
-  return true;
+  return true;*/
+  // TODO handle and save the 16bit address
+  return this->ReturnInstructionHex(token.m_tokenValue + "_Address");
 }
 
 // handle STA instructions
