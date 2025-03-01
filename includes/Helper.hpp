@@ -39,8 +39,6 @@ public:
 
   static int ConvertHexToDecimal(const std::string &num);
 
-  static unsigned char GetHexCodeForInstruction(const std::string &);
-
   static std::string ConvertToUppercase(std::string input);
 
 private:

@@ -7,8 +7,8 @@
 
 void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
 
-  std::cout << "Parser::ParseProgram::total tokens are= " << tokens.size()
-            << std::endl;
+  std::cout << "[Parser]::[ParseProgram]::[Total tokens are= " << tokens.size()
+            << "]" << std::endl;
   this->m_vectTokens = tokens; // do everything with the local variable
 
   // main loop iterate over the token vector
@@ -81,10 +81,7 @@ TOKEN_TYPES Parser::ReturnTokenType(unsigned long index) {
  * and consumes it
  */
 std::string Parser::GetNextToken() {
-  std::cout << "Parser::GetNextTokenCalled" << std::endl;
   this->m_currentIndex++;
-  std::cout << "Parser::GetNextTokenCalled returnning "
-            << this->m_vectTokens[m_currentIndex].m_tokenValue << std::endl;
   return this->m_vectTokens[m_currentIndex].m_tokenValue;
 }
 
@@ -93,34 +90,30 @@ std::string Parser::GetNextToken() {
  */
 std::vector<std::string> Parser::GetNextNTokens(unsigned int howMany = 1) {
   std::vector<std::string> temp;
-  std::cout << "Parser::GetNextNTokens called with  = " << howMany
-            << " and currentIndex =" << this->m_currentIndex << std::endl;
   this->m_currentIndex++;
   for (unsigned int i = this->m_currentIndex;
        i < this->m_currentIndex + howMany - 1; i++) {
     temp.emplace_back(this->m_vectTokens[i].m_tokenValue);
-    std::cout << "Putting in vecotr " << this->m_vectTokens[i].m_tokenValue
-              << std::endl;
   }
   this->m_currentIndex += howMany - 2;
   return temp;
 }
 
 std::string Parser::PeekNextToken(unsigned long howMany) {
-  std::cout << "[Parser]::[PeekNextToken] called" << std::endl;
+  // std::cout << "[Parser]::[PeekNextToken] called" << std::endl;
   return this->m_vectTokens[m_currentIndex + howMany].m_tokenValue;
 }
 
 void Parser::HandleAllInstructions(const TokenStruct &token) {
   // all AXX instructions
   if (token.m_tokenValue == "ACI") {
-    std::cout << "ACI " << std::endl;
+    // std::cout << "ACI " << std::endl;
     HandleAciInstruction(token);
   } else if (token.m_tokenValue == "ADC") {
-    std::cout << "ADC " << std::endl;
+    // std::cout << "ADC " << std::endl;
     HandleAdcInstruction(token);
   } else if (token.m_tokenValue == "ADD") {
-    std::cout << "ADD " << std::endl;
+    // std::cout << "ADD " << std::endl;
     HandleAddInstruction(token);
   } else if (token.m_tokenValue == "ADI") {
     std::cout << "ADI " << std::endl;
@@ -132,46 +125,61 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
   // here deal with LDA instructions
   else if (token.m_tokenValue == "LDA") {
     if (this->HandleLdaInstruction(token) == false) {
-      std::cout << "Parsing LDA Instruction failed." << std::endl;
-    } else {
-      std::cout << "Successfully parsed LDA at line " << token.m_lineNumber
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing LDA "
+                   "Instruction failed.]"
                 << std::endl;
+    } else {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
+                   "LDA at line "
+                << token.m_lineNumber << "]" << std::endl;
     }
   }
   // here deal with all MOV instructions
   else if (token.m_tokenValue == "MOV") {
     if (this->HandleMovInstruction(token) == false) {
-      std::cout << "Parsing MOV Instruction failed." << std::endl;
-    } else {
-      std::cout << "Successfully parsed MOV at line " << token.m_lineNumber
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing MOV "
+                   "Instruction failed.]"
                 << std::endl;
+    } else {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
+                   "MOV at line "
+                << token.m_lineNumber << "]" << std::endl;
     }
   }
   // here deal with all MVI instructions
   else if (token.m_tokenValue == "MVI") {
     if (this->HandleMviInstruction(token) == false) {
-      std::cout << "Parsing MVI Instruction failed." << std::endl;
-    } else {
-      std::cout << "Successfully parsed MVI at line " << token.m_lineNumber
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing MVI "
+                   "Instruction failed.]"
                 << std::endl;
+    } else {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
+                   "MVI at line "
+                << token.m_lineNumber << "]" << std::endl;
     }
   }
   // Parse SHLD Instruction
   else if (token.m_tokenValue == "SHLD") {
     if (!this->HandleShldInstruction(token)) {
-      std::cout << "Parsing SHLD Instruction failed." << std::endl;
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing SHLD "
+                   "Instruction failed.]"
+                << std::endl;
     } else {
-      std::cout << "Successfully parsed SHLD instruction at line "
-                << token.m_lineNumber << std::endl;
+      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
+                   "SHLD instruction at line "
+                << token.m_lineNumber << "]" << std::endl;
     }
   }
   // Parse STA instruction
   else if (token.m_tokenValue == "STA") {
     if (this->HandleStaInstruction(token) == false) {
-      std::cout << "Parsing STA Instruction failed." << std::endl;
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing STA "
+                   "Instruction failed.]"
+                << std::endl;
     } else {
-      std::cout << "Successfully parsed STA instruction at line "
-                << token.m_lineNumber << std::endl;
+      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
+                   "STA instruction at line "
+                << token.m_lineNumber << "]" << std::endl;
     }
   } else { // hopefully it never comes here
     this->HandleAndSaveError(token, ERROR_ILLEGAL_INSTRUCTION,
@@ -330,7 +338,7 @@ bool Parser::HandleLdaInstruction(const TokenStruct &token) {
             << type << "]" << std::endl;
 
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
-  std::cout << temp[0] << std::endl;
+  // std::cout << temp[0] << std::endl;
   if (type == TOKEN_NUMBER && !Helper::CheckIfAddressInRange(temp[0])) {
     std::cout << "[Parser]::[HandleLdaInstruction]:[address is invalid "
               << temp[0] << "]" << std::endl;
@@ -417,8 +425,8 @@ bool Parser::HandleMviInstruction(const TokenStruct &token) {
 
   std::vector<std::string> temp = this->GetNextNTokens(6); // will get only 5
 
-  for (unsigned long i = 0; i < temp.size(); i++)
-    std::cout << temp[i] << std::endl;
+  /*for (unsigned long i = 0; i < temp.size(); i++)
+    std::cout << temp[i] << std::endl;*/
 
   nextTokenRegister = temp[0];
 
@@ -505,7 +513,7 @@ bool Parser::HandleStaInstruction(const TokenStruct &token) {
   }
   // get next 3 tokens
   std::vector<std::string> temp = this->GetNextNTokens(4);
-  std::cout << "STA INS size of temp =" << temp.size() << std::endl;
+  // std::cout << "STA INS size of temp =" << temp.size() << std::endl;
   for (unsigned long i = 0; i < temp.size(); i++)
     std::cout << temp[i] << std::endl;
   // next token should be a 16bit address
@@ -520,19 +528,7 @@ bool Parser::HandleStaInstruction(const TokenStruct &token) {
   if (temp[2] != "NEWLINE") { // check if the next token is newline,
     return false;
   }
-  /*AstStruct astStruckt;
-  astStruckt.lineNumber = token.m_lineNumber;
-  astStruckt.startPos = token.m_startPos;
-  astStruckt.endPos = token.m_endPos;
-  astStruckt.totalLength = token.m_totalLength;
-  astStruckt.instruction = "INS_" + token.m_tokenValue;
-  astStruckt.opcode = 0x76; // fill it later at the first pass of assembler
-  // Helper::GetHexCodeForInstruction(strInstruction);
-  astStruckt.operandOne = "";
-  astStruckt.operandTwo = temp[0];
-  astStruckt.numberBase = temp[1];
-  astStruckt.hasErrors = false;
-  this->m_astVectTokens.push_back(astStruckt);*/
+
   this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
                                    token.m_endPos, token.m_totalLength,
                                    "INS_" + token.m_tokenValue, 0x76, "",

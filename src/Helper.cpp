@@ -126,35 +126,35 @@ std::string Helper::ConvertToUppercase(std::string input) {
 }
 
 bool Helper::CheckIfAddressInRange(const std::string &add) {
-  std::cout << "Helper::CheckIfAddressInRange " << std::endl;
+  std::cout << "[Helper]::[CheckIfAddressInRange]::[start]" << std::endl;
   int base = 10;
-  std::cout << Helper::ConvertToUppercase(add) << std::endl;
+  // std::cout << Helper::ConvertToUppercase(add) << std::endl;
   std::string uppercaseAdd = Helper::ConvertToUppercase(add);
   if (uppercaseAdd[uppercaseAdd.length() - 1] == 'H') {
-    std::cout << "Helper::CheckIfAddressInRange parsing address Numner is "
+    /*std::cout << "Helper::CheckIfAddressInRange parsing address Numner is "
                  "invalid hex please check the number "
-              << uppercaseAdd << std::endl;
+              << uppercaseAdd << std::endl;*/
     for (unsigned long i = 0; i < uppercaseAdd.length() - 1; i++) {
-      std::cout << "Helper::CheckIfAddressInRange:: add[i]=" << add[i]
-                << std::endl;
+      /*std::cout << "Helper::CheckIfAddressInRange:: add[i]=" << add[i]
+                << std::endl;*/
       if (isdigit(uppercaseAdd[i]) &&
           (uppercaseAdd[i] < '0' || uppercaseAdd[i] > '9')) {
-        std::cout << "Helper::CheckIfAddressInRange Numner is invalid hex "
+        /*std::cout << "Helper::CheckIfAddressInRange Numner is invalid hex "
                      "isdigit(uppercaseAdd[i]) && (uppercaseAdd[i] < '0' || "
                      "uppercaseAdd[i] > "
                      "'9') please "
                      "check the number "
-                  << add << std::endl;
+                  << add << std::endl;*/
         return false;
       }
       if (isalpha(uppercaseAdd[i]) &&
           (uppercaseAdd[i] < 'A' || uppercaseAdd[i] > 'F')) {
-        std::cout << "Helper::CheckIfAddressInRange Numner is invalid hex "
+        /*std::cout << "Helper::CheckIfAddressInRange Numner is invalid hex "
                      "isalpha(uppercaseAdd[i]) && (uppercaseAdd[i] < 'A' || "
                      "uppercaseAdd[i] > "
                      "'F' please "
                      "check the number "
-                  << add << std::endl;
+                  << add << std::endl;*/
         return false;
       }
     }
@@ -179,22 +179,3 @@ bool Helper::CheckIfAddressInRange(const std::string &add) {
 }
 
 int ConvertHexToDecimal(const std::string &num) { return 0; }
-
-unsigned char Helper::GetHexCodeForInstruction(const std::string &instruction) {
-  std::cout << "GetHexCodeForInstruction called inst =" << instruction
-            << std::endl;
-  // Instructions m_inst;
-  /*if (Helper::m_mapInstructionTable.size() !=
-      246) { // Total instructions are 246
-    InsertInstructionsInMap();
-  }
-  const auto code = m_mapInstructionTable.find(instruction);
-  if (code != m_mapInstructionTable.end()) { // the instruction is in map
-    return code->second;
-  } else { // instruction was not found in the map, wrong instruction
-    std::cout << "Assembler::GetHexCodeFromInstruction::Error in retreiving key"
-              << std::endl;
-    return 0x76; // return halt as of now
-  }*/
-  return 0x76;
-}
