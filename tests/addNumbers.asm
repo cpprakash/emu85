@@ -3,7 +3,7 @@ MOV H, A
 LDA 2051h
 ADD H 
 MOV L, A 
-MVI A, 00 
+MVI A, 00h 
 ADC A
 MOV H, A 
 SHLD ff50h 

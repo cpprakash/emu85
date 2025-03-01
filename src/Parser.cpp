@@ -317,7 +317,21 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
 // All AXX instructions
 bool Parser::HandleAciInstruction(const TokenStruct &token) { return false; }
 bool Parser::HandleAdcInstruction(const TokenStruct &token) { return false; }
-bool Parser::HandleAddInstruction(const TokenStruct &token) { return false; }
+bool Parser::HandleAddInstruction(const TokenStruct &token) {
+  std::cout << "[Parser]::[HandleAddInstruction]:[start]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
+  if (!Helper::CheckIfRegistersAreValid(temp[0])) {
+    std::cout
+        << "[Parser]::[HandleAddInstruction]::[first operand is not valid]"
+        << std::endl;
+    return false;
+  }
+  if (temp[1] != "NEWLINE") {
+    return false;
+  }
+  std::cout << "[Parser]::[HandleAddInstruction]:[end]" << std::endl;
+  return this->ReturnInstructionHex("ADD_" + temp[0]);
+}
 bool Parser::HandleAdiInstruction(const TokenStruct &token) { return false; }
 bool Parser::HandleAnaInstruction(const TokenStruct &token) { return false; }
 bool Parser::HandleAniInstruction(const TokenStruct &token) { return false; }
@@ -333,9 +347,8 @@ bool Parser::HandleHltInstruction(const TokenStruct &token) { return false; }
  * 3 byte instruction
  */
 bool Parser::HandleLdaInstruction(const TokenStruct &token) {
+  std::cout << "[Parser]::[HandleLdaInstruction]:[start]" << std::endl;
   TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
-  std::cout << "[Parser]::[HandleLdaInstruction]:[type of the current token is "
-            << type << "]" << std::endl;
 
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
   // std::cout << temp[0] << std::endl;
@@ -348,7 +361,8 @@ bool Parser::HandleLdaInstruction(const TokenStruct &token) {
   if (temp[1] != "NEWLINE") {
     return false;
   }
-  return this->ReturnInstructionHex("INS_LDA_Address");
+  std::cout << "[Parser]::[HandleLdaInstruction]:[end]" << std::endl;
+  return this->ReturnInstructionHex("LDA_Address");
   /*
   this->m_astVectTokens.push_back(
       {token.m_lineNumber, token.m_startPos, token.m_endPos,
@@ -395,12 +409,7 @@ bool Parser::HandleMovInstruction(const TokenStruct &token) {
     return false;
   }
 
-  this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
-                                   token.m_endPos, token.m_totalLength,
-                                   "INS_MOV_" + temp[0] + "_" + temp[2], 0x76,
-                                   temp[0], temp[2], "", false});
-  std::cout << "[Parser]::[HandleMovInstruction]::[end]" << std::endl;
-  return true;
+  return this->ReturnInstructionHex("MOV_" + temp[0] + "_" + temp[2]);
 }
 
 // handle all MVI instructions
@@ -418,10 +427,7 @@ bool Parser::HandleMviInstruction(const TokenStruct &token) {
   std::string peekTokenBase = "";
   std::string strInstruction = "";
   // unsigned char dataValue;
-  if (token.m_tokenValue != "MVI") { // we already know but still make it sure
-    std::cout << "[Parser]::[HandleMviInstruction]::[MVI]" << std::endl;
-    return false;
-  }
+  std::vector<std::string> temp = this->GetNextNTokens(5); // will get only 4
 
   std::vector<std::string> temp = this->GetNextNTokens(6); // will get only 5
 
@@ -443,7 +449,7 @@ bool Parser::HandleMviInstruction(const TokenStruct &token) {
     return false;
   }
 
-  // check the range of the value
+  // check the range of the value TODO check properly
   nextTokenValue = temp[2];
   if (!(std::stoi(nextTokenValue) >= 0) || !(std::stoi(nextTokenValue) < 255)) {
     std::cout << "[Parser]::[HandleMviInstruction]::[nextTokenValue]"
@@ -451,34 +457,23 @@ bool Parser::HandleMviInstruction(const TokenStruct &token) {
     return false;
   }
 
-  // check next token to be a value followed by either H, D, B or O
-  peekTokenBase = temp[3];
-  if (!Helper::CheckIfBaseIsValid(peekTokenBase)) { // base is wrong
-    std::cout << "[Parser]::[HandleMviInstruction]::[peekTokenBase]"
-              << std::endl;
-    return false;
-  }
-
-  // value comversion
-  /*if (peekTokenBase == "H" || peekTokenBase == "h") {
-    dataValue = std::stoi(nextTokenValue, nullptr, 16);
-  }*/
-
-  std::string nextTokenNewline = temp[4];
+  std::string nextTokenNewline = temp[3];
   if (nextTokenNewline != "NEWLINE") { // check if the next token is newline,
     std::cout << "[Parser]::[HandleMviInstruction]::[NEWLINE]" << std::endl;
     return false;
   }
 
   std::cout << "MVI sucesful all parameters are corect" << std::endl;
-  strInstruction = "INS_" + token.m_tokenValue + "_" + nextTokenRegister;
+  strInstruction = token.m_tokenValue + "_" + nextTokenRegister;
 
-  this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
+  /*this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
                                    token.m_endPos, token.m_totalLength,
                                    strInstruction, 0x76, nextTokenRegister,
                                    nextTokenValue, peekTokenBase, false});
   std::cout << "[Parser]::[HandleMviInstruction]::[end]" << std::endl;
-  return true;
+  return true;*/
+
+  return this->ReturnInstructionHex("MVI_" + nextTokenRegister + "_Data");
 }
 
 // handle SHLD instructions
@@ -499,8 +494,8 @@ bool Parser::HandleShldInstruction(const TokenStruct &token) {
 
   this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
                                    token.m_endPos, token.m_totalLength,
-                                   "INS_" + token.m_tokenValue, 0x76, "",
-                                   temp[0], temp[1], false});
+                                   token.m_tokenValue, 0x76, "", temp[0],
+                                   temp[1], false});
   std::cout << "[Parser]::[HandleShldInstruction]::[end]" << std::endl;
   return true;
 }
@@ -531,24 +526,30 @@ bool Parser::HandleStaInstruction(const TokenStruct &token) {
 
   this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
                                    token.m_endPos, token.m_totalLength,
-                                   "INS_" + token.m_tokenValue, 0x76, "",
-                                   temp[0], temp[1], false});
+                                   token.m_tokenValue, 0x76, "", temp[0],
+                                   temp[1], false});
   std::cout << "[Parser]::[HandleStaInstruction]::[end]" << std::endl;
   return true;
 }
 
 bool Parser::ReturnInstructionHex(const std::string &inst) {
+  std::cout << "[Parser]::[ReturnInstructionHex]::[start for instruction "
+            << inst << "]" << std::endl;
+  bool result = false;
   const auto code = types_mapInstruction.find(inst);
   if (code != types_mapInstruction.end()) { // the instruction is in map
     this->m_finalParserProgram->emplace_back(code->second);
-    return true;
+    result = true;
     // return code->second;
   } else { // instruction was not found in the map, wrong instruction
-    std::cout << "Parser::ReturnInstructionHex::Error in retreiving key"
+    std::cout << "[Parser]::[ReturnInstructionHex]::[Error in retreiving key]"
               << std::endl;
     // return 0x76; // return halt as of now
-    return false;
+    result = false;
   }
+  std::cout << "[Parser]::[ReturnInstructionHex]::[end for instruction " << inst
+            << "]" << std::endl;
+  return result;
 }
 
 //************************PRIVATE FUNCTIONS END******************************
