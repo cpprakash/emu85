@@ -650,6 +650,9 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
     return false;
   }
   // parse an 8 bit data here
+  bool result = Helper::CheckIf8BitDataIsValid(temp[2]);
+  std::cout << "[Parser]::[Handle8BitDataInstructions]::[data is " << result
+            << "]" << std::endl;
   if (temp[2] != "") {
     std::cout << "[Parser]::[Handle8BitDataInstructions]::[data is not valid]"
               << std::endl;
