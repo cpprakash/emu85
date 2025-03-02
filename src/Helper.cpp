@@ -1,6 +1,7 @@
 #include "../includes/Helper.hpp"
 
 #include <iostream>
+#include <string>
 
 bool Helper::CheckIfRegistersAreValid(const std::string &reg) {
   if (reg == "A" || reg == "B" || reg == "C" || reg == "D" || reg == "E" ||
@@ -32,97 +33,17 @@ bool Helper::CheckIfBaseIsValid(const std::string &base) {
  * Helper fuction to convert a string to its uppercase
  */
 std::string Helper::ConvertToUppercase(std::string input) {
-  std::string out = "";
+  std::string output = "";
+
   for (unsigned long i = 0; i < input.length(); i++) {
     if (input[i] >= 'a' && input[i] <= 'z') {
-      switch (input[i]) {
-      case 'a':
-        out += 'A';
-        break;
-      case 'b':
-        out += "B";
-        break;
-      case 'c':
-        out += "C";
-        break;
-      case 'd':
-        out += "D";
-        break;
-      case 'e':
-        out += "E";
-        break;
-      case 'f':
-        out += "F";
-        break;
-      case 'g':
-        out += "G";
-        break;
-      case 'h':
-        out += "H";
-        break;
-      case 'i':
-        out += "I";
-        break;
-      case 'j':
-        out += "J";
-        break;
-      case 'k':
-        out += "K";
-        break;
-      case 'l':
-        out += "L";
-        break;
-      case 'm':
-        out += "M";
-        break;
-      case 'n':
-        out += "N";
-        break;
-      case 'o':
-        out += "O";
-        break;
-      case 'p':
-        out += "P";
-        break;
-      case 'q':
-        out += "Q";
-        break;
-      case 'r':
-        out += "R";
-        break;
-      case 's':
-        out += "S";
-        break;
-      case 't':
-        out += "T";
-        break;
-      case 'u':
-        out += "U";
-        break;
-      case 'v':
-        out += "V";
-        break;
-      case 'w':
-        out += "W";
-        break;
-      case 'x':
-        out += "X";
-        break;
-      case 'y':
-        out += "Y";
-        break;
-      case 'z':
-        out += "Z";
-        break;
-
-      default:
-        break;
-      }
+      output += std::toupper(input[i]);
     } else {
-      out += input[i];
+      output += input[i];
     }
   }
-  return out;
+
+  return output;
 }
 
 bool Helper::CheckIfAddressInRange(const std::string &add) {
