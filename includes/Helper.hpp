@@ -39,9 +39,14 @@ public:
 
   static int ConvertHexToDecimal(const std::string &num);
 
-  static unsigned char GetHexCodeForInstruction(const std::string &);
+  static std::string ConvertToUppercase(const std::string &input);
 
-  static std::string ConvertToUppercase(std::string input);
+  static bool CheckIf8BitDataIsValid(const std::string &input);
+
+  static bool CheckDecimalNumber(const std::string &input);
+  static bool CheckBinaryNumber(const std::string &input);
+  static bool CheckOctalNumber(const std::string &input);
+  static bool CheckHexNumber(const std::string &input);
 
 private:
   // void InsertInstructionsInMap(void);

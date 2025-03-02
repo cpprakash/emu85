@@ -1,6 +1,7 @@
 #include "../includes/Helper.hpp"
 
 #include <iostream>
+#include <string>
 
 bool Helper::CheckIfRegistersAreValid(const std::string &reg) {
   if (reg == "A" || reg == "B" || reg == "C" || reg == "D" || reg == "E" ||
@@ -31,130 +32,135 @@ bool Helper::CheckIfBaseIsValid(const std::string &base) {
 /***
  * Helper fuction to convert a string to its uppercase
  */
-std::string Helper::ConvertToUppercase(std::string input) {
-  std::string out = "";
+std::string Helper::ConvertToUppercase(const std::string &input) {
+  std::string output = "";
+
   for (unsigned long i = 0; i < input.length(); i++) {
     if (input[i] >= 'a' && input[i] <= 'z') {
-      switch (input[i]) {
-      case 'a':
-        out += 'A';
-        break;
-      case 'b':
-        out += "B";
-        break;
-      case 'c':
-        out += "C";
-        break;
-      case 'd':
-        out += "D";
-        break;
-      case 'e':
-        out += "E";
-        break;
-      case 'f':
-        out += "F";
-        break;
-      case 'g':
-        out += "G";
-        break;
-      case 'h':
-        out += "H";
-        break;
-      case 'i':
-        out += "I";
-        break;
-      case 'j':
-        out += "J";
-        break;
-      case 'k':
-        out += "K";
-        break;
-      case 'l':
-        out += "L";
-        break;
-      case 'm':
-        out += "M";
-        break;
-      case 'n':
-        out += "N";
-        break;
-      case 'o':
-        out += "O";
-        break;
-      case 'p':
-        out += "P";
-        break;
-      case 'q':
-        out += "Q";
-        break;
-      case 'r':
-        out += "R";
-        break;
-      case 's':
-        out += "S";
-        break;
-      case 't':
-        out += "T";
-        break;
-      case 'u':
-        out += "U";
-        break;
-      case 'v':
-        out += "V";
-        break;
-      case 'w':
-        out += "W";
-        break;
-      case 'x':
-        out += "X";
-        break;
-      case 'y':
-        out += "Y";
-        break;
-      case 'z':
-        out += "Z";
-        break;
-
-      default:
-        break;
-      }
+      output += std::toupper(input[i]);
     } else {
-      out += input[i];
+      output += input[i];
     }
   }
-  return out;
+
+  return output;
+}
+// check if decimal number is valid
+bool Helper::CheckDecimalNumber(const std::string &input) {
+  std::cout << "[Helper]::[CheckDecimalNumber]::[start]" << std::endl;
+  std::string number = "";
+  for (unsigned long i = 0; i < input.length() - 1; i++)
+  // last char because it will be either D or d, dont loop it
+  {
+    if (isdigit(input[i])) {
+      number += input[i];
+    } else // a not digit encountered
+    {
+      return false;
+    }
+  }
+  if (std::stoi(number, nullptr, 10) < 256)
+    return true;
+  return false;
+}
+// check if binary number is valid
+bool Helper::CheckBinaryNumber(const std::string &input) {
+  std::cout << "[Helper]::[CheckBinaryNumber]::[start]" << std::endl;
+  // if valid binary number is there, it should be atleast 2 char
+  if (input.length() < 2) // should not be the case
+  {
+    return false;
+  }
+  std::string number = "";
+  for (unsigned long i = 0; i < input.length() - 1; i++)
+  // last char because it will be either D or d, dont loop it
+  {
+    std::cout << "Current digit is " << input[i] << std::endl;
+    if (isdigit(input[i]) && (input[i] == '0' || input[i] == '1')) {
+      number += input[i];
+    } else // a not digit encountered
+    {
+      return false;
+    }
+  }
+  if (std::stoi(input, nullptr, 2) < 256) {
+    return true;
+  }
+  std::cout << "[Helper]::[CheckBinaryNumber]::[end false]"
+            << std::stoi(input, nullptr, 2) << std::endl;
+  return false;
+}
+// check if octal number is valid
+bool Helper::CheckOctalNumber(const std::string &input) {
+  if (std::stoi(input, nullptr, 10) < 256)
+    return true;
+  return false;
+}
+// check if hex number is valid
+bool Helper::CheckHexNumber(const std::string &input) {
+  if (std::stoi(input, nullptr, 10) < 256)
+    return true;
+  return false;
+}
+
+/***
+ * helper function to check if an 8bit data is valid
+ */
+bool Helper::CheckIf8BitDataIsValid(const std::string &input) {
+  if (input.length() < 1) // check if the input is not empty
+    return false;
+  if (input.length() == 1 && isdigit(input[0])) // must be a decimal number
+  {
+    return (std::stoi(input, nullptr, 10) < 256);
+  }
+  if (input.length() > 1 && isdigit(input[input.length() - 1])) // decimal
+  {
+    // handle decimal number
+    return (std::stoi(input, nullptr, 10) < 256);
+  }
+  if (input.length() > 1) // can be any of these, decimal, hex, bin or octal
+  {
+    switch (input[input.length() - 1]) {
+    case 'D':
+    case 'd':
+      // Handle decimal number
+      return Helper::CheckDecimalNumber(input);
+      break;
+    case 'B':
+    case 'b':
+      // Handle binary number
+      return Helper::CheckBinaryNumber(input);
+      break;
+    case 'O':
+    case 'o':
+    case 'Q':
+    case 'q':
+      // Handle ocatal number
+      break;
+    case 'H':
+    case 'h':
+      // Handle hex number
+      break;
+    default:
+      break;
+    }
+  }
+  return false;
 }
 
 bool Helper::CheckIfAddressInRange(const std::string &add) {
-  std::cout << "Helper::CheckIfAddressInRange " << std::endl;
+  std::cout << "[Helper]::[CheckIfAddressInRange]::[start]" << std::endl;
   int base = 10;
-  std::cout << Helper::ConvertToUppercase(add) << std::endl;
+  // std::cout << Helper::ConvertToUppercase(add) << std::endl;
   std::string uppercaseAdd = Helper::ConvertToUppercase(add);
   if (uppercaseAdd[uppercaseAdd.length() - 1] == 'H') {
-    std::cout << "Helper::CheckIfAddressInRange parsing address Numner is "
-                 "invalid hex please check the number "
-              << uppercaseAdd << std::endl;
     for (unsigned long i = 0; i < uppercaseAdd.length() - 1; i++) {
-      std::cout << "Helper::CheckIfAddressInRange:: add[i]=" << add[i]
-                << std::endl;
       if (isdigit(uppercaseAdd[i]) &&
           (uppercaseAdd[i] < '0' || uppercaseAdd[i] > '9')) {
-        std::cout << "Helper::CheckIfAddressInRange Numner is invalid hex "
-                     "isdigit(uppercaseAdd[i]) && (uppercaseAdd[i] < '0' || "
-                     "uppercaseAdd[i] > "
-                     "'9') please "
-                     "check the number "
-                  << add << std::endl;
         return false;
       }
       if (isalpha(uppercaseAdd[i]) &&
           (uppercaseAdd[i] < 'A' || uppercaseAdd[i] > 'F')) {
-        std::cout << "Helper::CheckIfAddressInRange Numner is invalid hex "
-                     "isalpha(uppercaseAdd[i]) && (uppercaseAdd[i] < 'A' || "
-                     "uppercaseAdd[i] > "
-                     "'F' please "
-                     "check the number "
-                  << add << std::endl;
         return false;
       }
     }
@@ -179,22 +185,3 @@ bool Helper::CheckIfAddressInRange(const std::string &add) {
 }
 
 int ConvertHexToDecimal(const std::string &num) { return 0; }
-
-unsigned char Helper::GetHexCodeForInstruction(const std::string &instruction) {
-  std::cout << "GetHexCodeForInstruction called inst =" << instruction
-            << std::endl;
-  // Instructions m_inst;
-  /*if (Helper::m_mapInstructionTable.size() !=
-      246) { // Total instructions are 246
-    InsertInstructionsInMap();
-  }
-  const auto code = m_mapInstructionTable.find(instruction);
-  if (code != m_mapInstructionTable.end()) { // the instruction is in map
-    return code->second;
-  } else { // instruction was not found in the map, wrong instruction
-    std::cout << "Assembler::GetHexCodeFromInstruction::Error in retreiving key"
-              << std::endl;
-    return 0x76; // return halt as of now
-  }*/
-  return 0x76;
-}
