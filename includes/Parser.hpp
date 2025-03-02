@@ -49,6 +49,21 @@ private:
   // All STA Instruction
   bool HandleStaInstruction(const TokenStruct &token);
 
+  // ADC, ADD, ANA, CMP, ORA, SBB, SUB, XRA,
+  bool Handle8BitRegMemInstructions(const TokenStruct &token);
+  // ACI, ADI, ANI, CPI,  MVI, ORI, SBI, SUI,  XRI,
+  bool Handle8BitDataInstructions(const TokenStruct &token);
+  /**
+   * LDA, SDA, JC, JZ, JP, JPE, JNC, JNZ, JM, JPO, RC, RZ, RP, RPE, RNC, RNZ,
+   * RM, RPO, CC, CZ, CP, CPE, CNC; CNZ, CM, CPO
+   */
+  bool Handle16BitAddressInstructions(const TokenStruct &token);
+  // IN, OUT
+  bool Handle8BitPortNumberInstructions(const TokenStruct &token);
+  // INX, DCX, DAD
+  bool Handle16BitRegPairInstructions(const TokenStruct &token);
+  bool Handle16BitImmediateOperandInstructions(const TokenStruct &token);
+
 private:
   unsigned long m_currentIndex;
   std::string m_currentToken;

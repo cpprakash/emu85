@@ -52,30 +52,13 @@ bool Helper::CheckIfAddressInRange(const std::string &add) {
   // std::cout << Helper::ConvertToUppercase(add) << std::endl;
   std::string uppercaseAdd = Helper::ConvertToUppercase(add);
   if (uppercaseAdd[uppercaseAdd.length() - 1] == 'H') {
-    /*std::cout << "Helper::CheckIfAddressInRange parsing address Numner is "
-                 "invalid hex please check the number "
-              << uppercaseAdd << std::endl;*/
     for (unsigned long i = 0; i < uppercaseAdd.length() - 1; i++) {
-      /*std::cout << "Helper::CheckIfAddressInRange:: add[i]=" << add[i]
-                << std::endl;*/
       if (isdigit(uppercaseAdd[i]) &&
           (uppercaseAdd[i] < '0' || uppercaseAdd[i] > '9')) {
-        /*std::cout << "Helper::CheckIfAddressInRange Numner is invalid hex "
-                     "isdigit(uppercaseAdd[i]) && (uppercaseAdd[i] < '0' || "
-                     "uppercaseAdd[i] > "
-                     "'9') please "
-                     "check the number "
-                  << add << std::endl;*/
         return false;
       }
       if (isalpha(uppercaseAdd[i]) &&
           (uppercaseAdd[i] < 'A' || uppercaseAdd[i] > 'F')) {
-        /*std::cout << "Helper::CheckIfAddressInRange Numner is invalid hex "
-                     "isalpha(uppercaseAdd[i]) && (uppercaseAdd[i] < 'A' || "
-                     "uppercaseAdd[i] > "
-                     "'F' please "
-                     "check the number "
-                  << add << std::endl;*/
         return false;
       }
     }

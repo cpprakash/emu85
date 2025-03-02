@@ -68,6 +68,7 @@ struct AstStruct {
 };
 
 const std::map<std::string, unsigned char> types_mapInstruction{
+    {"ACI_Data", 0xCE},
     {"ADC_A", 0x8F},
     {"ADC_B", 0x88},
     {"ADC_C", 0x89},

@@ -105,23 +105,26 @@ std::string Parser::PeekNextToken(unsigned long howMany) {
 }
 
 void Parser::HandleAllInstructions(const TokenStruct &token) {
-  // all AXX instructions
-  if (token.m_tokenValue == "ACI") {
+
+  // Handle all instructions that have either one 8bit registger A, B, C, D ,E,
+  // H, L or a memory reference M through HL pair
+  // and has the format instruction RegM8, this function must parse 64
+  // instructions, 8 for each of these
+  if (token.m_tokenValue == "ADC" || token.m_tokenValue == "ADD" ||
+      token.m_tokenValue == "ANA" || token.m_tokenValue == "CMP" ||
+      token.m_tokenValue == "ORA" || token.m_tokenValue == "SBB" ||
+      token.m_tokenValue == "SUB" || token.m_tokenValue == "XRA") {
     // std::cout << "ACI " << std::endl;
-    HandleAciInstruction(token);
-  } else if (token.m_tokenValue == "ADC") {
-    // std::cout << "ADC " << std::endl;
-    HandleAdcInstruction(token);
-  } else if (token.m_tokenValue == "ADD") {
-    // std::cout << "ADD " << std::endl;
-    HandleAddInstruction(token);
-  } else if (token.m_tokenValue == "ADI") {
-    std::cout << "ADI " << std::endl;
-  } else if (token.m_tokenValue == "ANA") {
-    std::cout << "ANA " << std::endl;
-  } else if (token.m_tokenValue == "ANI") {
-    std::cout << "ANI " << std::endl;
+    this->Handle8BitRegMemInstructions(token);
+  } else if (token.m_tokenValue == "ACI" || token.m_tokenValue == "ADI" ||
+             token.m_tokenValue == "ANI" || token.m_tokenValue == "CPI" ||
+             token.m_tokenValue == "MVI" || token.m_tokenValue == "ORI" ||
+             token.m_tokenValue == "SBI" || token.m_tokenValue == "SUI" ||
+             token.m_tokenValue == "XRI") {
+    // std::cout << "ACI " << std::endl;
+    this->Handle8BitDataInstructions(token);
   }
+  // all AXX instructions
 
   // handle HLT instruction
   else if (token.m_tokenValue == "HLT") {
@@ -592,6 +595,116 @@ bool Parser::ReturnInstructionHex(const std::string &inst) {
   std::cout << "[Parser]::[ReturnInstructionHex]::[end for instruction " << inst
             << "]" << std::endl;
   return result;
+}
+
+/***
+ * Handle all instructions that operate on 8 bit registers A,B,C,D,E,H or L or
+ * M(memory referance) via 16 bit address in H and L register
+ * this function covers these instructions
+ * ADC, ADD, ANA, CMP, ORA, SBB, SUB, XRA,
+ * this function takes a token struct and parse the instructions
+ * and tries to determine the correct hex for instructions
+ * and the related operands if any
+ */
+bool Parser::Handle8BitRegMemInstructions(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[Handle8BitRegMemInstructions]:[started for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
+  if (!Helper::CheckIfRegistersAreValid(temp[0])) {
+    std::cout << "[Parser]::[Handle8BitRegMemInstructions]::[first operand is "
+                 "not valid]"
+              << std::endl;
+    return false;
+  }
+  if (temp[1] != "NEWLINE") {
+    return false;
+  }
+  std::cout
+      << "[Parser]::[Handle8BitRegMemInstructions]:[ended for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  return this->ReturnInstructionHex(token.m_tokenValue + "_" + temp[0]);
+}
+
+/***
+ * Handle all instructions that operate on 8 bit immediate operand
+ * this function covers these instructions
+ * ADI, ACI, SUI, SBI, ANI, XRI, ORI, CPI, MVI
+ */
+bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[Handle8BitDataInstructions]:[started for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(5); // will get only 4
+  // check for register, if not a valid register return false
+  if (!Helper::CheckIfRegistersAreValid(temp[0])) {
+    std::cout << "[Parser]::[Handle8BitDataInstructions]::[first operand is "
+                 "not valid]"
+              << std::endl;
+    return false;
+  }
+  // expects a comma between register and 8bit data
+  if (temp[1] != "COMMA") {
+    std::cout << "[Parser]::[Handle8BitDataInstructions]::[expecting a comma]"
+              << std::endl;
+    return false;
+  }
+  // parse an 8 bit data here
+  if (temp[2] != "") {
+    std::cout << "[Parser]::[Handle8BitDataInstructions]::[data is not valid]"
+              << std::endl;
+    return false;
+  }
+  // expects a new line at the end
+  if (temp[3] != "NEWLINE") {
+    std::cout
+        << "[Parser]::[Handle8BitDataInstructions]::[expecting a new line]"
+        << std::endl;
+    return false;
+  }
+  std::cout << "[Parser]::[Handle8BitDataInstructions]:[ended for instruction "
+            << token.m_tokenValue << "]" << std::endl;
+  if (token.m_tokenValue == "MVI") {
+    return this->ReturnInstructionHex(token.m_tokenValue + "_" + temp[0] +
+                                      "_Data");
+  }
+  return this->ReturnInstructionHex(token.m_tokenValue + "_Data");
+}
+
+/***
+ * Handle all instructions that operate on 16 bit address
+ * this function covers these instructions
+ * LDA, SDA, JC, JZ, JP, JPE, JNC, JNZ, JM, JPO, RC, RZ, RP, RPE, RNC, RNZ, RM,
+ * RPO, CC, CZ, CP, CPE, CNC; CNZ, CM, CPO
+ */
+bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
+  return false;
+}
+
+/***
+ * Handle all instructions that operate on 8 bit port number
+ * this function covers these instructions
+ * IN, OUT
+ */
+bool Parser::Handle8BitPortNumberInstructions(const TokenStruct &token) {
+  return false;
+}
+
+/***
+ * Handle all instructions operate on 16 bit register pair B & C,D & E,H & L
+ * this function covers these instructions INX, DCX, DAD
+ */
+bool Parser::Handle16BitRegPairInstructions(const TokenStruct &token) {
+  return false;
+}
+
+/***
+ * Handle all instructions that operate on 16 bit immediate operand
+ * this function covers these instructions
+ * ADD, ADC, SUB, SBB, ANA, XRA, ORA, CMP
+ */
+bool Parser::Handle16BitImmediateOperandInstructions(const TokenStruct &token) {
+  return false;
 }
 
 //************************PRIVATE FUNCTIONS END******************************
