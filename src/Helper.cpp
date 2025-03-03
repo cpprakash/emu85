@@ -46,8 +46,9 @@ std::string Helper::ConvertToUppercase(const std::string &input) {
   return output;
 }
 // check if decimal number is valid
-bool Helper::CheckDecimalNumber(const std::string &input) {
+EightBitData Helper::CheckDecimalNumber(const std::string &input) {
   std::cout << "[Helper]::[CheckDecimalNumber]::[start]" << std::endl;
+  bool result = false;
   std::string number = "";
   for (unsigned long i = 0; i < input.length() - 1; i++)
   // last char because it will be either D or d, dont loop it
@@ -56,20 +57,22 @@ bool Helper::CheckDecimalNumber(const std::string &input) {
       number += input[i];
     } else // a not digit encountered
     {
-      return false;
+      result = false;
     }
   }
   if (std::stoi(number, nullptr, 10) < 256)
-    return true;
-  return false;
+    result = true;
+  return {"SUCCESS", (std::stoi(number, nullptr, 10)), result};
 }
 // check if binary number is valid
-bool Helper::CheckBinaryNumber(const std::string &input) {
+EightBitData Helper::CheckBinaryNumber(const std::string &input) {
   std::cout << "[Helper]::[CheckBinaryNumber]::[start]" << std::endl;
+  EightBitData result{"", 0, false};
   // if valid binary number is there, it should be atleast 2 char
   if (input.length() < 2) // should not be the case
   {
-    return false;
+    result.message = "FAIL. Data is too short.";
+    result.result = false;
   }
   std::string number = "";
   for (unsigned long i = 0; i < input.length() - 1; i++)
@@ -78,74 +81,132 @@ bool Helper::CheckBinaryNumber(const std::string &input) {
     std::cout << "Current digit is " << input[i] << std::endl;
     if (isdigit(input[i]) && (input[i] == '0' || input[i] == '1')) {
       number += input[i];
-    } else // a not digit encountered
+    } else // a non binary digit encountered
     {
-      return false;
+      result.message = "FAIL. Non binary digit found in binary data.";
+      result.result = false;
     }
   }
   if (std::stoi(input, nullptr, 2) < 256) {
-    return true;
+    result.message = "SUCCESS.";
+    result.result = true;
+  } else {
+    result.message = "FAIL. The number is greater than one byte";
   }
   std::cout << "[Helper]::[CheckBinaryNumber]::[end false]"
             << std::stoi(input, nullptr, 2) << std::endl;
-  return false;
+  return result;
 }
 // check if octal number is valid
-bool Helper::CheckOctalNumber(const std::string &input) {
-  if (std::stoi(input, nullptr, 10) < 256)
-    return true;
-  return false;
+EightBitData Helper::CheckOctalNumber(const std::string &input) {
+  std::cout << "[Helper]::[CheckOctalNumber]::[start]" << std::endl;
+  EightBitData result{"", 0, false};
+  std::string number = "";
+  for (unsigned long i = 0; i < input.length() - 1; i++)
+  // last char because it will be either D or d, dont loop it
+  {
+    if (isdigit(input[i]) && (input[i] < 8)) {
+      number += input[i];
+    } else // a not digit encountered
+    {
+      result.result = false;
+      result.message = "Invalid non digit found.";
+    }
+  }
+  if (std::stoi(number, nullptr, 8) < 256) {
+    result.result = true;
+    result.message = MESSAGE_SUCCESS;
+    result.data = std::stoi(number, nullptr, 8);
+  } else {
+    result.message = "Data is greater than one byte.";
+  }
+  std::cout << "[Helper]::[CheckOctalNumber]::[end]" << std::endl;
+  return result;
 }
 // check if hex number is valid
-bool Helper::CheckHexNumber(const std::string &input) {
-  if (std::stoi(input, nullptr, 10) < 256)
-    return true;
-  return false;
+EightBitData Helper::CheckHexNumber(const std::string &input) {
+  std::cout << "[Helper]::[CheckHexNumber]::[start, input = " << input << "]"
+            << std::endl;
+  EightBitData result{"", 0, false};
+  std::string number = "";
+
+  for (unsigned long i = 0; i < input.length() - 1; i++)
+  // last char because it will be either D or d, dont loop it
+  {
+    if (isdigit(input[i]) || (input[i] == 'A') || (input[i] == 'B') ||
+        (input[i] == 'C') || (input[i] == 'D') || (input[i] == 'E') ||
+        (input[i] == 'F') || (input[i] == 'a') || (input[i] == 'b') ||
+        (input[i] == 'c') || (input[i] == 'd') || (input[i] == 'e') ||
+        (input[i] == 'f')) {
+      number += input[i];
+    } else // a not digit encountered
+    {
+      result.result = false;
+      result.message = "Invalid non digit found.";
+    }
+  }
+
+  if (std::stoi(number, nullptr, 16) < 256) {
+    result.result = true;
+    result.data = std::stoi(number, nullptr, 16);
+    result.message = MESSAGE_SUCCESS;
+  } else {
+    result.data = 0;
+    result.message = "FAIL. The number is greater than one byte";
+  }
+  std::cout << "[Helper]::[CheckHexNumber]::[end]" << std::endl;
+  return result;
 }
 
 /***
  * helper function to check if an 8bit data is valid
  */
-bool Helper::CheckIf8BitDataIsValid(const std::string &input) {
+EightBitData Helper::CheckIf8BitDataIsValid(const std::string &input) {
+  std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[start]" << std::endl;
   if (input.length() < 1) // check if the input is not empty
-    return false;
-  if (input.length() == 1 && isdigit(input[0])) // must be a decimal number
   {
-    return (std::stoi(input, nullptr, 10) < 256);
+    std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[failed, data is empty]"
+              << std::endl;
+    return {"Validation failed, no value is provided", 0x00, false};
   }
-  if (input.length() > 1 && isdigit(input[input.length() - 1])) // decimal
+  if ((input.length() == 1 && isdigit(input[0])) ||
+      (input.length() > 1 &&
+       isdigit(input[input.length() - 1]))) // must be a decimal number
   {
-    // handle decimal number
-    return (std::stoi(input, nullptr, 10) < 256);
+    if ((std::stoi(input, nullptr, 10) < 256))
+      return {MESSAGE_SUCCESS, (std::stoi(input, nullptr, 10)),
+              (std::stoi(input, nullptr, 10) < 256)};
   }
+
   if (input.length() > 1) // can be any of these, decimal, hex, bin or octal
   {
-    switch (input[input.length() - 1]) {
-    case 'D':
-    case 'd':
+    char base = (input[input.length() - 1]);
+    if (base == 'D' || base == 'd') // Handle decimal number
+    {
+      std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[decimal number found]"
+                << std::endl;
       // Handle decimal number
-      return Helper::CheckDecimalNumber(input);
-      break;
-    case 'B':
-    case 'b':
+      if (Helper::CheckDecimalNumber(input).result)
+        return (Helper::CheckDecimalNumber(input));
+    } else if (base == 'B' || base == 'b') {
+      std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[binary number found]"
+                << std::endl;
       // Handle binary number
-      return Helper::CheckBinaryNumber(input);
-      break;
-    case 'O':
-    case 'o':
-    case 'Q':
-    case 'q':
+      /*if (Helper::CheckBinaryNumber(input).result)
+        return (Helper::CheckBinaryNumber(input));*/
+    } else if (base == 'O' || base == 'o' || base == 'Q' || base == 'q') {
+      std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[octal number found]"
+                << std::endl;
       // Handle ocatal number
-      break;
-    case 'H':
-    case 'h':
+    } else if (base == 'H' || base == 'h') {
+      std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[hex number found]"
+                << std::endl;
       // Handle hex number
-      break;
-    default:
-      break;
+      return (Helper::CheckHexNumber(input));
     }
   }
-  return false;
+  std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[end]" << std::endl;
+  return {"FAIL", 0x00, false};
 }
 
 bool Helper::CheckIfAddressInRange(const std::string &add) {

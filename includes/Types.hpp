@@ -10,8 +10,27 @@ typedef char BYTE;
 typedef unsigned short u_WORD;
 typedef short WORD;
 
+/**
+ * Const strings
+ */
+const std::string MESSAGE_SUCCESS{"SUCCESS"};
+
 // base for the operand
 enum BASE { b, d, h, o };
+
+// struct for 8 bit data
+struct EightBitData {
+  std::string message;
+  int data;
+  bool result;
+};
+
+// result struct with 16 bit address
+struct SixteenBitAddress {
+  std::string message;
+  int address;
+  bool result;
+};
 
 // Token type
 enum TOKEN_TYPES {
@@ -37,6 +56,16 @@ enum ERROR_TYPES {
   ERROR_DATA_OUT_OF_RANGE,
   ERROR_NO_NEWLINE_FOUND,
   ERROR_UNKNOW
+};
+
+enum RESULT_TYPES {
+  RESULT_VALID_DATA,
+  RESULT_MISSING_COLON,
+  RESULT_MISSING_HEX,
+  RESULT_ADDRESS_OUT_OF_RANGE,
+  RESULT_DATA_OUT_OF_RANGE,
+  RESULT_NO_NEWLINE_FOUND,
+  RESULT_UNKNOW
 };
 
 /***

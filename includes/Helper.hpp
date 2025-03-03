@@ -3,10 +3,16 @@
 
 #include <map>
 #include <string>
+#include <vector>
+
+#include "../includes/Types.hpp"
 
 class Helper {
 
 public:
+  std::vector<EightBitData> data_vector;
+  std::vector<SixteenBitAddress> address_vector;
+
 private:
   unsigned char MIN_CHAR_DATA{0};
   unsigned char MIN_BOOL_DATA{0b0000};
@@ -41,12 +47,12 @@ public:
 
   static std::string ConvertToUppercase(const std::string &input);
 
-  static bool CheckIf8BitDataIsValid(const std::string &input);
+  static EightBitData CheckIf8BitDataIsValid(const std::string &input);
 
-  static bool CheckDecimalNumber(const std::string &input);
-  static bool CheckBinaryNumber(const std::string &input);
-  static bool CheckOctalNumber(const std::string &input);
-  static bool CheckHexNumber(const std::string &input);
+  static EightBitData CheckDecimalNumber(const std::string &input);
+  static EightBitData CheckBinaryNumber(const std::string &input);
+  static EightBitData CheckOctalNumber(const std::string &input);
+  static EightBitData CheckHexNumber(const std::string &input);
 
 private:
   // void InsertInstructionsInMap(void);

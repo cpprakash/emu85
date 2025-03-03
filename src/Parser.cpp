@@ -635,6 +635,7 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
   std::cout
       << "[Parser]::[Handle8BitDataInstructions]:[started for instruction "
       << token.m_tokenValue << "]" << std::endl;
+  bool result = false;
   std::vector<std::string> temp = this->GetNextNTokens(5); // will get only 4
   // check for register, if not a valid register return false
   if (!Helper::CheckIfRegistersAreValid(temp[0])) {
@@ -647,31 +648,33 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
   if (temp[1] != "COMMA") {
     std::cout << "[Parser]::[Handle8BitDataInstructions]::[expecting a comma]"
               << std::endl;
-    return false;
   }
   // parse an 8 bit data here
-  bool result = Helper::CheckIf8BitDataIsValid(temp[2]);
-  std::cout << "[Parser]::[Handle8BitDataInstructions]::[data is " << result
-            << "]" << std::endl;
-  if (temp[2] != "") {
-    std::cout << "[Parser]::[Handle8BitDataInstructions]::[data is not valid]"
-              << std::endl;
-    return false;
+  EightBitData data = Helper::CheckIf8BitDataIsValid(temp[2]);
+  if (data.result == false) {
+    std::cout << "[Parser]::[Handle8BitDataInstructions]::[" << data.message
+              << "]" << std::endl;
   }
   // expects a new line at the end
   if (temp[3] != "NEWLINE") {
     std::cout
         << "[Parser]::[Handle8BitDataInstructions]::[expecting a new line]"
         << std::endl;
-    return false;
+  }
+
+  if (token.m_tokenValue == "MVI") {
+    result = this->ReturnInstructionHex(token.m_tokenValue + "_" + temp[0] +
+                                        "_Data");
+  } else {
+    result = this->ReturnInstructionHex(token.m_tokenValue + "_Data");
+  }
+  if (result) // if we were able to find instruction only push operand
+  {
+    this->m_finalParserProgram->emplace_back(data.data);
   }
   std::cout << "[Parser]::[Handle8BitDataInstructions]:[ended for instruction "
             << token.m_tokenValue << "]" << std::endl;
-  if (token.m_tokenValue == "MVI") {
-    return this->ReturnInstructionHex(token.m_tokenValue + "_" + temp[0] +
-                                      "_Data");
-  }
-  return this->ReturnInstructionHex(token.m_tokenValue + "_Data");
+  return result;
 }
 
 /***
