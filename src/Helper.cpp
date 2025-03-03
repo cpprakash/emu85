@@ -180,25 +180,25 @@ EightBitData Helper::CheckIf8BitDataIsValid(const std::string &input) {
 
   if (input.length() > 1) // can be any of these, decimal, hex, bin or octal
   {
-    char base = (input[input.length() - 1]);
-    if (base == 'D' || base == 'd') // Handle decimal number
+    const char kBase = (input[input.length() - 1]);
+    if (kBase == 'D' || kBase == 'd') // Handle decimal number
     {
       std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[decimal number found]"
                 << std::endl;
       // Handle decimal number
       if (Helper::CheckDecimalNumber(input).result)
         return (Helper::CheckDecimalNumber(input));
-    } else if (base == 'B' || base == 'b') {
+    } else if (kBase == 'B' || kBase == 'b') {
       std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[binary number found]"
                 << std::endl;
       // Handle binary number
       /*if (Helper::CheckBinaryNumber(input).result)
         return (Helper::CheckBinaryNumber(input));*/
-    } else if (base == 'O' || base == 'o' || base == 'Q' || base == 'q') {
+    } else if (kBase == 'O' || kBase == 'o' || kBase == 'Q' || kBase == 'q') {
       std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[octal number found]"
                 << std::endl;
       // Handle ocatal number
-    } else if (base == 'H' || base == 'h') {
+    } else if (kBase == 'H' || kBase == 'h') {
       std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[hex number found]"
                 << std::endl;
       // Handle hex number

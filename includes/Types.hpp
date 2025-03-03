@@ -28,7 +28,8 @@ struct EightBitData {
 // result struct with 16 bit address
 struct SixteenBitAddress {
   std::string message;
-  int address;
+  int addressLow;
+  int addressHigh;
   bool result;
 };
 

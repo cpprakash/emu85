@@ -7,8 +7,8 @@
 
 void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
 
-  std::cout << "[Parser]::[ParseProgram]::[Total tokens are= " << tokens.size()
-            << "]" << std::endl;
+  std::cout << "[Parser]::[ParseProgram]::[start Total tokens are= "
+            << tokens.size() << "]" << std::endl;
   this->m_vectTokens = tokens; // do everything with the local variable
 
   // main loop iterate over the token vector
@@ -17,6 +17,8 @@ void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
     this->ParseSingleLine(this->m_vectTokens[this->m_currentIndex]);
     this->m_currentIndex++; // increment counter variable here
   }
+  std::cout << "[Parser]::[ParseProgram]::[end " << tokens.size() << "]"
+            << std::endl;
 }
 
 //************************PRIVATE FUNCTIONS START******************************
@@ -684,6 +686,12 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
  * RPO, CC, CZ, CP, CPE, CNC; CNZ, CM, CPO
  */
 bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[Handle16BitAddressInstructions]:[start for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  std::cout
+      << "[Parser]::[Handle16BitAddressInstructions]:[ended for instruction "
+      << token.m_tokenValue << "]" << std::endl;
   return false;
 }
 
