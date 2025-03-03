@@ -1,5 +1,5 @@
 #include "../includes/Helper.hpp"
-
+#include "../includes/Types.hpp"
 #include <iostream>
 #include <string>
 
@@ -207,6 +207,69 @@ EightBitData Helper::CheckIf8BitDataIsValid(const std::string &input) {
   }
   std::cout << "[Helper]::[CheckIf8BitDataIsValid]::[end]" << std::endl;
   return {"FAIL", 0x00, false};
+}
+
+SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
+  std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[start]" << std::endl;
+  SixteenBitAddress address{"", 0, 0, false};
+
+  if (input.length() < 1) // check if the input is not empty
+  {
+    std::cout
+        << "[Helper]::[CheckAndReturn16BitAddress]::[failed, data is empty]"
+        << std::endl;
+    address.message = MESSAGE_EMPTY_FIELD;
+  } else if ((input.length() == 1 && isdigit(input[0])) ||
+             (input.length() > 1 &&
+              isdigit(input[input.length() - 1]))) // must be a decimal number
+  {
+    if ((std::stoi(input, nullptr, 10) < MAX_CHAR_ADDRESS + 1)) {
+      address.message = MESSAGE_SUCCESS;
+      if ((std::stoi(input, nullptr, 10) <
+           MAX_CHAR_DATA + 1)) // high will be zero
+      {
+        address.addressLow = (std::stoi(input, nullptr, 10));
+        std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[Low =]"
+                  << address.addressLow << std::endl;
+      }
+    }
+    /*return {MESSAGE_SUCCESS, (std::stoi(input, nullptr, 10)),
+            (std::stoi(input, nullptr, 10) < 256)};*/
+  }
+
+  else if (input.length() > 1) // can be  decimal, hex, bin or octal
+  {
+    const char kBase = (input[input.length() - 1]);
+    if (kBase == 'D' || kBase == 'd') // Handle decimal number
+    {
+      std::cout
+          << "[Helper]::[CheckAndReturn16BitAddress]::[decimal number found]"
+          << std::endl;
+      // Handle decimal number
+      // if (Helper::CheckDecimalNumber(input).result)
+      // return (Helper::CheckDecimalNumber(input));
+    } else if (kBase == 'B' || kBase == 'b') {
+      std::cout
+          << "[Helper]::[CheckAndReturn16BitAddress]::[binary number found]"
+          << std::endl;
+      // Handle binary number
+      /*if (Helper::CheckBinaryNumber(input).result)
+        return (Helper::CheckBinaryNumber(input));*/
+    } else if (kBase == 'O' || kBase == 'o' || kBase == 'Q' || kBase == 'q') {
+      std::cout
+          << "[Helper]::[CheckAndReturn16BitAddress]::[octal number found]"
+          << std::endl;
+      // Handle ocatal number
+    } else if (kBase == 'H' || kBase == 'h') {
+      std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[hex number found]"
+                << std::endl;
+      // Handle hex number
+      // return (Helper::CheckHexNumber(input));
+    }
+  }
+
+  std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[end]" << std::endl;
+  return address;
 }
 
 bool Helper::CheckIfAddressInRange(const std::string &add) {

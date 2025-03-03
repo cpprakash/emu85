@@ -1,5 +1,5 @@
-#ifndef __INCLUDES_TYPES_HPP
-#define __INCLUDES_TYPES_HPP
+#ifndef __INCLUDES_TYPES_HPP__
+#define __INCLUDES_TYPES_HPP__
 
 #include <array>
 #include <map>
@@ -10,10 +10,35 @@ typedef char BYTE;
 typedef unsigned short u_WORD;
 typedef short WORD;
 
+static unsigned char MIN_CHAR_DATA{0};
+static unsigned char MIN_BOOL_DATA{0b0000};
+static unsigned char MIN_HEX_DATA{0x00};
+static unsigned char MIN_OCT_DATA{00};
+
+static unsigned char MAX_CHAR_DATA{255};
+static unsigned char MAX_BOOL_DATA{0b11111111};
+static unsigned char MAX_HEX_DATA{0xFF};
+static unsigned char MAX_OCT_DATA{0377};
+
+static unsigned short MIN_CHAR_ADDRESS{0};
+static unsigned short MIN_BOOL_ADDRESS{0b0000000000000000};
+static unsigned short MIN_HEX_ADDRESS{0x0000};
+static unsigned short MIN_OCT_ADDRESS{00};
+
+static unsigned short MAX_CHAR_ADDRESS{65535};
+static unsigned short MAX_BOOL_ADDRESS{0b1111111111111111};
+static unsigned short MAX_HEX_ADDRESS{0xFFFF};
+static unsigned short MAX_OCT_ADDRESS{0177777};
+
 /**
  * Const strings
  */
 const std::string MESSAGE_SUCCESS{"SUCCESS"};
+
+/***
+ * Failure message strings
+ */
+const std::string MESSAGE_EMPTY_FIELD{"Data/Address is empty."};
 
 // base for the operand
 enum BASE { b, d, h, o };
