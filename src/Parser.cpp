@@ -397,6 +397,7 @@ bool Parser::HandleLdaInstruction(const TokenStruct &token) {
 
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
   // std::cout << temp[0] << std::endl;
+  Helper::CheckAndReturn16BitAddress(temp[0]);
   if (type == TOKEN_NUMBER && !Helper::CheckIfAddressInRange(temp[0])) {
     std::cout << "[Parser]::[HandleLdaInstruction]:[address is invalid "
               << temp[0] << "]" << std::endl;

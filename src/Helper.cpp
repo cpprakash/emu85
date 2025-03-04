@@ -210,8 +210,14 @@ EightBitData Helper::CheckIf8BitDataIsValid(const std::string &input) {
 }
 
 SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
-  std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[start]" << std::endl;
+  std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[start input = ]"
+            << input << std::endl;
   SixteenBitAddress address{"", 0, 0, false};
+  u_BYTE lowByte = 0x00;
+  u_BYTE highByte = 0x00;
+
+  const u_WORD kLOW_BIT_MASK = 0x00FF;
+  const u_WORD kHIGH_BIT_MASK = 0xFF00;
 
   if (input.length() < 1) // check if the input is not empty
   {
@@ -219,56 +225,101 @@ SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
         << "[Helper]::[CheckAndReturn16BitAddress]::[failed, data is empty]"
         << std::endl;
     address.message = MESSAGE_EMPTY_FIELD;
-  } else if ((input.length() == 1 && isdigit(input[0])) ||
-             (input.length() > 1 &&
-              isdigit(input[input.length() - 1]))) // must be a decimal number
+  } // empty field
+  else if ((input.length() == 1 && isdigit(input[0])) ||
+           (input.length() > 1 &&
+            isdigit(input[input.length() - 1]))) // must be a decimal number,
+                                                 // default is decimal
   {
-    if ((std::stoi(input, nullptr, 10) < MAX_CHAR_ADDRESS + 1)) {
+    const auto num = std::stoi(input, nullptr, 10);
+    if (num > MAX_CHAR_ADDRESS) { // invalid address, more than 16bits
+      address.message = "FAIL. The address is greater than 2 byte";
+    } else { // valid 16 bit addrss in decimal
       address.message = MESSAGE_SUCCESS;
-      if ((std::stoi(input, nullptr, 10) <
-           MAX_CHAR_DATA + 1)) // high will be zero
-      {
-        address.addressLow = (std::stoi(input, nullptr, 10));
-        std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[Low =]"
-                  << address.addressLow << std::endl;
-      }
+      address.addressLow = static_cast<unsigned char>(num & kLOW_BIT_MASK);
+      address.addressHigh =
+          static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+      address.result = true;
     }
-    /*return {MESSAGE_SUCCESS, (std::stoi(input, nullptr, 10)),
-            (std::stoi(input, nullptr, 10) < 256)};*/
   }
 
   else if (input.length() > 1) // can be  decimal, hex, bin or octal
   {
     const char kBase = (input[input.length() - 1]);
+
     if (kBase == 'D' || kBase == 'd') // Handle decimal number
     {
       std::cout
           << "[Helper]::[CheckAndReturn16BitAddress]::[decimal number found]"
           << std::endl;
-      // Handle decimal number
-      // if (Helper::CheckDecimalNumber(input).result)
-      // return (Helper::CheckDecimalNumber(input));
+      const auto num =
+          std::stoi(input.substr(0, input.length() - 1), nullptr, 10);
+      if (num > MAX_CHAR_ADDRESS) { // invalid address, more than 16bits
+        address.message = "FAIL. The address is greater than 2 byte";
+      } else { // valid 16 bit addrss in decimal
+        address.message = MESSAGE_SUCCESS;
+        address.addressLow = static_cast<unsigned char>((num & kLOW_BIT_MASK));
+        address.addressHigh =
+            static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+        address.result = true;
+      }
+
     } else if (kBase == 'B' || kBase == 'b') {
       std::cout
           << "[Helper]::[CheckAndReturn16BitAddress]::[binary number found]"
           << std::endl;
-      // Handle binary number
-      /*if (Helper::CheckBinaryNumber(input).result)
-        return (Helper::CheckBinaryNumber(input));*/
+      const auto num =
+          std::stoi(input.substr(0, input.length() - 1), nullptr, 2);
+      if (num > MAX_CHAR_ADDRESS) { // invalid address, more than 16bits
+        address.message = "FAIL. The address is greater than 2 byte";
+      } else { // valid 16 bit addrss in binary
+        address.message = MESSAGE_SUCCESS;
+        address.addressLow = static_cast<unsigned char>((num & kLOW_BIT_MASK));
+        address.addressHigh =
+            static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+        address.result = true;
+      }
+
     } else if (kBase == 'O' || kBase == 'o' || kBase == 'Q' || kBase == 'q') {
       std::cout
           << "[Helper]::[CheckAndReturn16BitAddress]::[octal number found]"
           << std::endl;
-      // Handle ocatal number
+      const auto num =
+          std::stoi(input.substr(0, input.length() - 1), nullptr, 8);
+      if (num > MAX_CHAR_ADDRESS) { // invalid address, more than 16bits
+        address.message = "FAIL. The address is greater than 2 byte";
+      } else { // valid 16 bit addrss in octal
+        address.message = MESSAGE_SUCCESS;
+        address.addressLow = static_cast<unsigned char>(num & kLOW_BIT_MASK);
+        address.addressHigh =
+            static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+        address.result = true;
+      }
+
     } else if (kBase == 'H' || kBase == 'h') {
       std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[hex number found]"
-                << std::endl;
+                << input << std::endl;
+
       // Handle hex number
-      // return (Helper::CheckHexNumber(input));
+      const auto num =
+          std::stoi(input.substr(0, input.length() - 1), nullptr, 16);
+
+      if (num > MAX_CHAR_ADDRESS) { // invalid address, more than 16bits
+        address.message = "FAIL. The address is greater than 2 byte";
+      } else { // valid 16 bit addrss in hex
+        address.message = MESSAGE_SUCCESS;
+        address.addressLow = static_cast<unsigned char>(num & kLOW_BIT_MASK);
+        address.addressHigh =
+            static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+        address.result = true;
+      }
+    } else { // invalid number
+      address.message = "FAIL. The address is invalid";
     }
   }
 
-  std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[end]" << std::endl;
+  std::cout << "[Helper]::[CheckAndReturn16BitAddress]::[end with "
+            << address.message << " ]" << std::endl;
   return address;
 }
 
