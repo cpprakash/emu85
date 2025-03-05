@@ -5,10 +5,12 @@
 #include <iostream>
 #include <vector>
 
-void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
-
+u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
   std::cout << "[Parser]::[ParseProgram]::[start Total tokens are= "
             << tokens.size() << "]" << std::endl;
+  for (auto i = 0; i < 1024; i++) {
+    this->m_finalParserProgram[i] = 0x00;
+  }
   this->m_vectTokens = tokens; // do everything with the local variable
 
   // main loop iterate over the token vector
@@ -18,7 +20,8 @@ void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
     this->m_currentIndex++; // increment counter variable here
   }
   std::cout << "[Parser]::[ParseProgram]::[end final program size="
-            << this->m_finalParserProgram->size() << "]" << std::endl;
+            << this->pCounter << "]" << std::endl;
+  return this->m_finalParserProgram;
 }
 
 //************************PRIVATE FUNCTIONS START******************************
@@ -512,8 +515,10 @@ bool Parser::HandleShldInstruction(const TokenStruct &token) {
   }
 
   bool resultInst = this->ReturnInstructionHex(token.m_tokenValue + "_Address");
-  this->m_finalParserProgram->emplace_back(address.addressLow);
-  this->m_finalParserProgram->emplace_back(address.addressHigh);
+  this->m_finalParserProgram[pCounter] = (address.addressLow);
+  this->pCounter++;
+  this->m_finalParserProgram[pCounter] = (address.addressHigh);
+  this->pCounter++;
   std::cout << "[Parser]::[HandleShldInstruction]:[ended for instruction "
             << token.m_tokenValue << "]" << std::endl;
   return resultInst;
@@ -557,7 +562,8 @@ bool Parser::ReturnInstructionHex(const std::string &inst) {
   bool result = false;
   const auto code = types_mapInstruction.find(inst);
   if (code != types_mapInstruction.end()) { // the instruction is in map
-    this->m_finalParserProgram->emplace_back(code->second);
+    this->m_finalParserProgram[pCounter] = (code->second);
+    this->pCounter++;
     result = true;
     // return code->second;
   } else { // instruction was not found in the map, wrong instruction
@@ -644,7 +650,8 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
   }
   if (result) // if we were able to find instruction only push operand
   {
-    this->m_finalParserProgram->emplace_back(data.data);
+    this->m_finalParserProgram[pCounter] = (data.data);
+    this->pCounter++;
   }
   std::cout << "[Parser]::[Handle8BitDataInstructions]:[ended for instruction "
             << token.m_tokenValue << "]" << std::endl;
@@ -683,8 +690,10 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
       << "[Parser]::[Handle16BitAddressInstructions]:[ended for instruction "
       << token.m_tokenValue << "]" << std::endl;
   bool resultInst = this->ReturnInstructionHex(token.m_tokenValue + "_Address");
-  this->m_finalParserProgram->emplace_back(address.addressLow);
-  this->m_finalParserProgram->emplace_back(address.addressHigh);
+  this->m_finalParserProgram[this->pCounter] = (address.addressLow);
+  this->pCounter++;
+  this->m_finalParserProgram[this->pCounter] = (address.addressHigh);
+  this->pCounter++;
   return resultInst;
 }
 
