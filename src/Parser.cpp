@@ -17,8 +17,8 @@ void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
     this->ParseSingleLine(this->m_vectTokens[this->m_currentIndex]);
     this->m_currentIndex++; // increment counter variable here
   }
-  std::cout << "[Parser]::[ParseProgram]::[end " << tokens.size() << "]"
-            << std::endl;
+  std::cout << "[Parser]::[ParseProgram]::[end finatl program size="
+            << this->m_finalParserProgram->size() << "]" << std::endl;
 }
 
 //************************PRIVATE FUNCTIONS START******************************
@@ -140,18 +140,24 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << token.m_lineNumber << "]" << std::endl;
     }
   }
-  // here deal with LDA instructions
-  else if (token.m_tokenValue == "LDA") {
-    if (this->HandleLdaInstruction(token) == false) {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing LDA "
-                   "Instruction failed.]"
-                << std::endl;
-    } else {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "LDA at line "
-                << token.m_lineNumber << "]" << std::endl;
-    }
+
+  else if (token.m_tokenValue == "LDA" || token.m_tokenValue == "STA" ||
+           token.m_tokenValue == "JC" || token.m_tokenValue == "JZ" ||
+           token.m_tokenValue == "JP" || token.m_tokenValue == "JPE" ||
+           token.m_tokenValue == "JNC" || token.m_tokenValue == "JNZ" ||
+           token.m_tokenValue == "JM" || token.m_tokenValue == "JPO" ||
+           token.m_tokenValue == "RC" || token.m_tokenValue == "RZ" ||
+           token.m_tokenValue == "RP" || token.m_tokenValue == "RPE" ||
+           token.m_tokenValue == "RNC" || token.m_tokenValue == "RNZ" ||
+           token.m_tokenValue == "RM" || token.m_tokenValue == "RPO" ||
+           token.m_tokenValue == "CC" || token.m_tokenValue == "CZ" ||
+           token.m_tokenValue == "CP" || token.m_tokenValue == "CPE" ||
+           token.m_tokenValue == "CNC" || token.m_tokenValue == "CNZ" ||
+           token.m_tokenValue == "CM" || token.m_tokenValue == "CPO" ||
+           token.m_tokenValue == "LHLD" || token.m_tokenValue == "STHD") {
+    this->Handle16BitAddressInstructions(token);
   }
+
   // here deal with all MOV instructions
   else if (token.m_tokenValue == "MOV") {
     if (this->HandleMovInstruction(token) == false) {
@@ -391,7 +397,7 @@ bool Parser::HandleHltInstruction(const TokenStruct &token) {
  * addresssing = direct
  * 3 byte instruction
  */
-bool Parser::HandleLdaInstruction(const TokenStruct &token) {
+/*bool Parser::HandleLdaInstruction(const TokenStruct &token) {
   std::cout << "[Parser]::[HandleLdaInstruction]:[start]" << std::endl;
   TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
 
@@ -409,11 +415,8 @@ bool Parser::HandleLdaInstruction(const TokenStruct &token) {
   }
   std::cout << "[Parser]::[HandleLdaInstruction]:[end]" << std::endl;
   return this->ReturnInstructionHex("LDA_Address");
-  /*
-  this->m_astVectTokens.push_back(
-      {token.m_lineNumber, token.m_startPos, token.m_endPos,
-       token.m_totalLength, "INS_LDA_Address", 0x76, temp[0], "", "", false});*/
 }
+*/
 
 // handle all MVI instructions
 /***
@@ -512,13 +515,6 @@ bool Parser::HandleMviInstruction(const TokenStruct &token) {
   std::cout << "[Parser]::[HandleMviInstruction]::[end]" << std::endl;
   strInstruction = token.m_tokenValue + "_" + nextTokenRegister;
 
-  /*this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
-                                   token.m_endPos, token.m_totalLength,
-                                   strInstruction, 0x76, nextTokenRegister,
-                                   nextTokenValue, peekTokenBase, false});
-  std::cout << "[Parser]::[HandleMviInstruction]::[end]" << std::endl;
-  return true;*/
-
   return this->ReturnInstructionHex("MVI_" + nextTokenRegister + "_Data");
 }
 
@@ -526,26 +522,29 @@ bool Parser::HandleMviInstruction(const TokenStruct &token) {
 bool Parser::HandleShldInstruction(const TokenStruct &token) {
   std::cout << "[Parser]::[HandleShldInstruction]::[start]" << std::endl;
 
-  // get next 2 tokens
-  std::vector<std::string> temp = this->GetNextNTokens(3);
+  SixteenBitAddress address{"", 0x00, 0x00, false};
 
-  // next token should be a 16bit address
-  if (!Helper::CheckIfAddressInRange(temp[0])) {
+  TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
+
+  std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
+  // std::cout << temp[0] << std::endl;
+  address = Helper::CheckAndReturn16BitAddress(temp[0]);
+  if (type == TOKEN_NUMBER && !address.result) {
+    std::cout << "[Parser]::[HandleShldInstruction]:[address is invalid "
+              << temp[0] << "]" << std::endl;
+
+  } else if (type == TOKEN_LABEL) { // TODO handle label
+  }
+  if (temp[1] != "NEWLINE") {
     return false;
   }
 
-  if (temp[1] != "NEWLINE") { // check if the next token is newline,
-    return false;
-  }
-
-  /*this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
-                                   token.m_endPos, token.m_totalLength,
-                                   token.m_tokenValue, 0x76, "", temp[0],
-                                   temp[1], false});
-  std::cout << "[Parser]::[HandleShldInstruction]::[end]" << std::endl;
-  return true;*/
-  // TODO handle and save the 16bit address
-  return this->ReturnInstructionHex(token.m_tokenValue + "_Address");
+  bool resultInst = this->ReturnInstructionHex(token.m_tokenValue + "_Address");
+  this->m_finalParserProgram->emplace_back(address.addressLow);
+  this->m_finalParserProgram->emplace_back(address.addressHigh);
+  std::cout << "[Parser]::[HandleShldInstruction]:[ended for instruction "
+            << token.m_tokenValue << "]" << std::endl;
+  return resultInst;
 }
 
 // handle STA instructions
@@ -690,10 +689,31 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
   std::cout
       << "[Parser]::[Handle16BitAddressInstructions]:[start for instruction "
       << token.m_tokenValue << "]" << std::endl;
+  SixteenBitAddress address{"", 0x00, 0x00, false};
+
+  TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
+
+  std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
+  // std::cout << temp[0] << std::endl;
+  address = Helper::CheckAndReturn16BitAddress(temp[0]);
+  if (type == TOKEN_NUMBER && !address.result) {
+    std::cout
+        << "[Parser]::[Handle16BitAddressInstructions]:[address is invalid "
+        << temp[0] << "]" << std::endl;
+
+  } else if (type == TOKEN_LABEL) { // TODO handle label
+  }
+  if (temp[1] != "NEWLINE") {
+    return false;
+  }
+
   std::cout
       << "[Parser]::[Handle16BitAddressInstructions]:[ended for instruction "
       << token.m_tokenValue << "]" << std::endl;
-  return false;
+  bool resultInst = this->ReturnInstructionHex(token.m_tokenValue + "_Address");
+  this->m_finalParserProgram->emplace_back(address.addressLow);
+  this->m_finalParserProgram->emplace_back(address.addressHigh);
+  return resultInst;
 }
 
 /***
