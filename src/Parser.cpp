@@ -17,7 +17,7 @@ void Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
     this->ParseSingleLine(this->m_vectTokens[this->m_currentIndex]);
     this->m_currentIndex++; // increment counter variable here
   }
-  std::cout << "[Parser]::[ParseProgram]::[end finatl program size="
+  std::cout << "[Parser]::[ParseProgram]::[end final program size="
             << this->m_finalParserProgram->size() << "]" << std::endl;
 }
 
@@ -389,34 +389,6 @@ bool Parser::HandleHltInstruction(const TokenStruct &token) {
   std::cout << "[Parser]::[HandleHltInstruction]:[end]" << std::endl;
   return this->ReturnInstructionHex(token.m_tokenValue);
 }
-
-/***
- * handle LDA instruction
- * LDA = Opcode
- * 16 bit address = operand
- * addresssing = direct
- * 3 byte instruction
- */
-/*bool Parser::HandleLdaInstruction(const TokenStruct &token) {
-  std::cout << "[Parser]::[HandleLdaInstruction]:[start]" << std::endl;
-  TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
-
-  std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
-  // std::cout << temp[0] << std::endl;
-  Helper::CheckAndReturn16BitAddress(temp[0]);
-  if (type == TOKEN_NUMBER && !Helper::CheckIfAddressInRange(temp[0])) {
-    std::cout << "[Parser]::[HandleLdaInstruction]:[address is invalid "
-              << temp[0] << "]" << std::endl;
-    return false;
-  } else if (type == TOKEN_LABEL) { // TODO handle label
-  }
-  if (temp[1] != "NEWLINE") {
-    return false;
-  }
-  std::cout << "[Parser]::[HandleLdaInstruction]:[end]" << std::endl;
-  return this->ReturnInstructionHex("LDA_Address");
-}
-*/
 
 // handle all MVI instructions
 /***
