@@ -13,7 +13,7 @@ public:
   FileHandler() {}
   void ReadFile(char *file);
   bool WriteBinFile(const std::string &file, unsigned char data[],
-                    unsigned long size);
+                    unsigned short size);
 
 private:
   void GenerateTokens(const std::string &file_text);

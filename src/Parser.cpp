@@ -8,9 +8,7 @@
 u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
   std::cout << "[Parser]::[ParseProgram]::[start Total tokens are= "
             << tokens.size() << "]" << std::endl;
-  for (auto i = 0; i < 1024; i++) {
-    this->m_finalParserProgram[i] = 0x00;
-  }
+
   this->m_vectTokens = tokens; // do everything with the local variable
 
   // main loop iterate over the token vector
@@ -18,6 +16,9 @@ u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
        this->m_currentIndex < this->m_vectTokens.size();) {
     this->ParseSingleLine(this->m_vectTokens[this->m_currentIndex]);
     this->m_currentIndex++; // increment counter variable here
+  }
+  for (auto i = this->pCounter; i < 1024; i++) {
+    this->m_finalParserProgram[i] = 0x00;
   }
   std::cout << "[Parser]::[ParseProgram]::[end final program size="
             << this->pCounter << "]" << std::endl;
