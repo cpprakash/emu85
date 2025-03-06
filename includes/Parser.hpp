@@ -1,5 +1,5 @@
-#ifndef __HEADERS_PARSER_HPP__
-#define __HEADERS_PARSER_HPP__
+#ifndef __INCLUDES_PARSER_HPP__
+#define __INCLUDES_PARSER_HPP__
 
 #include <vector>
 
@@ -10,7 +10,7 @@
  */
 class Parser {
 public:
-  void ParseProgram(const std::vector<TokenStruct> &tokens);
+  u_BYTE *ParseProgram(const std::vector<TokenStruct> &tokens);
 
 private:
   bool ReturnInstructionHex(const std::string &inst);
@@ -66,12 +66,14 @@ private:
 
 private:
   unsigned long m_currentIndex;
+  unsigned int pCounter{0};
   std::string m_currentToken;
 
 public:
   std::vector<TokenStruct> m_vectTokens;
   std::vector<AstStruct> m_astVectTokens;
-  std::vector<unsigned char> m_finalParserProgram[2048];
+  // std::vector<unsigned char> m_finalParserProgram;
+  u_BYTE m_finalParserProgram[1024];
 }; // end class Parser
 
 #endif // end __HEADERS_PARSER_HPP__

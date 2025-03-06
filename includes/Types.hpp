@@ -1,5 +1,5 @@
-#ifndef __INCLUDES_TYPES_HPP
-#define __INCLUDES_TYPES_HPP
+#ifndef __INCLUDES_TYPES_HPP__
+#define __INCLUDES_TYPES_HPP__
 
 #include <array>
 #include <map>
@@ -10,8 +10,53 @@ typedef char BYTE;
 typedef unsigned short u_WORD;
 typedef short WORD;
 
+static unsigned char MIN_CHAR_DATA{0};
+static unsigned char MIN_BOOL_DATA{0b0000};
+static unsigned char MIN_HEX_DATA{0x00};
+static unsigned char MIN_OCT_DATA{00};
+
+static unsigned char MAX_CHAR_DATA{255};
+static unsigned char MAX_BOOL_DATA{0b11111111};
+static unsigned char MAX_HEX_DATA{0xFF};
+static unsigned char MAX_OCT_DATA{0377};
+
+static unsigned short MIN_CHAR_ADDRESS{0};
+static unsigned short MIN_BOOL_ADDRESS{0b0000000000000000};
+static unsigned short MIN_HEX_ADDRESS{0x0000};
+static unsigned short MIN_OCT_ADDRESS{00};
+
+static unsigned short MAX_CHAR_ADDRESS{65535};
+static unsigned short MAX_BOOL_ADDRESS{0b1111111111111111};
+static unsigned short MAX_HEX_ADDRESS{0xFFFF};
+static unsigned short MAX_OCT_ADDRESS{0177777};
+
+/**
+ * Const strings
+ */
+const std::string MESSAGE_SUCCESS{"SUCCESS"};
+
+/***
+ * Failure message strings
+ */
+const std::string MESSAGE_EMPTY_FIELD{"Data/Address is empty."};
+
 // base for the operand
 enum BASE { b, d, h, o };
+
+// struct for 8 bit data
+struct EightBitData {
+  std::string message;
+  int data;
+  bool result;
+};
+
+// result struct with 16 bit address
+struct SixteenBitAddress {
+  std::string message;
+  u_BYTE addressLow;
+  u_BYTE addressHigh;
+  bool result;
+};
 
 // Token type
 enum TOKEN_TYPES {
@@ -37,6 +82,16 @@ enum ERROR_TYPES {
   ERROR_DATA_OUT_OF_RANGE,
   ERROR_NO_NEWLINE_FOUND,
   ERROR_UNKNOW
+};
+
+enum RESULT_TYPES {
+  RESULT_VALID_DATA,
+  RESULT_MISSING_COLON,
+  RESULT_MISSING_HEX,
+  RESULT_ADDRESS_OUT_OF_RANGE,
+  RESULT_DATA_OUT_OF_RANGE,
+  RESULT_NO_NEWLINE_FOUND,
+  RESULT_UNKNOW
 };
 
 /***
@@ -95,9 +150,9 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"ANA_L", 0xA5},
     {"ANA_M", 0xA6},
     {"ANI_Data", 0xE6},
-    {"CALL_Label", 0xCD},
-    {"CC_Label", 0xDC},
-    {"CM_Label", 0xFC},
+    {"CALL_Address", 0xCD},
+    {"CC_Address", 0xDC},
+    {"CM_Address", 0xFC},
     {"CMA", 0x2F},
     {"CMC", 0x3F},
     {"CMP_A", 0xBF},
@@ -108,13 +163,13 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"CMP_H", 0xBC},
     {"CMP_L", 0xBD},
     {"CMP_M", 0xBD},
-    {"CNC_Label", 0xD4},
-    {"CNZ_Label", 0xC4},
-    {"CP_Label", 0xF4},
-    {"CPE_Label", 0xEC},
+    {"CNC_Address", 0xD4},
+    {"CNZ_Address", 0xC4},
+    {"CP_Address", 0xF4},
+    {"CPE_Address", 0xEC},
     {"CPI_Data", 0xFE},
-    {"CPO_Label", 0xE4},
-    {"CZ_Label", 0xCC},
+    {"CPO_Address", 0xE4},
+    {"CZ_Address", 0xCC},
     {"DAA", 0x27},
     {"DAD_B", 0x09},
     {"DAD_D", 0x19},
@@ -148,15 +203,15 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"INX_D", 0x13},
     {"INX_H", 0x23},
     {"INX_SP", 0x33},
-    {"JC_Label", 0xDA},
-    {"JM_Label", 0xFA},
-    {"JMP_Label", 0xC3},
-    {"JNC_Label", 0xD2},
-    {"JNZ_Label", 0xC2},
-    {"JP_Label", 0xF2},
-    {"JPE_Label", 0xEA},
-    {"JPO_Label", 0xE2},
-    {"JZ_Label", 0xCA},
+    {"JC_Address", 0xDA},
+    {"JM_Address", 0xFA},
+    {"JMP_Address", 0xC3},
+    {"JNC_Address", 0xD2},
+    {"JNZ_Address", 0xC2},
+    {"JP_Address", 0xF2},
+    {"JPE_Address", 0xEA},
+    {"JPO_Address", 0xE2},
+    {"JZ_Address", 0xCA},
     {"LDA_Address", 0x3A},
     {"LDAX_B", 0x0A},
     {"LDAX_D", 0x1A},

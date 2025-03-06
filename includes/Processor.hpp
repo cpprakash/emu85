@@ -1,5 +1,5 @@
-#ifndef __HEADERS_PROCESSOR_HPP__
-#define __HEADERS_PROCESSOR_HPP__
+#ifndef __INCLUDES_PROCESSOR_HPP__
+#define __INCLUDES_PROCESSOR_HPP__
 
 class Processor {
 public:

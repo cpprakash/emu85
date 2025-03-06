@@ -1,5 +1,5 @@
-#ifndef __HEADERS_FILEHANDLER_HPP__
-#define __HEADERS_FILEHANDLER_HPP__
+#ifndef __INCLUDES_FILEHANDLER_HPP__
+#define __INCLUDES_FILEHANDLER_HPP__
 
 #include <vector>
 
@@ -12,8 +12,8 @@ class FileHandler {
 public:
   FileHandler() {}
   void ReadFile(char *file);
-  bool WriteBinFile(const std::string &file, const unsigned char data[],
-                    unsigned long size);
+  bool WriteBinFile(const std::string &file, unsigned char data[],
+                    unsigned short size);
 
 private:
   void GenerateTokens(const std::string &file_text);

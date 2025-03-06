@@ -30,9 +30,10 @@ void FileHandler::ReadFile(char *file_path) {
 
     delete[] memblock; // frre up the memory
     // m_assembler.AssembleProgram(this->m_vectTokens);
-    m_parser.ParseProgram(this->m_vectTokens);
-    // m_assembler.WriteBinFile(); // TODO fix it to call the function from
-    // itself
+    unsigned char *data = m_parser.ParseProgram(this->m_vectTokens);
+
+    this->WriteBinFile("test.bin", data,
+                       1024); // TODO fix it to call the function
   } else {
     std::cout << "Unable to open file" << std::endl;
     return;
@@ -123,9 +124,8 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
  * unsigned char array of data
  * and the fiel size, default is 1kBx8
  */
-bool FileHandler::WriteBinFile(const std::string &file,
-                               const unsigned char data[],
-                               unsigned long size = 1024ul) {
+bool FileHandler::WriteBinFile(const std::string &file, unsigned char data[],
+                               unsigned short size = 1024) {
   std::ofstream out_file;
   out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
   if (!out_file.is_open()) {
@@ -133,8 +133,12 @@ bool FileHandler::WriteBinFile(const std::string &file,
               << std::endl;
     return false;
   }
-  std::cout << "Writing bin file with a data size of =" << size << std::endl;
-  out_file.write((char *)(&data), size);
+  std::cout << "Writing bin file with a file size of =" << size << " bytes."
+            << std::endl;
+  for (auto i = 0; i < size; i++) {
+    out_file.write((char *)(&data[i]), sizeof(unsigned char));
+  }
+
   out_file.close();
   return true;
 }

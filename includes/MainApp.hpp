@@ -1,6 +1,6 @@
 
-#ifndef __MAINAPP_HPP__
-#define __MAINAPP_HPP__
+#ifndef __INCLUDES_MAINAPP_HPP__
+#define __INCLUDES_MAINAPP_HPP__
 
 #include <wx/wx.h>
 

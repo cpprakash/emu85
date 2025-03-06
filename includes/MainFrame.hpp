@@ -1,5 +1,5 @@
-#ifndef __HEADER_MAINFRAME__
-#define __HEADER_MAINFRAME__
+#ifndef __INCLUDES_MAINFRAME_HPP__
+#define __INCLUDES_MAINFRAME_HPP__
 
 #include <wx/menu.h>
 #include <wx/stc/stc.h>
