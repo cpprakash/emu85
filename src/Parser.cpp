@@ -17,7 +17,7 @@ u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
     this->ParseSingleLine(this->m_vectTokens[this->m_currentIndex]);
     this->m_currentIndex++; // increment counter variable here
   }
-  for (auto i = this->pCounter; i < 1024; i++) {
+  for (auto i = this->pCounter; i < BIN_FILE_SIZE; i++) {
     this->m_finalParserProgram[i] = 0x00;
   }
   std::cout << "[Parser]::[ParseProgram]::[end final program size="

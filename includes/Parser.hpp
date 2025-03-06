@@ -72,22 +72,7 @@ private:
 public:
   std::vector<TokenStruct> m_vectTokens;
   std::vector<AstStruct> m_astVectTokens;
-  // std::vector<unsigned char> m_finalParserProgram;
-  u_BYTE m_finalParserProgram[1024];
+  u_BYTE m_finalParserProgram[BIN_FILE_SIZE];
 }; // end class Parser
 
 #endif // end __HEADERS_PARSER_HPP__
-
-/***
- * struct AstStruct {
-  unsigned int lineNumber;   // line of the token
-  unsigned int startPos;     // start pos of the token
-  unsigned int endPos;       // end pos of token
-  unsigned long totalLength; // length of the token
-  std::string instruction;   // actual value
-  std::string operandOne;    // actual value
-  std::string operandTwo;    // actual value
-  u_BYTE numberBase;
-  bool hasErrors;
-};
- */

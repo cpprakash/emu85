@@ -33,7 +33,7 @@ void FileHandler::ReadFile(char *file_path) {
     unsigned char *data = m_parser.ParseProgram(this->m_vectTokens);
 
     this->WriteBinFile("test.bin", data,
-                       1024); // TODO fix it to call the function
+                       BIN_FILE_SIZE); // TODO fix it to call the function
   } else {
     std::cout << "Unable to open file" << std::endl;
     return;
@@ -125,7 +125,7 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
  * and the fiel size, default is 1kBx8
  */
 bool FileHandler::WriteBinFile(const std::string &file, unsigned char data[],
-                               unsigned short size = 1024) {
+                               unsigned short size = BIN_FILE_SIZE) {
   std::ofstream out_file;
   out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
   if (!out_file.is_open()) {
