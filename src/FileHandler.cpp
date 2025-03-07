@@ -50,6 +50,22 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
   unsigned int cur_pos{0};
   // std::cout << file_text << std::endl;
   for (unsigned int i = 0; i < file_text.length(); i++) {
+    if (file_text[i] == ';') // starting of comment
+    {
+      std::string comment = "";
+      bool isComment = true;
+      while (isComment) // run this loop until new line is not detected
+      {
+        if (file_text[i] == '\n' || file_text[i] == '\r') {
+          isComment = false;
+        }
+        comment += file_text[i];
+        i++;
+      }
+      i--; // decrease counter so next token will be NEWLINE
+      this->m_vectTokens.push_back(
+          {line_number, i, i + 1, 1, TOKEN_COMMENT, comment});
+    }
     if (file_text[i] == '\n' || file_text[i] == '\r') { // newline character
       cur_pos = 0;
       this->m_vectTokens.push_back(
@@ -57,11 +73,13 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       line_number++;
       continue;
     }
-    if (isspace(file_text[i])) { // check if token is space, do nothing
+    // check if token is space, do nothing
+    if (isspace(file_text[i])) {
       cur_pos++;
       continue;
     }
-    if (isalnum(file_text[i])) { // check if token starts with character
+    // check if token starts with character
+    if (isalnum(file_text[i])) {
       start_pos = i;
       std::string temp_string;
       while (isalnum(file_text[i])) { // collect the token
@@ -103,9 +121,6 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
     } else if (file_text[i] == ':') {
       this->m_vectTokens.push_back(
           {line_number, i, i + 1, 1, TOKEN_COLON, "COLON"});
-    } else if (file_text[i] == ';') {
-      this->m_vectTokens.push_back(
-          {line_number, i, i + 1, 1, TOKEN_COMMENT, "COMMENT"});
     } else {
       this->m_vectTokens.push_back(
           {line_number, i, i + 1, 1, TOKEN_UNKNOWN, "UNKNWON"});

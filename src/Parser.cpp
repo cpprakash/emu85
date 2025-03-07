@@ -424,9 +424,13 @@ bool Parser::HandleMovInstruction(const TokenStruct &token) {
     return false;
   }
   if (temp[3] != "NEWLINE") {
-    std::cout << "[Parser]::[HandleMovInstruction]::[missing NEWLINE]"
-              << std::endl;
-    return false;
+    if (temp[3][0] == ';' && this->PeekNextToken() == "NEWLINE") {
+      // do nothing
+    } else {
+      std::cout << "[Parser]::[HandleMovInstruction]::[missing NEWLINE]"
+                << std::endl;
+      return false;
+    }
   }
   if (temp[0] == "M" && temp[2] == "M") {
     std::cout << "[Parser]::[HandleMovInstruction]::[MOV M, M is not allowed]"
@@ -623,7 +627,7 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
     std::cout << "[Parser]::[Handle8BitDataInstructions]::[first operand is "
                  "not valid]"
               << std::endl;
-    return false;
+    result = false;
   }
   // expects a comma between register and 8bit data
   if (temp[1] != "COMMA") {
@@ -638,9 +642,14 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
   }
   // expects a new line at the end
   if (temp[3] != "NEWLINE") {
-    std::cout
-        << "[Parser]::[Handle8BitDataInstructions]::[expecting a new line]"
-        << std::endl;
+    if (temp[3][0] == ';' && this->PeekNextToken() == "NEWLINE") {
+      // do nothing
+    } else {
+      result = false;
+      std::cout
+          << "[Parser]::[Handle8BitDataInstructions]::[expecting a new line]"
+          << std::endl;
+    }
   }
 
   if (token.m_tokenValue == "MVI") {
@@ -674,7 +683,7 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
   TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
 
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
-  // std::cout << temp[0] << std::endl;
+
   address = Helper::CheckAndReturn16BitAddress(temp[0]);
   if (type == TOKEN_NUMBER && !address.result) {
     std::cout
@@ -683,8 +692,15 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
 
   } else if (type == TOKEN_LABEL) { // TODO handle label
   }
+
   if (temp[1] != "NEWLINE") {
-    return false;
+    if (temp[1][0] == ';' && this->PeekNextToken() == "NEWLINE") {
+      std::cout << "[Parser]::[Handle16BitAddressInstructions]:[its a comment, "
+                   "ahve to get another token "
+                << temp[1] << "]" << std::endl;
+    } else {
+      return false;
+    }
   }
 
   std::cout
