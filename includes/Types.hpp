@@ -30,6 +30,8 @@ static unsigned short MAX_BOOL_ADDRESS{0b1111111111111111};
 static unsigned short MAX_HEX_ADDRESS{0xFFFF};
 static unsigned short MAX_OCT_ADDRESS{0177777};
 
+static const unsigned short BIN_FILE_SIZE{1024};
+
 /**
  * Const strings
  */

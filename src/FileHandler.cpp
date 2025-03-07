@@ -33,7 +33,7 @@ void FileHandler::ReadFile(char *file_path) {
     unsigned char *data = m_parser.ParseProgram(this->m_vectTokens);
 
     this->WriteBinFile("test.bin", data,
-                       1024); // TODO fix it to call the function
+                       BIN_FILE_SIZE); // TODO fix it to call the function
   } else {
     std::cout << "Unable to open file" << std::endl;
     return;
@@ -50,6 +50,22 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
   unsigned int cur_pos{0};
   // std::cout << file_text << std::endl;
   for (unsigned int i = 0; i < file_text.length(); i++) {
+    if (file_text[i] == ';') // starting of comment
+    {
+      std::string comment = "";
+      bool isComment = true;
+      while (isComment) // run this loop until new line is not detected
+      {
+        if (file_text[i] == '\n' || file_text[i] == '\r') {
+          isComment = false;
+        }
+        comment += file_text[i];
+        i++;
+      }
+      i--; // decrease counter so next token will be NEWLINE
+      this->m_vectTokens.push_back(
+          {line_number, i, i + 1, 1, TOKEN_COMMENT, comment});
+    }
     if (file_text[i] == '\n' || file_text[i] == '\r') { // newline character
       cur_pos = 0;
       this->m_vectTokens.push_back(
@@ -57,11 +73,13 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       line_number++;
       continue;
     }
-    if (isspace(file_text[i])) { // check if token is space, do nothing
+    // check if token is space, do nothing
+    if (isspace(file_text[i])) {
       cur_pos++;
       continue;
     }
-    if (isalnum(file_text[i])) { // check if token starts with character
+    // check if token starts with character
+    if (isalnum(file_text[i])) {
       start_pos = i;
       std::string temp_string;
       while (isalnum(file_text[i])) { // collect the token
@@ -103,9 +121,6 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
     } else if (file_text[i] == ':') {
       this->m_vectTokens.push_back(
           {line_number, i, i + 1, 1, TOKEN_COLON, "COLON"});
-    } else if (file_text[i] == ';') {
-      this->m_vectTokens.push_back(
-          {line_number, i, i + 1, 1, TOKEN_COMMENT, "COMMENT"});
     } else {
       this->m_vectTokens.push_back(
           {line_number, i, i + 1, 1, TOKEN_UNKNOWN, "UNKNWON"});
@@ -125,7 +140,7 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
  * and the fiel size, default is 1kBx8
  */
 bool FileHandler::WriteBinFile(const std::string &file, unsigned char data[],
-                               unsigned short size = 1024) {
+                               unsigned short size = BIN_FILE_SIZE) {
   std::ofstream out_file;
   out_file.open("./tests/prog.bin", std::ios::out | std::ios::binary);
   if (!out_file.is_open()) {
