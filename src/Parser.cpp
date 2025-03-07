@@ -1,7 +1,6 @@
 #include "../includes/Parser.hpp"
 #include "../includes/Helper.hpp"
 
-#include <algorithm>
 #include <iostream>
 #include <vector>
 
