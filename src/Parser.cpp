@@ -129,7 +129,6 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
     // std::cout << "ACI " << std::endl;
     this->Handle8BitDataInstructions(token);
   }
-  // all AXX instructions
 
   // handle HLT instruction
   else if (token.m_tokenValue == "HLT") {
