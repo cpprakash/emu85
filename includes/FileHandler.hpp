@@ -12,7 +12,7 @@ class FileHandler {
 public:
   FileHandler() {}
   void ReadFile(char *file);
-  bool WriteBinFile(const std::string &file, unsigned char data[],
+  bool WriteBinFile(const std::string &file, u_BYTE data[],
                     unsigned short size);
 
 private:
