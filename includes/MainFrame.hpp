@@ -23,8 +23,7 @@ private:
   wxBoxSizer *m_pOuterBoxSizer;
   wxBoxSizer *m_pRegistersBoxSizer;
   wxBoxSizer *m_pCodeWindowBoxSizer;
-  wxBoxSizer *m_pRomBoxSizer; // displays the ROM
-  wxBoxSizer *m_pRamBoxSizer; // displays the RAM
+  wxBoxSizer *m_pRomRamBoxSizer; // displays the ROM+RAM Boxers
 
   /***
    * text control where youc an write your code

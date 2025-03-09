@@ -98,15 +98,19 @@ void MainFrame::CreateBoxSizers() {
   this->m_pCodeWindowBoxSizer->Add(this->m_pCodeWindow);
   this->m_pCodeWindowBoxSizer->Add(this->m_pConsoleListView);
 
-  this->m_pRomBoxSizer = new wxBoxSizer(wxVERTICAL);
-  this->m_pRamBoxSizer = new wxBoxSizer(wxVERTICAL);
+  this->m_pRomRamBoxSizer = new wxBoxSizer(wxVERTICAL);
+  this->m_pRomRamBoxSizer->Add(this->m_pRomListView);
+  this->m_pRomRamBoxSizer->Add(this->m_pRamListView);
+
   wxStaticText *text =
       new wxStaticText(this, wxID_STATIC, wxT("Write here register values"));
   this->m_pOuterBoxSizer->Add(text);
   this->m_pOuterBoxSizer->Add(
       this->m_pCodeWindowBoxSizer); // add codeWindowBoxSizer
-  this->m_pOuterBoxSizer->Add(this->m_pRomListView);
-  this->m_pOuterBoxSizer->Add(this->m_pRamListView);
+
+  this->m_pOuterBoxSizer->Add(
+      this->m_pRomRamBoxSizer); // add Ram_Rom boxer to this boxer
+
   SetSizer(this->m_pOuterBoxSizer);
   this->m_pOuterBoxSizer->Fit(this);
 }
