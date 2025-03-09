@@ -7,6 +7,17 @@
 
 class MainFrame : public wxFrame {
 private:
+  /***
+   * Menu related variables
+   */
+  wxMenuBar *m_pMainMenuBar;
+  wxMenu *m_pFileMenu;
+  wxMenu *m_pEditMenu;
+  wxMenu *m_pToolsMenu;
+  wxMenu *m_pViewMenu;
+  wxMenu *m_pRunMenu;
+  wxMenu *m_pHelpMenu;
+
   wxMenuBar *m_pMainMenu;
   wxBoxSizer *outer_box;
 

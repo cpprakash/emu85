@@ -3,6 +3,7 @@
 #include "includes/FileHandler.hpp"
 #include <iostream>
 #define CONSOLE
+#define DEBUG 0
 
 /***
  * Main function, takes the filepath of the assembly as the argument

@@ -20,8 +20,8 @@ HELPER=$(BUILD_DIR)/Helper.o
 API=$(BUILD_DIR)/Api.o
 DISASSEMBLER=$(BUILD_DIR)/Disassembler.o
 
-emu8085: createdir MainApp.o main.o FileHandler.o Parser.o Instructions.o Assembler.o Api.o Helper.o MainFrame.o
-	$(PROJECT) $(BUILD_DIR)/MainApp.o $(MAIN) $(INSTRUCTIONS) $(WX_WIDGET) $(ASSEMBLER) $(API) $(MAIN_FRAME)
+emu8085: createdir MainApp.o main.o FileHandler.o Parser.o Instructions.o Assembler.o Helper.o MainFrame.o FileHandler.o Helper.o 
+	$(PROJECT) $(BUILD_DIR)/MainApp.o $(MAIN) $(INSTRUCTIONS) $(WX_WIDGET) $(ASSEMBLER) $(MAIN_FRAME) $(FILE_HANDLER) $(HELPER) $(PARSER) 
 
 createdir: clean
 	mkdir $(BUILD_DIR)
