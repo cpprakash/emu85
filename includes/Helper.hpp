@@ -5,9 +5,8 @@
 #include <string>
 #include <vector>
 
-//#include "../includes/Types.hpp"
-struct EightBitData;
-struct SixteenBitAddress;
+#include "../includes/Types.hpp"
+
 class Helper {
 
 public:
@@ -15,7 +14,7 @@ public:
   std::vector<SixteenBitAddress> address_vector;
 
 private:
-  std::map<std::string, unsigned char> *m_mapInstructionTable;
+  std::map<std::string, u_BYTE> *m_mapInstructionTable;
 
 public:
   static bool CheckIfRegistersAreValid(const std::string &reg);
@@ -23,8 +22,6 @@ public:
                                     const std::string &base);
   static bool CheckIfAddressInRange(const std::string &add);
   static bool CheckIfBaseIsValid(const std::string &base);
-
-  static int ConvertHexToDecimal(const std::string &num);
 
   static std::string ConvertToUppercase(const std::string &input);
 

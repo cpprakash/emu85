@@ -105,7 +105,6 @@ std::vector<std::string> Parser::GetNextNTokens(unsigned int howMany = 1) {
 }
 
 std::string Parser::PeekNextToken(unsigned long howMany) {
-  // std::cout << "[Parser]::[PeekNextToken] called" << std::endl;
   return this->m_vectTokens[m_currentIndex + howMany].m_tokenValue;
 }
 
@@ -456,11 +455,6 @@ bool Parser::HandleMviInstruction(const TokenStruct &token) {
   // unsigned char dataValue;
   std::vector<std::string> temp = this->GetNextNTokens(5); // will get only 4
 
-  // std::vector<std::string> temp = this->GetNextNTokens(6); // will get only 5
-
-  /*for (unsigned long i = 0; i < temp.size(); i++)
-    std::cout << temp[i] << std::endl;*/
-
   nextTokenRegister = temp[0];
 
   if (!Helper::CheckIfRegistersAreValid(nextTokenRegister)) {
@@ -568,11 +562,9 @@ bool Parser::ReturnInstructionHex(const std::string &inst) {
     this->m_finalParserProgram[pCounter] = (code->second);
     this->pCounter++;
     result = true;
-    // return code->second;
   } else { // instruction was not found in the map, wrong instruction
     std::cout << "[Parser]::[ReturnInstructionHex]::[Error in retreiving key]"
               << std::endl;
-    // return 0x76; // return halt as of now
     result = false;
   }
   std::cout << "[Parser]::[ReturnInstructionHex]::[end for instruction " << inst

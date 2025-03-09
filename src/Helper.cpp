@@ -236,9 +236,8 @@ SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
       address.message = "FAIL. The address is greater than 2 byte";
     } else { // valid 16 bit addrss in decimal
       address.message = MESSAGE_SUCCESS;
-      address.addressLow = static_cast<unsigned char>(num & kLOW_BIT_MASK);
-      address.addressHigh =
-          static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+      address.addressLow = static_cast<u_BYTE>(num & kLOW_BIT_MASK);
+      address.addressHigh = static_cast<u_BYTE>((num & kHIGH_BIT_MASK) >> 8);
       address.result = true;
     }
   }
@@ -258,9 +257,8 @@ SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
         address.message = "FAIL. The address is greater than 2 byte";
       } else { // valid 16 bit addrss in decimal
         address.message = MESSAGE_SUCCESS;
-        address.addressLow = static_cast<unsigned char>((num & kLOW_BIT_MASK));
-        address.addressHigh =
-            static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+        address.addressLow = static_cast<u_BYTE>((num & kLOW_BIT_MASK));
+        address.addressHigh = static_cast<u_BYTE>((num & kHIGH_BIT_MASK) >> 8);
         address.result = true;
       }
 
@@ -274,9 +272,8 @@ SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
         address.message = "FAIL. The address is greater than 2 byte";
       } else { // valid 16 bit addrss in binary
         address.message = MESSAGE_SUCCESS;
-        address.addressLow = static_cast<unsigned char>((num & kLOW_BIT_MASK));
-        address.addressHigh =
-            static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+        address.addressLow = static_cast<u_BYTE>((num & kLOW_BIT_MASK));
+        address.addressHigh = static_cast<u_BYTE>((num & kHIGH_BIT_MASK) >> 8);
         address.result = true;
       }
 
@@ -290,9 +287,8 @@ SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
         address.message = "FAIL. The address is greater than 2 byte";
       } else { // valid 16 bit addrss in octal
         address.message = MESSAGE_SUCCESS;
-        address.addressLow = static_cast<unsigned char>(num & kLOW_BIT_MASK);
-        address.addressHigh =
-            static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+        address.addressLow = static_cast<u_BYTE>(num & kLOW_BIT_MASK);
+        address.addressHigh = static_cast<u_BYTE>((num & kHIGH_BIT_MASK) >> 8);
         address.result = true;
       }
 
@@ -308,9 +304,8 @@ SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
         address.message = "FAIL. The address is greater than 2 byte";
       } else { // valid 16 bit addrss in hex
         address.message = MESSAGE_SUCCESS;
-        address.addressLow = static_cast<unsigned char>(num & kLOW_BIT_MASK);
-        address.addressHigh =
-            static_cast<unsigned char>((num & kHIGH_BIT_MASK) >> 8);
+        address.addressLow = static_cast<u_BYTE>(num & kLOW_BIT_MASK);
+        address.addressHigh = static_cast<u_BYTE>((num & kHIGH_BIT_MASK) >> 8);
         address.result = true;
       }
     } else { // invalid number
