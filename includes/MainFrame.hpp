@@ -1,6 +1,7 @@
 #ifndef __INCLUDES_MAINFRAME_HPP__
 #define __INCLUDES_MAINFRAME_HPP__
 
+#include <wx/listctrl.h>
 #include <wx/menu.h>
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
@@ -18,10 +19,21 @@ private:
   wxMenu *m_pRunMenu;
   wxMenu *m_pHelpMenu;
 
-  wxMenuBar *m_pMainMenu;
-  wxBoxSizer *outer_box;
+  /***sizers variables*/
+  wxBoxSizer *m_pOuterBoxSizer;
+  wxBoxSizer *m_pRegistersBoxSizer;
+  wxBoxSizer *m_pCodeWindowBoxSizer;
+  wxBoxSizer *m_pRomBoxSizer; // displays the ROM
+  wxBoxSizer *m_pRamBoxSizer; // displays the RAM
 
-  wxTextCtrl *m_pCodeWindow; // Main Text Control for code
+  /***
+   * text control where youc an write your code
+   */
+  wxTextCtrl *m_pCodeWindow;      // Main Text Control for code
+  wxListView *m_pConsoleListView; // List view to display ROM
+
+  wxListView *m_pRomListView; // List view to display ROM
+  wxListView *m_pRamListView; // List view to display RAM
 
 private:
   void CreateMenuBar(void);     // Create MenuBar

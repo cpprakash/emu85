@@ -7,8 +7,8 @@ MainFrame::MainFrame()
               wxPoint(0, 0)) {
   this->CreateMenuBar();
   this->CreateStatusBar();
-  // CreateBoxSizers();
   this->CreateGUIControls();
+  this->CreateBoxSizers();
   SetStatusText("Welcome to 8085 Microporcessor Simulator.");
   this->SetMinClientSize(wxSize(800, 600));
 }
@@ -80,7 +80,36 @@ void MainFrame::CreateMenuBar() {
   SetMenuBar(m_pMainMenuBar);
 }
 
-void MainFrame::CreateBoxSizers() { outer_box = new wxBoxSizer(wxVERTICAL); }
+void MainFrame::CreateBoxSizers() {
+  /***
+   * the main outer box sizer to hold all controls
+   */
+  this->m_pOuterBoxSizer = new wxBoxSizer(wxHORIZONTAL);
+  /***
+   * this registerboxsizer will hold all the registers info
+   */
+  this->m_pRegistersBoxSizer = new wxBoxSizer(wxVERTICAL);
+  /***
+   * this box sizer will hold code window on the top and the console window at
+   * the bottom
+   */
+  this->m_pCodeWindowBoxSizer = new wxBoxSizer(wxVERTICAL);
+
+  this->m_pCodeWindowBoxSizer->Add(this->m_pCodeWindow);
+  this->m_pCodeWindowBoxSizer->Add(this->m_pConsoleListView);
+
+  this->m_pRomBoxSizer = new wxBoxSizer(wxVERTICAL);
+  this->m_pRamBoxSizer = new wxBoxSizer(wxVERTICAL);
+  wxStaticText *text =
+      new wxStaticText(this, wxID_STATIC, wxT("Write here register values"));
+  this->m_pOuterBoxSizer->Add(text);
+  this->m_pOuterBoxSizer->Add(
+      this->m_pCodeWindowBoxSizer); // add codeWindowBoxSizer
+  this->m_pOuterBoxSizer->Add(this->m_pRomListView);
+  this->m_pOuterBoxSizer->Add(this->m_pRamListView);
+  SetSizer(this->m_pOuterBoxSizer);
+  this->m_pOuterBoxSizer->Fit(this);
+}
 
 /***
  * Create all GUI Controls in this function
@@ -97,4 +126,10 @@ void MainFrame::CreateGUIControls() {
   code_window->SetDefaultStyle(wxTextAttr(*wxBLUE));
   code_window->AppendText("Blue on grey text\n");*/
   this->m_pCodeWindow->LoadFile("tests/testprog1.asm", wxTEXT_TYPE_ANY);
+  this->m_pConsoleListView =
+      new wxListView(this, wxID_ANY, wxDefaultPosition, wxSize(250, 200));
+  this->m_pRomListView =
+      new wxListView(this, wxID_ANY, wxDefaultPosition, wxSize(250, 200));
+  this->m_pRamListView =
+      new wxListView(this, wxID_ANY, wxDefaultPosition, wxSize(250, 200));
 }
