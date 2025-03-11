@@ -60,6 +60,15 @@ struct SixteenBitAddress {
   bool result;
 };
 
+enum LOG_LEVELS {
+  LOG_FATAL,
+  LOG_ERROR,
+  LOG_WARN,
+  LOG_INFO,
+  LOG_DEBUG,
+  LOG_TRACE
+};
+
 // Token type
 enum TOKEN_TYPES {
   TOKEN_INSTRUCTION,
