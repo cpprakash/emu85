@@ -1,13 +1,13 @@
 #include "includes/FileHandler.hpp"
 #include <iostream>
-#define DEBUG 1
+#define CONSOLE
 
 /***
  * Main function, takes the filepath of the assembly as the argument
  * and then calls the ReadFile method from FileHandler class
  */
 
-#ifdef DEBUG
+#ifdef CONSOLE
 int main(int argc, char *argv[]) {
   std::cout << "Hello World from 8085 Emulator argc=" << argc << argv[1]
             << std::endl;
