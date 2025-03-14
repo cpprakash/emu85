@@ -5,7 +5,8 @@
 #include <iostream>
 #include <vector>
 
-u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
+u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens,
+                             const bool hasLabel) {
   std::cout << "[Parser]::[ParseProgram]::[start Total tokens are= "
             << tokens.size() << "]" << std::endl;
 

@@ -127,6 +127,16 @@ struct SymbolTable {
 };
 
 /***
+ * struct for SymbolTable
+ */
+struct SymbolTable {
+  bool symbolFound;
+  std::string symbolValue;
+  unsigned int symbolLineNumber;
+  unsigned short symbolAddress;
+};
+
+/***
  * Token struct used for initial token generation from the file
  */
 // TODO remove m_ from here
