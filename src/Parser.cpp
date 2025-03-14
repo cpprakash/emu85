@@ -1,15 +1,18 @@
 #include "../includes/Parser.hpp"
 #include "../includes/Helper.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
-u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
+u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens,
+                             const bool hasLabel) {
   std::cout << "[Parser]::[ParseProgram]::[start Total tokens are= "
             << tokens.size() << "]" << std::endl;
 
   this->m_vectTokens = tokens; // do everything with the local variable
-
+  // if program has lables, we need a symbol table to resovle the addr of label
+  this->m_bHasLabel = hasLabel;
   // main loop iterate over the token vector
   for (this->m_currentIndex = 0ul;
        this->m_currentIndex < this->m_vectTokens.size();) {
@@ -104,6 +107,10 @@ std::vector<std::string> Parser::GetNextNTokens(unsigned int howMany = 1) {
   return temp;
 }
 
+/***
+ * just peek the next token
+ * we dont need to consume this token yet
+ */
 std::string Parser::PeekNextToken(unsigned long howMany) {
   return this->m_vectTokens[m_currentIndex + howMany].m_tokenValue;
 }
@@ -146,16 +153,17 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
            token.m_tokenValue == "JC" || token.m_tokenValue == "JZ" ||
            token.m_tokenValue == "JP" || token.m_tokenValue == "JPE" ||
            token.m_tokenValue == "JNC" || token.m_tokenValue == "JNZ" ||
-           token.m_tokenValue == "JM" || token.m_tokenValue == "JPO" ||
-           token.m_tokenValue == "RC" || token.m_tokenValue == "RZ" ||
-           token.m_tokenValue == "RP" || token.m_tokenValue == "RPE" ||
-           token.m_tokenValue == "RNC" || token.m_tokenValue == "RNZ" ||
-           token.m_tokenValue == "RM" || token.m_tokenValue == "RPO" ||
-           token.m_tokenValue == "CC" || token.m_tokenValue == "CZ" ||
-           token.m_tokenValue == "CP" || token.m_tokenValue == "CPE" ||
-           token.m_tokenValue == "CNC" || token.m_tokenValue == "CNZ" ||
-           token.m_tokenValue == "CM" || token.m_tokenValue == "CPO" ||
-           token.m_tokenValue == "LHLD" || token.m_tokenValue == "STHD") {
+           token.m_tokenValue == "JM" || token.m_tokenValue == "JMP" ||
+           token.m_tokenValue == "JPO" || token.m_tokenValue == "RC" ||
+           token.m_tokenValue == "RZ" || token.m_tokenValue == "RP" ||
+           token.m_tokenValue == "RPE" || token.m_tokenValue == "RNC" ||
+           token.m_tokenValue == "RNZ" || token.m_tokenValue == "RM" ||
+           token.m_tokenValue == "RPO" || token.m_tokenValue == "CC" ||
+           token.m_tokenValue == "CZ" || token.m_tokenValue == "CP" ||
+           token.m_tokenValue == "CPE" || token.m_tokenValue == "CNC" ||
+           token.m_tokenValue == "CNZ" || token.m_tokenValue == "CM" ||
+           token.m_tokenValue == "CPO" || token.m_tokenValue == "LHLD" ||
+           token.m_tokenValue == "STHD") {
     this->Handle16BitAddressInstructions(token);
   }
 
@@ -215,39 +223,58 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
 }
 
 /***
- * Handle the label
+ * Handle the label with string input
+ */
+void Parser::HandleTokenLabel(const std::string &token) {
+  std::cout
+      << "[Parser]::[HandleTokenLabelSTRING]::[Start]::[Checking for a label  "
+      << " with value = " << token << "]" << std::endl;
+  Helper::CheckIfLabelNameIsValid(token);
+}
+/***
+ * Handle the label with token input overloaded
  */
 void Parser::HandleTokenLabel(const TokenStruct &token) {
   std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label found at "
             << token.m_lineNumber << " with value = " << token.m_tokenValue
             << "]" << std::endl;
-  if (token.m_tokenValue.length() > 6) { // check if label is less than 6 char
-    std::cout << "[Parser]::[HandleTokenLabel]::[A label  cannot have more "
-                 "than 6 characters "
-              << token.m_tokenValue << "]" << std::endl;
+  if (!Helper::CheckIfLabelNameIsValid(token.m_tokenValue)) {
+    std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label failed "
+              << token.m_lineNumber << " with value = " << token.m_tokenValue
+              << " is not a label]" << std::endl;
     return;
   }
-  // case check label if has only one char, then its not any illegal char
-  if (token.m_tokenValue.length() == 1 &&
-      (Helper::CheckIfRegistersAreValid(token.m_tokenValue) ||
-       token.m_tokenValue.substr(1, 1) == "?" ||
-       token.m_tokenValue.substr(1, 1) == "@" ||
-       isdigit(token.m_tokenValue[0]))) {
-    std::cout << "[Parser]::[HandleTokenLabel]::[A label cannot have one "
-                 "character with either @,?, a register name or with a digit "
-              << token.m_tokenValue << "]" << std::endl;
-    return;
-  }
-  if (this->PeekNextToken() == "COLON") {
+  if (this->PeekNextToken() == "COLON") { // label declaration here
     std::cout << "[Parser]::[HandleTokenLabel]::[A label found at "
               << token.m_lineNumber << " with value = " << token.m_tokenValue
               << "]" << std::endl;
+    // check if the same label has been declared before
+    // if yes, then its an error, you cant declare a label twice
+    // otherwise save it to the symbol table
+    bool labelFound = false;
+    for (unsigned long int i = 0; i < this->m_vecSymbolTable.size(); i++) {
+      if (this->m_vecSymbolTable[i].symbolValue == token.m_tokenValue) {
+        labelFound = true;
+        return;
+      }
+    }
+    if (labelFound) {
+      std::cout << "ERRRROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" << std::endl;
+    }
+    if (!labelFound) {
+      std::cout << "Okay the symbol was not found, will create it for address "
+                << this->pCounter << std::endl;
+      m_vecSymbolTable.push_back(
+          {false, token.m_tokenValue, token.m_lineNumber, this->pCounter});
+    }
+
     this->GetNextToken(); // advance tokens by one
     return;
   }
-  std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label failed "
-            << token.m_lineNumber << " with value = " << token.m_tokenValue
-            << " is not a label]" << std::endl;
+  std::cout
+      << "[Parser]::[HandleTokenLabel]::[End]::[Checking for a label failed "
+      << token.m_lineNumber << " with value = " << token.m_tokenValue
+      << " is not a label]" << std::endl;
 }
 
 /***
@@ -675,22 +702,32 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
 
   address = Helper::CheckAndReturn16BitAddress(temp[0]);
-  if (type == TOKEN_NUMBER && !address.result) {
-    std::cout
-        << "[Parser]::[Handle16BitAddressInstructions]:[address is invalid "
-        << temp[0] << "]" << std::endl;
+  if (type == TOKEN_NUMBER) {
+    if (!address.result) { // if the result is invalid
+      std::cout
+          << "[Parser]::[Handle16BitAddressInstructions]:[address is invalid "
+          << temp[0] << "]" << std::endl;
+    } else if (temp[1] != "NEWLINE") {
+      if (temp[1][0] == ';' && this->PeekNextToken() == "NEWLINE") {
+        std::cout
+            << "[Parser]::[Handle16BitAddressInstructions]:[its a comment, "
+               "ahve to get another token "
+            << temp[1] << "]" << std::endl;
+      } else {
+        return false;
+      }
+    }
 
   } else if (type == TOKEN_LABEL) { // TODO handle label
-  }
+    this->HandleTokenLabel(temp[0]);
+    /*std::cout << "The label is been found with label name : " << temp[0]
+              << std::endl;
+    if (temp[1] == "COLON") {
+      std::cout << "The label is defined here : " << temp[0] << std::endl;
 
-  if (temp[1] != "NEWLINE") {
-    if (temp[1][0] == ';' && this->PeekNextToken() == "NEWLINE") {
-      std::cout << "[Parser]::[Handle16BitAddressInstructions]:[its a comment, "
-                   "ahve to get another token "
-                << temp[1] << "]" << std::endl;
-    } else {
-      return false;
-    }
+    } else if (temp[1] == "NEWLINE") {
+      std::cout << "The label is been called here : " << temp[0] << std::endl;
+    }*/
   }
 
   std::cout

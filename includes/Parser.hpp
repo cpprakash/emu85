@@ -10,7 +10,8 @@
  */
 class Parser {
 public:
-  u_BYTE *ParseProgram(const std::vector<TokenStruct> &tokens);
+  u_BYTE *ParseProgram(const std::vector<TokenStruct> &tokens,
+                       const bool hasLabel);
 
 private:
   bool ReturnInstructionHex(const std::string &inst);
@@ -20,12 +21,15 @@ private:
   void HandleAllInstructions(const TokenStruct &token);
 
   void HandleTokenLabel(const TokenStruct &token);
+  void HandleTokenLabel(const std::string &token);
   void HandleTokenComment(const TokenStruct &token);
 
   void ParseSingleLine(const TokenStruct &token);
   std::string GetNextToken();
   std::vector<std::string> GetNextNTokens(unsigned int howMany);
   std::string PeekNextToken(unsigned long howMany = 1);
+
+  std::vector<SymbolTable> m_vecSymbolTable;
 
   /**
    * All instructions with AXX
@@ -66,8 +70,9 @@ private:
 
 private:
   unsigned long m_currentIndex;
-  unsigned int pCounter{0};
+  unsigned short pCounter{0};
   std::string m_currentToken;
+  bool m_bHasLabel{false};
 
 public:
   std::vector<TokenStruct> m_vectTokens;

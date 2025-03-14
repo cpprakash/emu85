@@ -92,6 +92,7 @@ enum ERROR_TYPES {
   ERROR_ADDRESS_OUT_OF_RANGE,
   ERROR_DATA_OUT_OF_RANGE,
   ERROR_NO_NEWLINE_FOUND,
+  ERROR_SYMBOL_REDEFINED, // if a lable is redefined
   ERROR_UNKNOW
 };
 
@@ -103,6 +104,16 @@ enum RESULT_TYPES {
   RESULT_DATA_OUT_OF_RANGE,
   RESULT_NO_NEWLINE_FOUND,
   RESULT_UNKNOW
+};
+
+/***
+ * struct for SymbolTable
+ */
+struct SymbolTable {
+  bool symbolFound;
+  std::string symbolValue;
+  unsigned int symbolLineNumber;
+  unsigned short symbolAddress;
 };
 
 /***
