@@ -19,6 +19,7 @@ private:
   void GenerateTokens(const std::string &file_text);
 
 private:
+  bool m_bHasLabel{false};
   // Array of all Instructions
   std::array<std::string, 79ul> m_arrAllInstructions = {
       "ACI", "ADC", "ADD", "ADI",  "ANA",  "ANI",  "CALL", "CC",  "CM",

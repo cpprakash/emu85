@@ -24,13 +24,13 @@ void FileHandler::ReadFile(char *file_path) {
     file.read(memblock, size);
     file.close();
 
-    GenerateTokens(memblock);
+    this->GenerateTokens(memblock);
     Assembler m_assembler;
     Parser m_parser;
 
     delete[] memblock; // frre up the memory
 
-    u_BYTE *data = m_parser.ParseProgram(this->m_vectTokens);
+    u_BYTE *data = m_parser.ParseProgram(this->m_vectTokens, this->m_bHasLabel);
 
     this->WriteBinFile("test.bin", data, BIN_FILE_SIZE);
   } else {
@@ -98,6 +98,7 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
         m_vectTokens.push_back({line_number, start_pos + 1, end_pos,
                                 temp_string.length(), TOKEN_LABEL,
                                 temp_string});
+        this->m_bHasLabel = true; // tell the parser that program has labels
       }
 
       i--;
