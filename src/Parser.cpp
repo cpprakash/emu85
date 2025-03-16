@@ -156,7 +156,7 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
     this->Handle8BitDataInstructions(token);
   }
 
-  // handle HLT instruction
+  // handle all control instruction
   else if (token.m_tokenValue == "DI" || token.m_tokenValue == "EI" ||
            token.m_tokenValue == "HLT" || token.m_tokenValue == "NOP" ||
            token.m_tokenValue == "RIM" || token.m_tokenValue == "RST" ||
@@ -437,19 +437,6 @@ bool Parser::HandleAddInstruction(const TokenStruct &token) {
 bool Parser::HandleAdiInstruction(const TokenStruct &token) { return false; }
 bool Parser::HandleAnaInstruction(const TokenStruct &token) { return false; }
 bool Parser::HandleAniInstruction(const TokenStruct &token) { return false; }
-
-// handle HLT instruction
-bool Parser::HandleHltInstruction(const TokenStruct &token) {
-  std::cout << "[Parser]::[HandleHltInstruction]:[start]" << std::endl;
-  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 1
-  if (temp[0] != "NEWLINE") {
-    std::cout << "[Parser]::[HandleHltInstruction]::[expecting newline]"
-              << std::endl;
-    return false;
-  }
-  std::cout << "[Parser]::[HandleHltInstruction]:[end]" << std::endl;
-  return this->ReturnInstructionHex(token.m_tokenValue);
-}
 
 // handle all MVI instructions
 /***

@@ -39,8 +39,7 @@ private:
   bool HandleAdiInstruction(const TokenStruct &token);
   bool HandleAnaInstruction(const TokenStruct &token);
   bool HandleAniInstruction(const TokenStruct &token);
-  // HLT Instruction
-  bool HandleHltInstruction(const TokenStruct &token);
+
   // LDA Instruction
   bool HandleLdaInstruction(const TokenStruct &token);
   // LDA Instruction
