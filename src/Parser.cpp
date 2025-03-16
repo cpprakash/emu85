@@ -838,4 +838,19 @@ bool Parser::HandleAccumulatorInstruction(const TokenStruct &token) {
   return false;
 }
 
+bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[HandleAllControlInstructions]:[start for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+
+  if (this->PeekNextToken() == "NEWLINE") { // valid line
+    std::cout
+        << "[Parser]::[HandleAllControlInstructions]:[ended for instruction "
+        << token.m_tokenValue << "]" << std::endl;
+    bool resultInst = this->ReturnInstructionHex(token.m_tokenValue);
+    return resultInst;
+  }
+  return false;
+}
+
 //************************PRIVATE FUNCTIONS END******************************
