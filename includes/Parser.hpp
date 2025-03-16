@@ -10,8 +10,7 @@
  */
 class Parser {
 public:
-  u_BYTE *ParseProgram(const std::vector<TokenStruct> &tokens,
-                       const bool hasLabel);
+  u_BYTE *ParseProgram(const std::vector<TokenStruct> &tokens);
 
 private:
   bool ReturnInstructionHex(const std::string &inst);

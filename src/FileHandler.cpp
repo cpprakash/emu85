@@ -126,7 +126,6 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
         m_vectTokens.push_back({line_number, start_pos + 1, end_pos,
                                 temp_string.length(), TOKEN_LABEL,
                                 temp_string});
-        this->m_bHasLabel = true; // tell the parser that program has labels
       }
 
       i--;
