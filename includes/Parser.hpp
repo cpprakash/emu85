@@ -68,6 +68,9 @@ private:
   bool Handle16BitRegPairInstructions(const TokenStruct &token);
   bool Handle16BitImmediateOperandInstructions(const TokenStruct &token);
 
+  // Handle all control instructions DI, EI, HLT, NOP, RIM, SIM, RST
+  bool HandleAllControlInstructions(const TokenStruct &token);
+
 private:
   unsigned long m_currentIndex;
   unsigned short pCounter{0};

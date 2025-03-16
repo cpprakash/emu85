@@ -78,7 +78,7 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       continue;
     }
     // check if token starts with character
-    if (isalnum(file_text[i])) {
+    if (isalpha(file_text[i])) {
       start_pos = i;
       std::string temp_string;
       while (isalnum(file_text[i])) { // collect the token
@@ -106,7 +106,7 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       start_pos = i;
       cur_pos++;
       std::string temp_num;
-      while (isdigit(file_text[i])) { // while it is a digit collect it
+      while (isalnum(file_text[i])) { // while it is a digit collect it
         temp_num += file_text[i];
         i++;
       }
