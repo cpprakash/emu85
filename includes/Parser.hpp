@@ -20,8 +20,8 @@ private:
   TOKEN_TYPES ReturnTokenType(unsigned long index);
   void HandleAllInstructions(const TokenStruct &token);
 
-  void HandleTokenLabel(const TokenStruct &token);
-  void HandleTokenLabel(const std::string &token);
+  SixteenBitAddress HandleTokenLabel(const TokenStruct &token);
+  SixteenBitAddress HandleTokenLabel(const std::string &token);
   void HandleTokenComment(const TokenStruct &token);
 
   void ParseSingleLine(const TokenStruct &token);
@@ -29,7 +29,7 @@ private:
   std::vector<std::string> GetNextNTokens(unsigned int howMany);
   std::string PeekNextToken(unsigned long howMany = 1);
 
-  std::vector<SymbolTable> m_vecSymbolTable;
+  void ParseLabels(const TokenStruct &token, const unsigned long index);
 
   /**
    * All instructions with AXX
@@ -73,6 +73,8 @@ private:
   unsigned short pCounter{0};
   std::string m_currentToken;
   bool m_bHasLabel{false};
+  std::vector<SymbolTable> m_vecSymbolTable;
+  unsigned long m_TotalBytesTillNow{0};
 
 public:
   std::vector<TokenStruct> m_vectTokens;
