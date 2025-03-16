@@ -133,7 +133,8 @@ struct SymbolTable {
   bool symbolFound;
   std::string symbolValue;
   unsigned int symbolLineNumber;
-  unsigned short symbolAddress;
+  unsigned char symbolAddressLow;
+  unsigned char symbolAddressHigh;
 };
 
 /***
