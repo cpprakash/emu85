@@ -10,8 +10,7 @@
  */
 class Parser {
 public:
-  u_BYTE *ParseProgram(const std::vector<TokenStruct> &tokens,
-                       const bool hasLabel);
+  u_BYTE *ParseProgram(const std::vector<TokenStruct> &tokens);
 
 private:
   bool ReturnInstructionHex(const std::string &inst);
@@ -50,8 +49,6 @@ private:
   bool HandleMviInstruction(const TokenStruct &token);
   // SHLD Instruction
   bool HandleShldInstruction(const TokenStruct &token);
-  // All STA Instruction
-  bool HandleStaInstruction(const TokenStruct &token);
 
   // ADC, ADD, ANA, CMP, ORA, SBB, SUB, XRA,
   bool Handle8BitRegMemInstructions(const TokenStruct &token);
