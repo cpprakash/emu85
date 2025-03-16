@@ -113,12 +113,14 @@ struct SymbolTable {
   bool symbolFound;
   std::string symbolValue;
   unsigned int symbolLineNumber;
-  unsigned short symbolAddress;
+  unsigned char symbolAddressLow;
+  unsigned char symbolAddressHigh;
 };
 
 /***
  * Token struct used for initial token generation from the file
  */
+// TODO remove m_ from here
 struct TokenStruct {
   unsigned int m_lineNumber;   // line of the token
   unsigned int m_startPos;     // start pos of the token
@@ -143,6 +145,25 @@ struct AstStruct {
   std::string numberBase;
   bool hasErrors;
 };
+
+// TODO fill this table
+const std::map<std::string, unsigned char> type_mapInstructionBytes{
+    {"ACI", 0},  {"ADC", 0},  {"ADD", 0},  {"ADI", 0},  {"ANA", 0},
+    {"ANI", 0},  {"CALL", 0}, {"CC", 0},   {"CM", 0},   {"CMA", 0},
+    {"CMC", 0},  {"CMP", 0},  {"CNC", 0},  {"CNZ", 0},  {"CP", 0},
+    {"CPE", 0},  {"CPI", 0},  {"CPO", 0},  {"CZ", 0},   {"DAA", 0},
+    {"DAD", 0},  {"DCR", 0},  {"DCX", 0},  {"DI", 0},   {"EI", 0},
+    {"HLT", 0},  {"IN", 0},   {"INR", 0},  {"INX", 0},  {"JC", 0},
+    {"JM", 3},   {"JMP", 3},  {"JNC", 3},  {"JNZ", 3},  {"JP", 3},
+    {"JPE", 3},  {"JPO", 3},  {"JZ", 3},   {"LDA", 0},  {"LDAX", 0},
+    {"LHLD", 0}, {"LXI", 0},  {"MOV", 0},  {"MVI", 0},  {"NOP", 0},
+    {"ORA", 0},  {"ORI", 0},  {"OUT", 0},  {"PCHL", 0}, {"POP", 0},
+    {"PUSH", 0}, {"RAL", 0},  {"RAR", 0},  {"RC", 0},   {"RET", 0},
+    {"RIM", 0},  {"RLC", 0},  {"RM", 0},   {"RNC", 0},  {"RNZ", 0},
+    {"RP", 0},   {"RPE", 0},  {"RPO", 0},  {"RRC", 0},  {"RST", 0},
+    {"SSB", 0},  {"SBI", 0},  {"SHLD", 0}, {"SIM", 0},  {"SPHL", 0},
+    {"STA", 0},  {"STAX", 0}, {"STC", 0},  {"SUB", 0},  {"SUI", 0},
+    {"XCHG", 0}, {"XRA", 0},  {"XRI", 0},  {"XTHL", 0}};
 
 const std::map<std::string, unsigned char> types_mapInstruction{
     {"ACI_Data", 0xCE},

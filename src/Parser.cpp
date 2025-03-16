@@ -11,8 +11,33 @@ u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens,
             << tokens.size() << "]" << std::endl;
 
   this->m_vectTokens = tokens; // do everything with the local variable
-  // if program has lables, we need a symbol table to resovle the addr of label
+  for (unsigned long i = 0; i < this->m_vectTokens.size(); i++) {
+    std::cout << this->m_vectTokens[i].m_tokenValue << std::endl;
+  }
+
+  // if program has lables, we need a symbol table to resovle the addr of
+  // label
   this->m_bHasLabel = hasLabel;
+
+  // Parsing the labels in the first pass
+  for (unsigned long i = 0; i < this->m_vectTokens.size(); i++) {
+    this->ParseLabels(this->m_vectTokens[i], i);
+  }
+
+  // debug printing the vector
+  for (unsigned long i = 0; i < this->m_vecSymbolTable.size(); i++) {
+    std::cout << "Symbole table at " << i << " symbolFound "
+              << this->m_vecSymbolTable[i].symbolFound << std::endl;
+    std::cout << "Symbole table at " << i << " symbolValue "
+              << this->m_vecSymbolTable[i].symbolValue << std::endl;
+    std::cout << "Symbole table at " << i << " symbolLineNumber "
+              << this->m_vecSymbolTable[i].symbolLineNumber << std::endl;
+    std::cout << "Symbole table at " << i << " symbolAddressLow " << std::hex
+              << this->m_vecSymbolTable[i].symbolAddressLow << std::endl;
+    std::cout << "Symbole table at " << i << " symbolAddressHigh " << std::hex
+              << this->m_vecSymbolTable[i].symbolAddressHigh << std::endl;
+  }
+
   // main loop iterate over the token vector
   for (this->m_currentIndex = 0ul;
        this->m_currentIndex < this->m_vectTokens.size();) {
@@ -225,56 +250,79 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
 /***
  * Handle the label with string input
  */
-void Parser::HandleTokenLabel(const std::string &token) {
+SixteenBitAddress Parser::HandleTokenLabel(const std::string &token) {
   std::cout
-      << "[Parser]::[HandleTokenLabelSTRING]::[Start]::[Checking for a label  "
-      << " with value = " << token << "]" << std::endl;
+      << "[Parser]::[HandleTokenLabelSTRING]::[Start]::[Checking for a label "
+      << "with value = " << token << "]" << std::endl;
+  SixteenBitAddress address{"", 0x00, 0x00, false};
   Helper::CheckIfLabelNameIsValid(token);
+  // search in the vector of symble table for this label
+  for (unsigned long i = 0; i < this->m_vecSymbolTable.size(); i++) {
+    if (this->m_vecSymbolTable[i].symbolValue == token) {
+      address.result = true;
+      address.addressLow = this->m_vecSymbolTable[i].symbolAddressLow;
+      address.addressHigh = this->m_vecSymbolTable[i].symbolAddressHigh;
+      address.message = "Successfully parser the lable";
+      return address;
+    }
+  }
+  return address;
 }
 /***
  * Handle the label with token input overloaded
  */
-void Parser::HandleTokenLabel(const TokenStruct &token) {
+SixteenBitAddress Parser::HandleTokenLabel(const TokenStruct &token) {
   std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label found at "
             << token.m_lineNumber << " with value = " << token.m_tokenValue
             << "]" << std::endl;
+  SixteenBitAddress address{"", 0x00, 0x00, false};
   if (!Helper::CheckIfLabelNameIsValid(token.m_tokenValue)) {
     std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label failed "
               << token.m_lineNumber << " with value = " << token.m_tokenValue
               << " is not a label]" << std::endl;
-    return;
+    return address;
   }
+  /***
+   * if we have a token which is a label then there are two possibilites
+   * first: label is declared at this line, means the next token should be colon
+   *    |-> search the vector to see if the label is not declared twice
+   *    |-> if the label is redeclared, generate error
+   *    |-> else save it in the vector and retunr the high and low address
+   * second: the label is referenced here at this line
+   */
   if (this->PeekNextToken() == "COLON") { // label declaration here
-    std::cout << "[Parser]::[HandleTokenLabel]::[A label found at "
+    std::cout << "[Parser]::[HandleTokenLabel]::[A label declaration found at "
               << token.m_lineNumber << " with value = " << token.m_tokenValue
               << "]" << std::endl;
-    // check if the same label has been declared before
-    // if yes, then its an error, you cant declare a label twice
-    // otherwise save it to the symbol table
     bool labelFound = false;
     for (unsigned long int i = 0; i < this->m_vecSymbolTable.size(); i++) {
       if (this->m_vecSymbolTable[i].symbolValue == token.m_tokenValue) {
-        labelFound = true;
-        return;
+        address.message = "Label is defined multiple times";
+        address.result = false;
+        // return;
       }
     }
-    if (labelFound) {
-      std::cout << "ERRRROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO" << std::endl;
-    }
+
     if (!labelFound) {
       std::cout << "Okay the symbol was not found, will create it for address "
                 << this->pCounter << std::endl;
-      m_vecSymbolTable.push_back(
-          {false, token.m_tokenValue, token.m_lineNumber, this->pCounter});
+      /*m_vecSymbolTable.push_back(
+          {false, token.m_tokenValue, token.m_lineNumber, this->pCounter});*/
+      address.message =
+          "Created new entry in the symbol table at address " + this->pCounter;
+      address.result = true;
+      address.addressLow = this->pCounter;
+      address.addressHigh = this->pCounter + 1;
     }
 
     this->GetNextToken(); // advance tokens by one
-    return;
+    return address;
   }
   std::cout
       << "[Parser]::[HandleTokenLabel]::[End]::[Checking for a label failed "
       << token.m_lineNumber << " with value = " << token.m_tokenValue
       << " is not a label]" << std::endl;
+  return address;
 }
 
 /***
@@ -291,9 +339,9 @@ void Parser::HandleTokenComment(const TokenStruct &token) {
     std::cout << "Comment =" << comment << std::endl;
   }
 
-  this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
+  /*this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
                                    token.m_endPos, comment.length(), comment,
-                                   0x76, "", "", "", false});
+                                   0x76, "", "", "", false});*/
 }
 
 /***
@@ -307,7 +355,7 @@ void Parser::HandleTokenComment(const TokenStruct &token) {
  */
 void Parser::ParseSingleLine(const TokenStruct &token) {
   std::cout << "[Parser]::[ParseSingleLine]::[Parsing token= "
-            << token.m_tokenValue << " (" << this->m_currentIndex << "/"
+            << token.m_tokenValue << " (" << this->m_currentIndex + 1 << "/"
             << this->m_vectTokens.size() << ")]" << std::endl;
 
   switch (token.m_tokenType) {
@@ -329,32 +377,32 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
   case TOKEN_NEWLINE:
     // HandleNewline();
     std::cout << "[Parser]::[ParseSingleLine]::[A newline found at line number "
-              << token.m_lineNumber << "]" << std::endl;
+              << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   case TOKEN_EOF: // token parsing is complete or no more tokens are there
     // HandleFileEnd();
     std::cout << "[Parser]::[ParseSingleLine]::[An EOF found at "
-              << token.m_lineNumber << "]" << std::endl;
+              << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   case TOKEN_COMMENT:
     this->HandleTokenComment(token);
-    std::cout << "[Parser]::[ParseSingleLine]::[A comment found at "
-              << token.m_lineNumber << "]" << std::endl;
+    std::cout << "[Parser]::[ParseSingleLine]::[A comment found at line "
+              << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   case TOKEN_COMMA:
     // HandleComma();
     std::cout << "[Parser]::[ParseSingleLine]::[A comma found at "
-              << token.m_lineNumber << "]" << std::endl;
+              << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   case TOKEN_COLON:
     // HandleColon();
     std::cout << "[Parser]::[ParseSingleLine]::[colon found at line number "
-              << token.m_lineNumber << "]" << std::endl;
+              << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   case TOKEN_NUMBER:
     // HandleNumber();
     std::cout << "[Parser]::[ParseSingleLine]::[A Number found at line number "
-              << token.m_lineNumber << " with value " << token.m_tokenValue
+              << token.m_lineNumber + 1 << " with value " << token.m_tokenValue
               << "]" << std::endl;
     break;
   case TOKEN_UNKNOWN:
@@ -362,7 +410,7 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
     std::cout
         << "[Parser]::[ParseSingleLine]::[Wrong Instruction found. Please "
            "check it again line] "
-        << token.m_lineNumber << std::endl;
+        << token.m_lineNumber + 1 << std::endl;
     break;
   }
 }
@@ -688,8 +736,8 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
 /***
  * Handle all instructions that operate on 16 bit address
  * this function covers these instructions
- * LDA, SDA, JC, JZ, JP, JPE, JNC, JNZ, JM, JPO, RC, RZ, RP, RPE, RNC, RNZ, RM,
- * RPO, CC, CZ, CP, CPE, CNC; CNZ, CM, CPO
+ * LDA, SDA, JC, JZ, JP, JMP, JPE, JNC, JNZ, JM, JPO, RC, RZ, RP, RPE, RNC, RNZ,
+ * RM, RPO, CC, CZ, CP, CPE, CNC; CNZ, CM, CPO
  */
 bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
   std::cout
@@ -697,12 +745,14 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
       << token.m_tokenValue << "]" << std::endl;
   SixteenBitAddress address{"", 0x00, 0x00, false};
 
+  // the next token type can either be a label referece or a 16 bit address
   TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
 
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
 
-  address = Helper::CheckAndReturn16BitAddress(temp[0]);
+  // if token type is number it should be a 16 bit address
   if (type == TOKEN_NUMBER) {
+    address = Helper::CheckAndReturn16BitAddress(temp[0]);
     if (!address.result) { // if the result is invalid
       std::cout
           << "[Parser]::[Handle16BitAddressInstructions]:[address is invalid "
@@ -714,20 +764,12 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
                "ahve to get another token "
             << temp[1] << "]" << std::endl;
       } else {
-        return false;
+        // return false;
       }
     }
 
   } else if (type == TOKEN_LABEL) { // TODO handle label
-    this->HandleTokenLabel(temp[0]);
-    /*std::cout << "The label is been found with label name : " << temp[0]
-              << std::endl;
-    if (temp[1] == "COLON") {
-      std::cout << "The label is defined here : " << temp[0] << std::endl;
-
-    } else if (temp[1] == "NEWLINE") {
-      std::cout << "The label is been called here : " << temp[0] << std::endl;
-    }*/
+    address = this->HandleTokenLabel(temp[0]);
   }
 
   std::cout
@@ -765,6 +807,49 @@ bool Parser::Handle16BitRegPairInstructions(const TokenStruct &token) {
  */
 bool Parser::Handle16BitImmediateOperandInstructions(const TokenStruct &token) {
   return false;
+}
+
+/***
+ * parse all the labels in the first pass
+ * so that at the second pass the symbols can be resolved
+ */
+void Parser::ParseLabels(const TokenStruct &token, const unsigned long index) {
+  std::cout << "[Parser]::[ParseLabels]:[start for token " << token.m_tokenValue
+            << "]" << std::endl;
+  if (token.m_tokenType ==
+      TOKEN_INSTRUCTION) { // get the byte of this instruction
+    const auto code = type_mapInstructionBytes.find(token.m_tokenValue);
+    if (code != types_mapInstruction.end()) { // the instruction is in map
+
+      this->m_TotalBytesTillNow += (code->second);
+    }
+  }
+
+  if (token.m_tokenType == TOKEN_LABEL) {
+    if (Helper::CheckIfLabelNameIsValid(token.m_tokenValue)) {
+      std::cout << "[Parser]::[ParseLabels]:[Yes label found at this token] "
+                << std::endl;
+      std::cout << "NExt topken is "
+                << this->m_vectTokens[index + 1].m_tokenValue << std::endl;
+      if (this->m_vectTokens[index + 1].m_tokenType == TOKEN_COLON) {
+        std::cout << "The label declaration is found low address = "
+                  << this->m_TotalBytesTillNow << std::endl;
+        m_vecSymbolTable.push_back(
+            {false, token.m_tokenValue, token.m_lineNumber,
+             static_cast<unsigned char>(this->m_TotalBytesTillNow & 0x00FF),
+             static_cast<unsigned char>((this->m_TotalBytesTillNow & 0xFF00) >>
+                                        8)});
+      }
+    } else {
+      std::cout << "Invalid lable name found" << std::endl;
+    }
+  } else {
+    std::cout << "[Parser]::[ParseLabels]:[No label found at this token] "
+              << std::endl;
+  }
+
+  std::cout << "[Parser]::[ParseLabels]:[end for token " << token.m_tokenValue
+            << "]" << std::endl;
 }
 
 //************************PRIVATE FUNCTIONS END******************************
