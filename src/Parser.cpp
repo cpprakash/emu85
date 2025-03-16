@@ -162,15 +162,17 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
   }
 
   // handle HLT instruction
-  else if (token.m_tokenValue == "HLT") {
-    if (this->HandleHltInstruction(token) == false) {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing HLT "
-                   "Instruction failed.]"
-                << std::endl;
+  else if (token.m_tokenValue == "DI" || token.m_tokenValue == "EI" ||
+           token.m_tokenValue == "HLT" || token.m_tokenValue == "NOP" ||
+           token.m_tokenValue == "RIM" || token.m_tokenValue == "RST" ||
+           token.m_tokenValue == "SIM") {
+    if (this->HandleAllControlInstructions(token) == false) {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing "
+                << token.m_tokenValue << "Instruction failed.]" << std::endl;
     } else {
       std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "HLT at line "
-                << token.m_lineNumber << "]" << std::endl;
+                << token.m_tokenValue << " at line " << token.m_lineNumber
+                << "]" << std::endl;
     }
   }
 
@@ -850,6 +852,21 @@ void Parser::ParseLabels(const TokenStruct &token, const unsigned long index) {
 
   std::cout << "[Parser]::[ParseLabels]:[end for token " << token.m_tokenValue
             << "]" << std::endl;
+}
+
+bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[HandleAllControlInstructions]:[start for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+
+  if (this->PeekNextToken() == "NEWLINE") { // valid line
+    std::cout
+        << "[Parser]::[HandleAllControlInstructions]:[ended for instruction "
+        << token.m_tokenValue << "]" << std::endl;
+    bool resultInst = this->ReturnInstructionHex(token.m_tokenValue);
+    return resultInst;
+  }
+  return false;
 }
 
 //************************PRIVATE FUNCTIONS END******************************
