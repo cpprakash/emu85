@@ -10,27 +10,10 @@ u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
             << tokens.size() << "]" << std::endl;
 
   this->m_vectTokens = tokens; // do everything with the local variable
-  for (unsigned long i = 0; i < this->m_vectTokens.size(); i++) {
-    std::cout << this->m_vectTokens[i].m_tokenValue << std::endl;
-  }
 
   // Parsing the labels in the first pass
   for (unsigned long i = 0; i < this->m_vectTokens.size(); i++) {
     this->ParseLabels(this->m_vectTokens[i], i);
-  }
-
-  // debug printing the vector
-  for (unsigned long i = 0; i < this->m_vecSymbolTable.size(); i++) {
-    std::cout << "Symbole table at " << i << " symbolFound "
-              << this->m_vecSymbolTable[i].symbolFound << std::endl;
-    std::cout << "Symbole table at " << i << " symbolValue "
-              << this->m_vecSymbolTable[i].symbolValue << std::endl;
-    std::cout << "Symbole table at " << i << " symbolLineNumber "
-              << this->m_vecSymbolTable[i].symbolLineNumber << std::endl;
-    std::cout << "Symbole table at " << i << " symbolAddressLow " << std::hex
-              << this->m_vecSymbolTable[i].symbolAddressLow << std::endl;
-    std::cout << "Symbole table at " << i << " symbolAddressHigh " << std::hex
-              << this->m_vecSymbolTable[i].symbolAddressHigh << std::endl;
   }
 
   // main loop iterate over the token vector
@@ -343,21 +326,21 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
             << token.m_tokenValue << " (" << this->m_currentIndex + 1 << "/"
             << this->m_vectTokens.size() << ")]" << std::endl;
 
+  /***
+   * the start of the line can have only five possibilites for this program
+   * 1. there can be a label definition e.g <Label:>
+   * 2. there can be an instruction <ANY INSTRUCTION>
+   * 3. there can be a comment e.g. <;COMMENT>
+   * 4. there can be a newline \\n or \r treated as NEWLINE
+   * 5. there can be a EOF, added automatically
+   * other than these cases, it must be an error
+   */
   switch (token.m_tokenType) {
   case TOKEN_INSTRUCTION:
     this->HandleAllInstructions(token);
     break;
   case TOKEN_LABEL:
     this->HandleTokenLabel(token);
-    break;
-  case TOKEN_ADDDRESS:
-    // Handle16BitAddress();
-    break;
-  case TOKEN_DATA:
-    // Handle8BitData();
-    break;
-  case TOKEN_REGISTER:
-    // HandleRegister();
     break;
   case TOKEN_NEWLINE:
     // HandleNewline();
@@ -374,28 +357,12 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
     std::cout << "[Parser]::[ParseSingleLine]::[A comment found at line "
               << token.m_lineNumber + 1 << "]" << std::endl;
     break;
-  case TOKEN_COMMA:
-    // HandleComma();
-    std::cout << "[Parser]::[ParseSingleLine]::[A comma found at "
-              << token.m_lineNumber + 1 << "]" << std::endl;
-    break;
-  case TOKEN_COLON:
-    // HandleColon();
-    std::cout << "[Parser]::[ParseSingleLine]::[colon found at line number "
-              << token.m_lineNumber + 1 << "]" << std::endl;
-    break;
-  case TOKEN_NUMBER:
-    // HandleNumber();
-    std::cout << "[Parser]::[ParseSingleLine]::[A Number found at line number "
-              << token.m_lineNumber + 1 << " with value " << token.m_tokenValue
-              << "]" << std::endl;
-    break;
   case TOKEN_UNKNOWN:
   default:
     std::cout
         << "[Parser]::[ParseSingleLine]::[Wrong Instruction found. Please "
-           "check it again line] "
-        << token.m_lineNumber + 1 << std::endl;
+           "check the line number "
+        << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   }
 }
