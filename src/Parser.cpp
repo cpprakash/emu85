@@ -5,8 +5,7 @@
 #include <iostream>
 #include <vector>
 
-u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens,
-                             const bool hasLabel) {
+u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
   std::cout << "[Parser]::[ParseProgram]::[start Total tokens are= "
             << tokens.size() << "]" << std::endl;
 
@@ -14,10 +13,6 @@ u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens,
   for (unsigned long i = 0; i < this->m_vectTokens.size(); i++) {
     std::cout << this->m_vectTokens[i].m_tokenValue << std::endl;
   }
-
-  // if program has lables, we need a symbol table to resovle the addr of
-  // label
-  this->m_bHasLabel = hasLabel;
 
   // Parsing the labels in the first pass
   for (unsigned long i = 0; i < this->m_vectTokens.size(); i++) {
@@ -227,18 +222,6 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
     } else {
       std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
                    "SHLD instruction at line "
-                << token.m_lineNumber << "]" << std::endl;
-    }
-  }
-  // Parse STA instruction
-  else if (token.m_tokenValue == "STA") {
-    if (this->HandleStaInstruction(token) == false) {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing STA "
-                   "Instruction failed.]"
-                << std::endl;
-    } else {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "STA instruction at line "
                 << token.m_lineNumber << "]" << std::endl;
     }
   } else { // hopefully it never comes here
@@ -596,38 +579,6 @@ bool Parser::HandleShldInstruction(const TokenStruct &token) {
   std::cout << "[Parser]::[HandleShldInstruction]:[ended for instruction "
             << token.m_tokenValue << "]" << std::endl;
   return resultInst;
-}
-
-// handle STA instructions
-bool Parser::HandleStaInstruction(const TokenStruct &token) {
-  std::cout << "[Parser]::[HandleStaInstruction]::[start]" << std::endl;
-  if (token.m_tokenValue != "STA") {
-    return false; // just make sure once again
-  }
-  // get next 3 tokens
-  std::vector<std::string> temp = this->GetNextNTokens(4);
-  // std::cout << "STA INS size of temp =" << temp.size() << std::endl;
-  for (unsigned long i = 0; i < temp.size(); i++)
-    std::cout << temp[i] << std::endl;
-  // next token should be a 16bit address
-  if (!Helper::CheckIfAddressInRange(temp[0])) {
-    return false;
-  }
-
-  if (!Helper::CheckIfBaseIsValid(temp[1])) { // base is wrong
-    return false;
-  }
-
-  if (temp[2] != "NEWLINE") { // check if the next token is newline,
-    return false;
-  }
-
-  this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
-                                   token.m_endPos, token.m_totalLength,
-                                   token.m_tokenValue, 0x76, "", temp[0],
-                                   temp[1], false});
-  std::cout << "[Parser]::[HandleStaInstruction]::[end]" << std::endl;
-  return true;
 }
 
 bool Parser::ReturnInstructionHex(const std::string &inst) {
