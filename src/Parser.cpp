@@ -692,11 +692,22 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
 
 /***
  * Handle all instructions that operate on 8 bit port number
+ * IN <PORT> and OUT <PORT> instructions
+ * where PORT is an 8Bit port address
  * this function covers these instructions
  * IN, OUT
  */
 bool Parser::Handle8BitPortNumberInstructions(const TokenStruct &token) {
-  return false;
+  std::cout << "[Parser]::[Handle8BitPortNumberInstructions]:[started for "
+               "instruction "
+            << token.m_tokenValue << "]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
+  // it should check that if the PORT address is valid 8 bit number TODO
+  // and then it should check if the next token is a new line or comment TODO
+  std::cout
+      << "[Parser]::[Handle8BitPortNumberInstructions]:[ended for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  return this->ReturnInstructionHex(token.m_tokenValue + "_" + temp[0]);
 }
 
 /***
