@@ -11,14 +11,17 @@
 class FileHandler {
 public:
   FileHandler() {}
+  const std::vector<TokenStruct> &ReturnTokens(const char *filePath);
   void ReadFile(char *file);
   bool WriteBinFile(const std::string &file, u_BYTE data[],
                     unsigned short size);
+  ~FileHandler();
 
 private:
-  void GenerateTokens(const std::string &file_text);
+  const std::vector<TokenStruct> &GenerateTokens(const std::string &file_text);
 
 private:
+  char *memblock;
   // Array of all Instructions
   std::array<std::string, 79ul> m_arrAllInstructions = {
       "ACI", "ADC", "ADD", "ADI",  "ANA",  "ANI",  "CALL", "CC",  "CM",

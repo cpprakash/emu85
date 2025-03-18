@@ -4,6 +4,8 @@
 class Api {
 public:
   Api();
+  void GetDataForGUI(void);
+  void GetDataForGUI(const char *filePath);
 };
 
 #endif

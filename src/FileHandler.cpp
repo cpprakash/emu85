@@ -13,7 +13,6 @@
  */
 void FileHandler::ReadFile(char *file_path) {
   std::streampos size;
-  char *memblock;
 
   std::ifstream file(file_path,
                      std::ios::in | std::ios::binary | std::ios::ate);
@@ -28,8 +27,6 @@ void FileHandler::ReadFile(char *file_path) {
     Assembler m_assembler;
     Parser m_parser;
 
-    delete[] memblock; // frre up the memory
-
     u_BYTE *data = m_parser.ParseProgram(this->m_vectTokens);
 
     this->WriteBinFile("test.bin", data, BIN_FILE_SIZE);
@@ -40,9 +37,37 @@ void FileHandler::ReadFile(char *file_path) {
 }
 
 /***
+ * destructor
+ * free the memory block here
+ */
+FileHandler::~FileHandler() {
+  delete[] memblock; // frre up the memory
+}
+
+const std::vector<TokenStruct> &
+FileHandler::ReturnTokens(const char *filePath) {
+  std::streampos size;
+
+  std::ifstream file(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  if (file.is_open()) {
+    size = file.tellg();
+    memblock = new char[size];
+    file.seekg(0, std::ios::beg);
+    file.read(memblock, size);
+    file.close();
+    return this->GenerateTokens(memblock);
+  }
+  // error just send the empty vector with erro message
+  this->m_vectTokens.push_back(
+      {0, 1, 3, 3, TOKEN_UNKNOWN, "FILE READ ERROR OCCURRED"});
+  return this->m_vectTokens;
+}
+
+/***
  * Generates the tokens based on the file content of the <program>.asm file
  */
-void FileHandler::GenerateTokens(const std::string &file_text) {
+const std::vector<TokenStruct> &
+FileHandler::GenerateTokens(const std::string &file_text) {
   unsigned int line_number{1};
   unsigned int start_pos{0};
   unsigned int end_pos{0};
@@ -131,6 +156,8 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
         {line_number, 1, 8, 8, TOKEN_NEWLINE, "NEWLINE"}); // add newline
   }
   this->m_vectTokens.push_back({line_number, 1, 3, 3, TOKEN_EOF, "EOF"});
+
+  return this->m_vectTokens;
 }
 /***
  * write the bin ROM file with the program
