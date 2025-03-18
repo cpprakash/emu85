@@ -20,7 +20,7 @@ Api::Api() {}
 void Api::GetDataForGUI(const char *filePath) {
   FileHandler m_fileHandler;
   const std::vector<TokenStruct> m_tokens =
-      m_fileHandler.ReturnTokens("./tests/label.asm");
+      m_fileHandler.ReturnTokens(filePath);
 
   for (unsigned long i = 0; i < m_tokens.size(); i++)
     std::cout << "Tokens received i =" << i
