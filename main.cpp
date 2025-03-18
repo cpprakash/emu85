@@ -1,3 +1,4 @@
+#include "api/Api.hpp"
 #include "includes/FileHandler.hpp"
 #include <iostream>
 #define CONSOLE
@@ -11,6 +12,8 @@
 int main(int argc, char *argv[]) {
   std::cout << "Hello World from 8085 Emulator argc=" << argc << argv[1]
             << std::endl;
+  Api api;
+  api.GetDataForGUI(argv[1]);
   FileHandler file_handler;
   if (argc == 2) {
     file_handler.ReadFile(argv[1]);
