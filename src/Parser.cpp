@@ -276,8 +276,7 @@ SixteenBitAddress Parser::HandleTokenLabel(const TokenStruct &token) {
                 << this->pCounter << std::endl;
       /*m_vecSymbolTable.push_back(
           {false, token.m_tokenValue, token.m_lineNumber, this->pCounter});*/
-      address.message =
-          "Created new entry in the symbol table at address " + this->pCounter;
+      address.message = "Created new entry in the symbol table at address";
       address.result = true;
       address.addressLow = this->pCounter;
       address.addressHigh = this->pCounter + 1;
@@ -599,7 +598,6 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
     std::cout << "[Parser]::[Handle8BitDataInstructions]::[first operand is "
                  "not valid]"
               << std::endl;
-    result = false;
   }
   // expects a comma between register and 8bit data
   if (temp[1] != "COMMA") {
@@ -617,7 +615,6 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
     if (temp[3][0] == ';' && this->PeekNextToken() == "NEWLINE") {
       // do nothing
     } else {
-      result = false;
       std::cout
           << "[Parser]::[Handle8BitDataInstructions]::[expecting a new line]"
           << std::endl;
