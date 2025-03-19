@@ -3,7 +3,6 @@
 #include "../includes/Helper.hpp"
 #include "../includes/Parser.hpp"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -18,12 +17,13 @@ void FileHandler::ReadFile(char *file_path) {
                      std::ios::in | std::ios::binary | std::ios::ate);
   if (file.is_open()) {
     size = file.tellg();
-    memblock = new char[size];
+    char *memBlockRead = new char[size];
     file.seekg(0, std::ios::beg);
-    file.read(memblock, size);
+    file.read(memBlockRead, size);
     file.close();
 
-    this->GenerateTokens(memblock);
+    this->GenerateTokens(memBlockRead);
+    delete[] memBlockRead;
     Assembler m_assembler;
     Parser m_parser;
 
@@ -40,9 +40,9 @@ void FileHandler::ReadFile(char *file_path) {
  * destructor
  * free the memory block here
  */
-FileHandler::~FileHandler() {
+/*FileHandler::~FileHandler() {
   delete[] memblock; // frre up the memory
-}
+}*/
 
 const std::vector<TokenStruct> &
 FileHandler::ReturnTokens(const char *filePath) {
@@ -50,29 +50,32 @@ FileHandler::ReturnTokens(const char *filePath) {
 
   std::ifstream file(filePath, std::ios::in | std::ios::binary | std::ios::ate);
   if (file.is_open()) {
+
     size = file.tellg();
-    memblock = new char[size];
+    char *memblock = new char[size];
     file.seekg(0, std::ios::beg);
     file.read(memblock, size);
     file.close();
-    return this->GenerateTokens(memblock);
+    this->GenerateTokens(memblock);
+    delete[] memblock;
+  } else {
+    // error just send the empty vector with erro message
+    this->m_vectTokens.push_back(
+        {0, 1, 3, 3, TOKEN_UNKNOWN, "FILE READ ERROR OCCURRED"});
   }
-  // error just send the empty vector with erro message
-  this->m_vectTokens.push_back(
-      {0, 1, 3, 3, TOKEN_UNKNOWN, "FILE READ ERROR OCCURRED"});
+
   return this->m_vectTokens;
 }
 
 /***
  * Generates the tokens based on the file content of the <program>.asm file
  */
-const std::vector<TokenStruct> &
-FileHandler::GenerateTokens(const std::string &file_text) {
+void FileHandler::GenerateTokens(const std::string &file_text) {
   unsigned int line_number{1};
   unsigned int start_pos{0};
   unsigned int end_pos{0};
   unsigned int cur_pos{0};
-  // std::cout << file_text << std::endl;
+
   for (unsigned int i = 0; i < file_text.length(); i++) {
     if (file_text[i] == ';') // starting of comment
     {
@@ -156,8 +159,6 @@ FileHandler::GenerateTokens(const std::string &file_text) {
         {line_number, 1, 8, 8, TOKEN_NEWLINE, "NEWLINE"}); // add newline
   }
   this->m_vectTokens.push_back({line_number, 1, 3, 3, TOKEN_EOF, "EOF"});
-
-  return this->m_vectTokens;
 }
 /***
  * write the bin ROM file with the program

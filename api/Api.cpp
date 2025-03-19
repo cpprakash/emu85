@@ -22,7 +22,7 @@ void Api::GetDataForGUI(const char *filePath) {
   const std::vector<TokenStruct> m_tokens =
       m_fileHandler.ReturnTokens(filePath);
 
-  for (unsigned long i = 0; i < m_tokens.size(); i++)
+  /*for (unsigned long i = 0; i < m_tokens.size(); i++)
     std::cout << "Tokens received i =" << i
-              << " value =" << m_tokens[i].m_tokenValue << std::endl;
+              << " value =" << m_tokens[i].m_tokenValue << std::endl;*/
 }
