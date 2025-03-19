@@ -732,8 +732,9 @@ bool Parser::Handle16BitImmediateOperandInstructions(const TokenStruct &token) {
  * so that at the second pass the symbols can be resolved
  */
 void Parser::ParseLabels(const TokenStruct &token, const unsigned long index) {
-  std::cout << "[Parser]::[ParseLabels]:[start for token " << token.m_tokenValue
-            << "]" << std::endl;
+  /*std::cout << "[Parser]::[ParseLabels]:[start for token " <<
+     token.m_tokenValue
+            << "]" << std::endl;*/
   if (token.m_tokenType ==
       TOKEN_INSTRUCTION) { // get the byte of this instruction
     const auto code = type_mapInstructionBytes.find(token.m_tokenValue);
@@ -750,6 +751,8 @@ void Parser::ParseLabels(const TokenStruct &token, const unsigned long index) {
             {false, token.m_tokenValue, token.m_lineNumber,
              static_cast<u_BYTE>(this->m_TotalBytesTillNow & 0x00FF),
              static_cast<u_BYTE>((this->m_TotalBytesTillNow & 0xFF00) >> 8)});
+        std::cout << "[Parser]::[ParseLabels]:[New entry added for token "
+                  << token.m_tokenValue << "]" << std::endl;
       }
     } else {
       // std::cout << "Invalid lable name found" << std::endl;
@@ -759,8 +762,8 @@ void Parser::ParseLabels(const TokenStruct &token, const unsigned long index) {
               << std::endl;*/
   }
 
-  std::cout << "[Parser]::[ParseLabels]:[end for token " << token.m_tokenValue
-            << "]" << std::endl;
+  /*std::cout << "[Parser]::[ParseLabels]:[end for token " << token.m_tokenValue
+            << "]" << std::endl;*/
 }
 
 bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
