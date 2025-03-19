@@ -70,8 +70,7 @@ FileHandler::ReturnTokens(const char *filePath) {
 /***
  * Generates the tokens based on the file content of the <program>.asm file
  */
-const std::vector<TokenStruct> &
-FileHandler::GenerateTokens(const std::string &file_text) {
+void FileHandler::GenerateTokens(const std::string &file_text) {
   unsigned int line_number{1};
   unsigned int start_pos{0};
   unsigned int end_pos{0};
@@ -161,8 +160,6 @@ FileHandler::GenerateTokens(const std::string &file_text) {
         {line_number, 1, 8, 8, TOKEN_NEWLINE, "NEWLINE"}); // add newline
   }
   this->m_vectTokens.push_back({line_number, 1, 3, 3, TOKEN_EOF, "EOF"});
-
-  return this->m_vectTokens;
 }
 /***
  * write the bin ROM file with the program
