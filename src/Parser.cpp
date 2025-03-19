@@ -745,25 +745,18 @@ void Parser::ParseLabels(const TokenStruct &token, const unsigned long index) {
 
   if (token.m_tokenType == TOKEN_LABEL) {
     if (Helper::CheckIfLabelNameIsValid(token.m_tokenValue)) {
-      std::cout << "[Parser]::[ParseLabels]:[Yes label found at this token] "
-                << std::endl;
-      std::cout << "NExt topken is "
-                << this->m_vectTokens[index + 1].m_tokenValue << std::endl;
       if (this->m_vectTokens[index + 1].m_tokenType == TOKEN_COLON) {
-        std::cout << "The label declaration is found low address = "
-                  << this->m_TotalBytesTillNow << std::endl;
         m_vecSymbolTable.push_back(
             {false, token.m_tokenValue, token.m_lineNumber,
-             static_cast<unsigned char>(this->m_TotalBytesTillNow & 0x00FF),
-             static_cast<unsigned char>((this->m_TotalBytesTillNow & 0xFF00) >>
-                                        8)});
+             static_cast<u_BYTE>(this->m_TotalBytesTillNow & 0x00FF),
+             static_cast<u_BYTE>((this->m_TotalBytesTillNow & 0xFF00) >> 8)});
       }
     } else {
-      std::cout << "Invalid lable name found" << std::endl;
+      // std::cout << "Invalid lable name found" << std::endl;
     }
   } else {
-    std::cout << "[Parser]::[ParseLabels]:[No label found at this token] "
-              << std::endl;
+    /*std::cout << "[Parser]::[ParseLabels]:[No label found at this token] "
+              << std::endl;*/
   }
 
   std::cout << "[Parser]::[ParseLabels]:[end for token " << token.m_tokenValue
