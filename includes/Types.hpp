@@ -4,6 +4,7 @@
 #include <array>
 #include <map>
 #include <string>
+#include <vector>
 
 typedef unsigned char u_BYTE;
 typedef char BYTE;
@@ -106,6 +107,14 @@ enum RESULT_TYPES {
   RESULT_UNKNOW
 };
 
+struct ErrorStruct {
+  std::string fileName;
+  unsigned long lineNumber;
+  ERROR_TYPES errorType;
+  std::string errorReason;
+  std::string errorMessage;
+};
+
 /***
  * struct for SymbolTable
  */
@@ -146,6 +155,16 @@ struct AstStruct {
   bool hasErrors;
 };
 
+/***
+ * struct for data which has to be sent to the GUI
+ */
+struct GuiData {
+  std::vector<TokenStruct> m_tokens;
+  std::vector<std::string> m_debugMessages;
+  ErrorStruct m_errorMessages;
+  u_BYTE m_finalParsedProgram[1024];
+};
+
 // TODO fill this table
 const std::map<std::string, unsigned char> type_mapInstructionBytes{
     {"ACI", 2},  {"ADC", 1},  {"ADD", 1},  {"ADI", 2},  {"ANA", 1},
@@ -162,7 +181,7 @@ const std::map<std::string, unsigned char> type_mapInstructionBytes{
     {"RIM", 1},  {"RLC", 1},  {"RM", 0},   {"RNC", 0},  {"RNZ", 0},
     {"RP", 0},   {"RPE", 0},  {"RPO", 0},  {"RRC", 0},  {"RST", 1},
     {"SSB", 0},  {"SBI", 0},  {"SHLD", 3}, {"SIM", 1},  {"SPHL", 1},
-    {"STA", 3},  {"STAX", 1}, {"STC", 1},  {"SUB", 0},  {"SUI", 2},
+    {"STA", 3},  {"STAX", 1}, {"STC", 1},  {"SUB", 1},  {"SUI", 2},
     {"XCHG", 1}, {"XRA", 0},  {"XRI", 2},  {"XTHL", 1}};
 
 const std::map<std::string, unsigned char> types_mapInstruction{

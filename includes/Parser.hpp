@@ -60,6 +60,8 @@ private:
   bool Handle16BitAddressInstructions(const TokenStruct &token);
   // IN, OUT
   bool Handle8BitPortNumberInstructions(const TokenStruct &token);
+  // RLC, RAL, RRC, RAR, CMA, DAA
+  bool HandleAccumulatorInstruction(const TokenStruct &token);
   // INX, DCX, DAD
   bool Handle16BitRegPairInstructions(const TokenStruct &token);
   bool Handle16BitImmediateOperandInstructions(const TokenStruct &token);

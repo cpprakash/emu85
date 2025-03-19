@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "../includes/FileHandler.hpp"
+#include "../includes/Parser.hpp"
 #include "../includes/Types.hpp"
 
 Api::Api() {}
@@ -17,12 +18,18 @@ Api::Api() {}
  * 3. generate all the log messages for the frontend
  * 4. generate the other control structure
  */
-void Api::GetDataForGUI(const char *filePath) {
+GuiData Api::GetDataForGUI(const char *filePath) {
+  GuiData result = {};
   FileHandler m_fileHandler;
   const std::vector<TokenStruct> m_tokens =
       m_fileHandler.ReturnTokens(filePath);
+  Parser m_parser;
+  // result.m_finalParsedProgram = m_parser.ParseProgram(m_tokens);
+
+  result.m_tokens = m_tokens;
 
   /*for (unsigned long i = 0; i < m_tokens.size(); i++)
     std::cout << "Tokens received i =" << i
               << " value =" << m_tokens[i].m_tokenValue << std::endl;*/
+  return result;
 }

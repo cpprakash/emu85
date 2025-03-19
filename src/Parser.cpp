@@ -127,7 +127,8 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
   if (token.m_tokenValue == "ADC" || token.m_tokenValue == "ADD" ||
       token.m_tokenValue == "ANA" || token.m_tokenValue == "CMP" ||
       token.m_tokenValue == "ORA" || token.m_tokenValue == "SBB" ||
-      token.m_tokenValue == "SUB" || token.m_tokenValue == "XRA") {
+      token.m_tokenValue == "SUB" || token.m_tokenValue == "XRA" ||
+      token.m_tokenValue == "INR" || token.m_tokenValue == "DCR") {
     // std::cout << "ACI " << std::endl;
     this->Handle8BitRegMemInstructions(token);
   } else if (token.m_tokenValue == "ACI" || token.m_tokenValue == "ADI" ||
@@ -196,6 +197,22 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << token.m_lineNumber << "]" << std::endl;
     }
   }
+
+  // Parser Accumulator instructions
+  else if (token.m_tokenValue == "RLC" || token.m_tokenValue == "RAL" ||
+           token.m_tokenValue == "RRC" || token.m_tokenValue == "RAR" ||
+           token.m_tokenValue == "CMA" || token.m_tokenValue == "DAA") {
+    if (this->HandleAccumulatorInstruction(token) == false) {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing MVI "
+                   "Instruction failed.]"
+                << std::endl;
+    } else {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
+                   "MVI at line "
+                << token.m_lineNumber << "]" << std::endl;
+    }
+  }
+
   // Parse SHLD Instruction
   else if (token.m_tokenValue == "SHLD") {
     if (!this->HandleShldInstruction(token)) {
@@ -567,15 +584,22 @@ bool Parser::Handle8BitRegMemInstructions(const TokenStruct &token) {
       << "[Parser]::[Handle8BitRegMemInstructions]:[started for instruction "
       << token.m_tokenValue << "]" << std::endl;
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
+
   if (!Helper::CheckIfRegistersAreValid(temp[0])) {
     std::cout << "[Parser]::[Handle8BitRegMemInstructions]::[first operand is "
                  "not valid]"
               << std::endl;
     return false;
   }
-  if (temp[1] != "NEWLINE") {
+  // we need to check if next token is comment or newline
+  if (temp[1][0] == ';') {
+    if (this->PeekNextToken() != "NEWLINE") {
+      return false;
+    }
+  } else if (temp[1] != "NEWLINE") {
     return false;
   }
+
   std::cout
       << "[Parser]::[Handle8BitRegMemInstructions]:[ended for instruction "
       << token.m_tokenValue << "]" << std::endl;
@@ -767,10 +791,45 @@ bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
   std::cout
       << "[Parser]::[HandleAllControlInstructions]:[start for instruction "
       << token.m_tokenValue << "]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 2
+  // we need to check if next token is comment or newline
+  if (temp[0][0] == ';') {
+    if (this->PeekNextToken() != "NEWLINE") {
+      return false;
+    }
+  } else if (temp[0] != "NEWLINE") {
+    return false;
+  }
 
   if (this->PeekNextToken() == "NEWLINE") { // valid line
     std::cout
         << "[Parser]::[HandleAllControlInstructions]:[ended for instruction "
+        << token.m_tokenValue << "]" << std::endl;
+    bool resultInst = this->ReturnInstructionHex(token.m_tokenValue);
+    return resultInst;
+  }
+  return false;
+}
+
+bool Parser::HandleAccumulatorInstruction(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[HandleAccumulatorInstruction]:[start for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 2
+  // we need to check if next token is comment or newline
+
+  if (temp[0][0] == ';') {
+    if (this->PeekNextToken() != "NEWLINE") {
+      return false;
+    }
+  } else if (temp[0] != "NEWLINE") {
+    return false;
+  }
+
+  // TODO check this again when there is no comment at end
+  if (this->PeekNextToken() == "NEWLINE") { // valid line
+    std::cout
+        << "[Parser]::[HandleAccumulatorInstruction]:[ended for instruction "
         << token.m_tokenValue << "]" << std::endl;
     bool resultInst = this->ReturnInstructionHex(token.m_tokenValue);
     return resultInst;
