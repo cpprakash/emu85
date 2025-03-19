@@ -318,7 +318,7 @@ SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
   return address;
 }
 
-bool Helper::CheckIfAddressInRange(const std::string &add) {
+/*bool Helper::CheckIfAddressInRange(const std::string &add) {
   std::cout << "[Helper]::[CheckIfAddressInRange]::[start]" << std::endl;
   int base = 10;
   // std::cout << Helper::ConvertToUppercase(add) << std::endl;
@@ -352,7 +352,7 @@ bool Helper::CheckIfAddressInRange(const std::string &add) {
   if (std::stoi(uppercaseAdd, nullptr, 16) < 0xFFFF)
     return true;
   return false;
-}
+}*/
 
 int ConvertHexToDecimal(const std::string &num) { return 0; }
 

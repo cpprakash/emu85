@@ -154,7 +154,8 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       std::cout << "Unknow token|" << file_text[i] << "|" << std::endl;
     }
   }
-  if (this->m_vectTokens[this->m_vectTokens.size()].m_tokenValue != "NEWLINE") {
+  if (this->m_vectTokens[this->m_vectTokens.size() - 1].m_tokenValue !=
+      "NEWLINE") {
     this->m_vectTokens.push_back(
         {line_number, 1, 8, 8, TOKEN_NEWLINE, "NEWLINE"}); // add newline
   }
