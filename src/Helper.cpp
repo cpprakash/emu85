@@ -358,8 +358,8 @@ int ConvertHexToDecimal(const std::string &num) { return 0; }
 
 bool Helper::CheckIfLabelNameIsValid(const std::string &label) {
   bool result = false;
-  std::cout << "[Helper]::[CheckIfLabelNameIsValid]::[start with label = "
-            << label << " ]" << std::endl;
+  /*std::cout << "[Helper]::[CheckIfLabelNameIsValid]::[start with label = "
+            << label << " ]" << std::endl;*/
 
   if (label.length() > 6) { // check if label is less than 6 char
     std::cout
@@ -379,11 +379,11 @@ bool Helper::CheckIfLabelNameIsValid(const std::string &label) {
         << label << "]" << std::endl;
     result = false;
   } else {
-    std::cout << "[Helper]::[CheckIfLabelNameIsValid]::[Valid Label found]"
-              << std::endl;
+    /*std::cout << "[Helper]::[CheckIfLabelNameIsValid]::[Valid Label found]"
+              << std::endl;*/
     result = true;
   }
 
-  std::cout << "[Helper]::[CheckIfLabelNameIsValid]::[end]" << std::endl;
+  // std::cout << "[Helper]::[CheckIfLabelNameIsValid]::[end]" << std::endl;
   return result;
 }
