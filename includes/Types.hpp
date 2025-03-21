@@ -167,22 +167,20 @@ struct GuiData {
 
 // TODO fill this table
 const std::map<std::string, unsigned char> type_mapInstructionBytes{
-    {"ACI", 2},  {"ADC", 1},  {"ADD", 1},  {"ADI", 2},  {"ANA", 1},
-    {"ANI", 2},  {"CALL", 3}, {"CC", 0},   {"CM", 0},   {"CMA", 1},
-    {"CMC", 1},  {"CMP", 1},  {"CNC", 0},  {"CNZ", 0},  {"CP", 0},
-    {"CPE", 0},  {"CPI", 2},  {"CPO", 0},  {"CZ", 0},   {"DAA", 1},
-    {"DAD", 1},  {"DCR", 1},  {"DCX", 0},  {"DI", 1},   {"EI", 1},
-    {"HLT", 1},  {"IN", 2},   {"INR", 1},  {"INX", 0},  {"JC", 3},
-    {"JM", 3},   {"JMP", 3},  {"JNC", 3},  {"JNZ", 3},  {"JP", 3},
-    {"JPE", 3},  {"JPO", 3},  {"JZ", 3},   {"LDA", 3},  {"LDAX", 0},
-    {"LHLD", 3}, {"LXI", 3},  {"MOV", 1},  {"MVI", 2},  {"NOP", 1},
-    {"ORA", 0},  {"ORI", 2},  {"OUT", 2},  {"PCHL", 1}, {"POP", 1},
-    {"PUSH", 1}, {"RAL", 1},  {"RAR", 1},  {"RC", 0},   {"RET", 1},
-    {"RIM", 1},  {"RLC", 1},  {"RM", 0},   {"RNC", 0},  {"RNZ", 0},
-    {"RP", 0},   {"RPE", 0},  {"RPO", 0},  {"RRC", 1},  {"RST", 1},
-    {"SSB", 0},  {"SBI", 0},  {"SHLD", 3}, {"SIM", 1},  {"SPHL", 1},
-    {"STA", 3},  {"STAX", 1}, {"STC", 1},  {"SUB", 1},  {"SUI", 2},
-    {"XCHG", 1}, {"XRA", 0},  {"XRI", 2},  {"XTHL", 1}};
+    {"ACI", 2},  {"ADC", 1}, {"ADD", 1},  {"ADI", 2},  {"ANA", 1},  {"ANI", 2},
+    {"CALL", 3}, {"CC", 3},  {"CM", 3},   {"CMA", 1},  {"CMC", 1},  {"CMP", 1},
+    {"CNC", 3},  {"CNZ", 3}, {"CP", 3},   {"CPE", 3},  {"CPI", 2},  {"CPO", 3},
+    {"CZ", 3},   {"DAA", 1}, {"DAD", 1},  {"DCR", 1},  {"DCX", 0},  {"DI", 1},
+    {"EI", 1},   {"HLT", 1}, {"IN", 2},   {"INR", 1},  {"INX", 0},  {"JC", 3},
+    {"JM", 3},   {"JMP", 3}, {"JNC", 3},  {"JNZ", 3},  {"JP", 3},   {"JPE", 3},
+    {"JPO", 3},  {"JZ", 3},  {"LDA", 3},  {"LDAX", 0}, {"LHLD", 3}, {"LXI", 3},
+    {"MOV", 1},  {"MVI", 2}, {"NOP", 1},  {"ORA", 0},  {"ORI", 2},  {"OUT", 2},
+    {"PCHL", 1}, {"POP", 1}, {"PUSH", 1}, {"RAL", 1},  {"RAR", 1},  {"RC", 3},
+    {"RET", 1},  {"RIM", 1}, {"RLC", 1},  {"RM", 3},   {"RNC", 3},  {"RNZ", 3},
+    {"RZ", 3},   {"RP", 3},  {"RPE", 3},  {"RPO", 3},  {"RRC", 1},  {"RST", 1},
+    {"SSB", 0},  {"SBI", 0}, {"SHLD", 3}, {"SIM", 1},  {"SPHL", 1}, {"STA", 3},
+    {"STAX", 1}, {"STC", 1}, {"SUB", 1},  {"SUI", 2},  {"XCHG", 1}, {"XRA", 0},
+    {"XRI", 2},  {"XTHL", 1}};
 
 const std::map<std::string, unsigned char> types_mapInstruction{
     {"ACI_Data", 0xCE},
