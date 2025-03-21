@@ -203,13 +203,12 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
            token.m_tokenValue == "RRC" || token.m_tokenValue == "RAR" ||
            token.m_tokenValue == "CMA" || token.m_tokenValue == "DAA") {
     if (this->HandleAccumulatorInstruction(token) == false) {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing MVI "
-                   "Instruction failed.]"
-                << std::endl;
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing "
+                << token.m_tokenValue << " Instruction failed.]" << std::endl;
     } else {
       std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "MVI at line "
-                << token.m_lineNumber << "]" << std::endl;
+                << token.m_tokenValue << " at line " << token.m_lineNumber
+                << "]" << std::endl;
     }
   }
 
@@ -289,8 +288,9 @@ SixteenBitAddress Parser::HandleTokenLabel(const TokenStruct &token) {
     }
 
     if (!labelFound) {
-      std::cout << "Okay the symbol was not found, will create it for address "
-                << this->pCounter << std::endl;
+      std::cout << "[Parser]::[HandleTokenLabel]::[Okay the symbol was not "
+                   "found, will create it for address "
+                << this->pCounter << "]" << std::endl;
       /*m_vecSymbolTable.push_back(
           {false, token.m_tokenValue, token.m_lineNumber, this->pCounter});*/
       address.message = "Created new entry in the symbol table at address";
@@ -759,8 +759,7 @@ void Parser::ParseLabels(const TokenStruct &token, const unsigned long index) {
   if (token.m_tokenType ==
       TOKEN_INSTRUCTION) { // get the byte of this instruction
     const auto code = type_mapInstructionBytes.find(token.m_tokenValue);
-    if (code != types_mapInstruction.end()) { // the instruction is in map
-
+    if (code != type_mapInstructionBytes.end()) { // the instruction is in map
       this->m_TotalBytesTillNow += (code->second);
     }
   }
