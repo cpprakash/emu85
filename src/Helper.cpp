@@ -318,7 +318,7 @@ SixteenBitAddress Helper::CheckAndReturn16BitAddress(const std::string &input) {
   return address;
 }
 
-bool Helper::CheckIfAddressInRange(const std::string &add) {
+/*bool Helper::CheckIfAddressInRange(const std::string &add) {
   std::cout << "[Helper]::[CheckIfAddressInRange]::[start]" << std::endl;
   int base = 10;
   // std::cout << Helper::ConvertToUppercase(add) << std::endl;
@@ -352,6 +352,38 @@ bool Helper::CheckIfAddressInRange(const std::string &add) {
   if (std::stoi(uppercaseAdd, nullptr, 16) < 0xFFFF)
     return true;
   return false;
-}
+}*/
 
 int ConvertHexToDecimal(const std::string &num) { return 0; }
+
+bool Helper::CheckIfLabelNameIsValid(const std::string &label) {
+  bool result = false;
+  /*std::cout << "[Helper]::[CheckIfLabelNameIsValid]::[start with label = "
+            << label << " ]" << std::endl;*/
+
+  if (label.length() > 6) { // check if label is less than 6 char
+    std::cout
+        << "[Helper]::[CheckIfLabelNameIsValid]::[A label  cannot have more "
+           "than 6 characters "
+        << label << "]" << std::endl;
+    result = false;
+  }
+  // case check label if has only one char, then its not any illegal char
+  else if (label.length() == 1 &&
+           (Helper::CheckIfRegistersAreValid(label) ||
+            label.substr(1, 1) == "?" || label.substr(1, 1) == "@" ||
+            isdigit(label[0]))) {
+    std::cout
+        << "[Helper]::[CheckIfLabelNameIsValid]::[A label cannot have one "
+           "character with either @,?, a register name or with a digit "
+        << label << "]" << std::endl;
+    result = false;
+  } else {
+    /*std::cout << "[Helper]::[CheckIfLabelNameIsValid]::[Valid Label found]"
+              << std::endl;*/
+    result = true;
+  }
+
+  // std::cout << "[Helper]::[CheckIfLabelNameIsValid]::[end]" << std::endl;
+  return result;
+}

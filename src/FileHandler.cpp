@@ -3,7 +3,6 @@
 #include "../includes/Helper.hpp"
 #include "../includes/Parser.hpp"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -13,22 +12,20 @@
  */
 void FileHandler::ReadFile(char *file_path) {
   std::streampos size;
-  char *memblock;
 
   std::ifstream file(file_path,
                      std::ios::in | std::ios::binary | std::ios::ate);
   if (file.is_open()) {
     size = file.tellg();
-    memblock = new char[size];
+    char *memBlockRead = new char[size];
     file.seekg(0, std::ios::beg);
-    file.read(memblock, size);
+    file.read(memBlockRead, size);
     file.close();
 
-    GenerateTokens(memblock);
+    this->GenerateTokens(memBlockRead);
+    delete[] memBlockRead;
     Assembler m_assembler;
     Parser m_parser;
-
-    delete[] memblock; // frre up the memory
 
     u_BYTE *data = m_parser.ParseProgram(this->m_vectTokens);
 
@@ -40,6 +37,37 @@ void FileHandler::ReadFile(char *file_path) {
 }
 
 /***
+ * destructor
+ * free the memory block here
+ */
+/*FileHandler::~FileHandler() {
+  delete[] memblock; // frre up the memory
+}*/
+
+const std::vector<TokenStruct> &
+FileHandler::ReturnTokens(const char *filePath) {
+  std::streampos size;
+
+  std::ifstream file(filePath, std::ios::in | std::ios::binary | std::ios::ate);
+  if (file.is_open()) {
+
+    size = file.tellg();
+    char *memblock = new char[size];
+    file.seekg(0, std::ios::beg);
+    file.read(memblock, size);
+    file.close();
+    this->GenerateTokens(memblock);
+    delete[] memblock;
+  } else {
+    // error just send the empty vector with erro message
+    this->m_vectTokens.push_back(
+        {0, 1, 3, 3, TOKEN_UNKNOWN, "FILE READ ERROR OCCURRED"});
+  }
+
+  return this->m_vectTokens;
+}
+
+/***
  * Generates the tokens based on the file content of the <program>.asm file
  */
 void FileHandler::GenerateTokens(const std::string &file_text) {
@@ -47,7 +75,7 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
   unsigned int start_pos{0};
   unsigned int end_pos{0};
   unsigned int cur_pos{0};
-  // std::cout << file_text << std::endl;
+
   for (unsigned int i = 0; i < file_text.length(); i++) {
     if (file_text[i] == ';') // starting of comment
     {
@@ -78,7 +106,7 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       continue;
     }
     // check if token starts with character
-    if (isalnum(file_text[i])) {
+    if (isalpha(file_text[i])) {
       start_pos = i;
       std::string temp_string;
       while (isalnum(file_text[i])) { // collect the token
@@ -105,7 +133,7 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       start_pos = i;
       cur_pos++;
       std::string temp_num;
-      while (isdigit(file_text[i])) { // while it is a digit collect it
+      while (isalnum(file_text[i])) { // while it is a digit collect it
         temp_num += file_text[i];
         i++;
       }
@@ -126,7 +154,8 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
       std::cout << "Unknow token|" << file_text[i] << "|" << std::endl;
     }
   }
-  if (this->m_vectTokens[this->m_vectTokens.size()].m_tokenValue != "NEWLINE") {
+  if (this->m_vectTokens[this->m_vectTokens.size() - 1].m_tokenValue !=
+      "NEWLINE") {
     this->m_vectTokens.push_back(
         {line_number, 1, 8, 8, TOKEN_NEWLINE, "NEWLINE"}); // add newline
   }

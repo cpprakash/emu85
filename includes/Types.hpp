@@ -4,6 +4,7 @@
 #include <array>
 #include <map>
 #include <string>
+#include <vector>
 
 typedef unsigned char u_BYTE;
 typedef char BYTE;
@@ -60,6 +61,15 @@ struct SixteenBitAddress {
   bool result;
 };
 
+enum LOG_LEVELS {
+  LOG_FATAL,
+  LOG_ERROR,
+  LOG_WARN,
+  LOG_INFO,
+  LOG_DEBUG,
+  LOG_TRACE
+};
+
 // Token type
 enum TOKEN_TYPES {
   TOKEN_INSTRUCTION,
@@ -83,6 +93,7 @@ enum ERROR_TYPES {
   ERROR_ADDRESS_OUT_OF_RANGE,
   ERROR_DATA_OUT_OF_RANGE,
   ERROR_NO_NEWLINE_FOUND,
+  ERROR_SYMBOL_REDEFINED, // if a lable is redefined
   ERROR_UNKNOW
 };
 
@@ -96,9 +107,29 @@ enum RESULT_TYPES {
   RESULT_UNKNOW
 };
 
+struct ErrorStruct {
+  std::string fileName;
+  unsigned long lineNumber;
+  ERROR_TYPES errorType;
+  std::string errorReason;
+  std::string errorMessage;
+};
+
+/***
+ * struct for SymbolTable
+ */
+struct SymbolTable {
+  bool symbolFound;
+  std::string symbolValue;
+  unsigned int symbolLineNumber;
+  unsigned char symbolAddressLow;
+  unsigned char symbolAddressHigh;
+};
+
 /***
  * Token struct used for initial token generation from the file
  */
+// TODO remove m_ from here
 struct TokenStruct {
   unsigned int m_lineNumber;   // line of the token
   unsigned int m_startPos;     // start pos of the token
@@ -123,6 +154,33 @@ struct AstStruct {
   std::string numberBase;
   bool hasErrors;
 };
+
+/***
+ * struct for data which has to be sent to the GUI
+ */
+struct GuiData {
+  std::vector<TokenStruct> m_tokens;
+  std::vector<std::string> m_debugMessages;
+  ErrorStruct m_errorMessages;
+  u_BYTE m_finalParsedProgram[1024];
+};
+
+// TODO fill this table
+const std::map<std::string, unsigned char> type_mapInstructionOffsetBytes{
+    {"ACI", 2},  {"ADC", 1}, {"ADD", 1},  {"ADI", 2},  {"ANA", 1},  {"ANI", 2},
+    {"CALL", 3}, {"CC", 3},  {"CM", 3},   {"CMA", 1},  {"CMC", 1},  {"CMP", 1},
+    {"CNC", 3},  {"CNZ", 3}, {"CP", 3},   {"CPE", 3},  {"CPI", 2},  {"CPO", 3},
+    {"CZ", 3},   {"DAA", 1}, {"DAD", 1},  {"DCR", 1},  {"DCX", 0},  {"DI", 1},
+    {"EI", 1},   {"HLT", 1}, {"IN", 2},   {"INR", 1},  {"INX", 0},  {"JC", 3},
+    {"JM", 3},   {"JMP", 3}, {"JNC", 3},  {"JNZ", 3},  {"JP", 3},   {"JPE", 3},
+    {"JPO", 3},  {"JZ", 3},  {"LDA", 3},  {"LDAX", 0}, {"LHLD", 3}, {"LXI", 3},
+    {"MOV", 1},  {"MVI", 2}, {"NOP", 1},  {"ORA", 0},  {"ORI", 2},  {"OUT", 2},
+    {"PCHL", 1}, {"POP", 1}, {"PUSH", 1}, {"RAL", 1},  {"RAR", 1},  {"RC", 3},
+    {"RET", 1},  {"RIM", 1}, {"RLC", 1},  {"RM", 3},   {"RNC", 3},  {"RNZ", 3},
+    {"RZ", 3},   {"RP", 3},  {"RPE", 3},  {"RPO", 3},  {"RRC", 1},  {"RST", 1},
+    {"SSB", 0},  {"SBI", 0}, {"SHLD", 3}, {"SIM", 1},  {"SPHL", 1}, {"STA", 3},
+    {"STAX", 1}, {"STC", 1}, {"SUB", 1},  {"SUI", 2},  {"XCHG", 1}, {"XRA", 0},
+    {"XRI", 2},  {"XTHL", 1}};
 
 const std::map<std::string, unsigned char> types_mapInstruction{
     {"ACI_Data", 0xCE},
