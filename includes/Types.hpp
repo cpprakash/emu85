@@ -166,7 +166,7 @@ struct GuiData {
 };
 
 // TODO fill this table
-const std::map<std::string, unsigned char> type_mapInstructionBytes{
+const std::map<std::string, unsigned char> type_mapInstructionOffsetBytes{
     {"ACI", 2},  {"ADC", 1}, {"ADD", 1},  {"ADI", 2},  {"ANA", 1},  {"ANI", 2},
     {"CALL", 3}, {"CC", 3},  {"CM", 3},   {"CMA", 1},  {"CMC", 1},  {"CMP", 1},
     {"CNC", 3},  {"CNZ", 3}, {"CP", 3},   {"CPE", 3},  {"CPI", 2},  {"CPO", 3},

@@ -758,8 +758,9 @@ void Parser::ParseLabels(const TokenStruct &token, const unsigned long index) {
             << "]" << std::endl;*/
   if (token.m_tokenType ==
       TOKEN_INSTRUCTION) { // get the byte of this instruction
-    const auto code = type_mapInstructionBytes.find(token.m_tokenValue);
-    if (code != type_mapInstructionBytes.end()) { // the instruction is in map
+    const auto code = type_mapInstructionOffsetBytes.find(token.m_tokenValue);
+    if (code !=
+        type_mapInstructionOffsetBytes.end()) { // the instruction is in map
       this->m_TotalBytesTillNow += (code->second);
     }
   }
