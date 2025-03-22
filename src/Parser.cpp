@@ -220,7 +220,7 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << std::endl;
     } else {
       std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "SHLD instruction at line "
+                   "MVI at line "
                 << token.m_lineNumber << "]" << std::endl;
     }
   } else { // hopefully it never comes here
