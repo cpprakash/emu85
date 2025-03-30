@@ -24,6 +24,7 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
   std::cout << "[Disassembler]::[ReadBinaryFileToDisassemble]:[start]"
             << std::endl;
   char fileContent[1024];
+  const unsigned char a = 0xA9;
   std::ifstream file(this->m_fileName, std::ios::in | std::ios::binary);
   if (file.is_open()) {
     file.read(fileContent, 1024);
@@ -40,7 +41,22 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
           break; // found last instruction, no need to loop any further
 
         switch (data->first) {
-        case 0x00:
+        case 0x3E: // MVI_A instruction
+        case 0x06: // MVI_B instruction
+        case 0x0E: // MVI_C instruction
+        case 0x16: // MVI_D instruction
+        case 0x1E: // MVI_E instruction
+        case 0x26: // MVI_H instruction
+        case 0x2E: // MVI_L instruction
+        case 0x36: // MVI_M instruction
+          // all these instruction have one byte of data
+          {
+            std::cout << "[Disassembler]::[ReadBinaryFileToDisassemble]:[found "
+                         "data = "
+                      << static_cast<unsigned int>(fileContent[i + 1]) << "]"
+                      << std::endl;
+            i++;
+          }
           break;
 
         default:
