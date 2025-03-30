@@ -34,6 +34,10 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
         std::cout << "[Disassembler]::[ReadBinaryFileToDisassemble]:[found "
                      "instruction = "
                   << data->second << "]" << std::endl;
+
+        if (data->second == "HLT")
+          break; // found last instruction, no need to loop any further
+
         switch (data->first) {
         case 0x00:
           break;
