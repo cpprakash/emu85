@@ -60,6 +60,9 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
             << std::endl;
 }
 
+/***
+ * takes the string like MOV_A_B and returns the string like MOV A, B
+ */
 const std::string &
 Disassembler::ReturnInstructionWithoutUnderscore(const std::string &input) {
   this->m_strInstruction = "";
