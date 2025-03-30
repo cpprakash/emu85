@@ -33,7 +33,8 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
       if (data != types_mapOpcode.end()) {
         std::cout << "[Disassembler]::[ReadBinaryFileToDisassemble]:[found "
                      "instruction = "
-                  << data->second << "]" << std::endl;
+                  << this->ReturnInstructionWithoutUnderscore(data->second)
+                  << "]" << std::endl;
 
         if (data->second == "HLT")
           break; // found last instruction, no need to loop any further
@@ -57,4 +58,29 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
   }
   std::cout << "[Disassembler]::[ReadBinaryFileToDisassemble]:[end]"
             << std::endl;
+}
+
+const std::string &
+Disassembler::ReturnInstructionWithoutUnderscore(const std::string &input) {
+  this->m_strInstruction = "";
+  bool firstComma = false;
+  if (input == "")
+    return this->m_strInstruction;
+
+  unsigned int counter = 0;
+  while (counter < input.length()) {
+    if (input[counter] == '_') {
+      if (firstComma == false) {
+        this->m_strInstruction += ' ';
+        firstComma = true;
+        counter++;
+      } else {
+        this->m_strInstruction += ", ";
+        counter++;
+      }
+    }
+    this->m_strInstruction += input[counter];
+    counter++;
+  }
+  return this->m_strInstruction;
 }
