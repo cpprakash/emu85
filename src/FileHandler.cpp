@@ -13,8 +13,7 @@
 void FileHandler::ReadFile(char *file_path) {
   std::streampos size;
 
-  std::ifstream file(file_path,
-                     std::ios::in | std::ios::binary | std::ios::ate);
+  std::ifstream file(file_path, std::ios::in | std::ios::ate);
   if (file.is_open()) {
     size = file.tellg();
     char *memBlockRead = new char[size];
@@ -160,6 +159,9 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
         {line_number, 1, 8, 8, TOKEN_NEWLINE, "NEWLINE"}); // add newline
   }
   this->m_vectTokens.push_back({line_number, 1, 3, 3, TOKEN_EOF, "EOF"});
+  for (unsigned long i = 0; i < m_vectTokens.size(); i++) {
+    std::cout << "Token = " << m_vectTokens[i].m_tokenValue << std::endl;
+  }
 }
 /***
  * write the bin ROM file with the program

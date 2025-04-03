@@ -203,22 +203,12 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
            token.m_tokenValue == "RRC" || token.m_tokenValue == "RAR" ||
            token.m_tokenValue == "CMA" || token.m_tokenValue == "DAA") {
     if (this->HandleAccumulatorInstruction(token) == false) {
-<<<<<<< HEAD
       std::cout << "[Parser]::[HandleAllInstructions]::[Parsing "
                 << token.m_tokenValue << " Instruction failed.]" << std::endl;
     } else {
       std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
                 << token.m_tokenValue << " at line " << token.m_lineNumber
                 << "]" << std::endl;
-=======
-      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing MVI "
-                   "Instruction failed.]"
-                << std::endl;
-    } else {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "MVI at line "
-                << token.m_lineNumber << "]" << std::endl;
->>>>>>> 0dc34d7 (added more instruction parsing)
     }
   }
 
@@ -801,17 +791,15 @@ bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
   std::cout
       << "[Parser]::[HandleAllControlInstructions]:[start for instruction "
       << token.m_tokenValue << "]" << std::endl;
-  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 2
+  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 1
   // we need to check if next token is comment or newline
   if (temp[0][0] == ';') {
     if (this->PeekNextToken() != "NEWLINE") {
       return false;
     }
-  } else if (temp[0] != "NEWLINE") {
-    return false;
   }
-
-  if (this->PeekNextToken() == "NEWLINE") { // valid line
+  if ((temp[0] == "NEWLINE") ||
+      (this->PeekNextToken() == "NEWLINE")) { // valid line
     std::cout
         << "[Parser]::[HandleAllControlInstructions]:[ended for instruction "
         << token.m_tokenValue << "]" << std::endl;

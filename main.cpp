@@ -15,8 +15,8 @@ int main(int argc, char *argv[]) {
             << std::endl;
 
   // API stuff
-  Api api;
-  api.GetDataForGUI(argv[1]);
+  // Api api;
+  // api.GetDataForGUI(argv[1]);
 
   FileHandler file_handler;
   if (argc == 2) {

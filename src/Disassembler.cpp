@@ -91,11 +91,19 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
         case 0xE2: //{0xE2, "JPO"},
         case 0xCA: //{0xCA, "JZ"}
         {
-          std::cout << this->ReturnInstructionWithoutUnderscore(data->second)
-                    << " 0" << std::hex << std::uppercase
-                    << (fileContent[i + 2] << 8 | fileContent[i + 1])
+          std::cout << "[Disassembler]::[ReadBinaryFileToDisassemble]:["
+                       "fileContent[i + 2]]"
+                    << std::hex << (fileContent[i + 2]) << std::dec
+                    << std::endl;
+          std::cout << "[Disassembler]::[ReadBinaryFileToDisassemble]:["
+                       "data->second "
+                    << data->second << std::endl;
+          std::cout << data->second << " 0" << std::hex
+                    << (fileContent[i + 2] << 8) << fileContent[i + 1]
                     << std::dec << "H" << std::endl;
-
+          std::cout << "[Disassembler]::[ReadBinaryFileToDisassemble]:["
+                       "fileContent[i + 1]]"
+                    << std::hex << fileContent[i + 1] << std::dec << std::endl;
           i += 2; // increment with 2, one for high and one for low byte
 
         } break;
