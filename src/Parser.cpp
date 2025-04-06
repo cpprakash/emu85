@@ -220,8 +220,8 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << std::endl;
     } else {
       std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "SHLD instruction at line "
-                << token.m_lineNumber << "]" << std::endl;
+                << token.m_tokenValue << " at line " << token.m_lineNumber
+                << "]" << std::endl;
     }
   } else { // hopefully it never comes here
     this->HandleAndSaveError(token, ERROR_ILLEGAL_INSTRUCTION,
