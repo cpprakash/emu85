@@ -791,17 +791,15 @@ bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
   std::cout
       << "[Parser]::[HandleAllControlInstructions]:[start for instruction "
       << token.m_tokenValue << "]" << std::endl;
-  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 2
+  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 1
   // we need to check if next token is comment or newline
   if (temp[0][0] == ';') {
     if (this->PeekNextToken() != "NEWLINE") {
       return false;
     }
-  } else if (temp[0] != "NEWLINE") {
-    return false;
   }
-
-  if (this->PeekNextToken() == "NEWLINE") { // valid line
+  if ((temp[0] == "NEWLINE") ||
+      (this->PeekNextToken() == "NEWLINE")) { // valid line
     std::cout
         << "[Parser]::[HandleAllControlInstructions]:[ended for instruction "
         << token.m_tokenValue << "]" << std::endl;
@@ -837,4 +835,4 @@ bool Parser::HandleAccumulatorInstruction(const TokenStruct &token) {
   return false;
 }
 
-//************************PRIVATE FUNCTIONS END******************************
+//************************PRIVATE FUNCTIONS END********************************

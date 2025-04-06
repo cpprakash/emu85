@@ -75,7 +75,7 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
         case 0xFC: // CM
         case 0xE4: // CPO
         case 0x2A: // LHLD
-        case 0x22: // SHLD TODO fix SHLD address
+        case 0x22: // SHLD
         case 0x3A: // LDA
         case 0x32: // STA
         case 0xD8: // RC
@@ -91,11 +91,10 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
         case 0xE2: //{0xE2, "JPO"},
         case 0xCA: //{0xCA, "JZ"}
         {
-          std::cout << this->ReturnInstructionWithoutUnderscore(data->second)
-                    << " 0" << std::hex << std::uppercase
-                    << (fileContent[i + 2] << 8 | fileContent[i + 1])
+          std::cout << data->second << " 0" << std::hex
+                    << (static_cast<unsigned short>(fileContent[i + 2] << 8) |
+                        (fileContent[i + 1]))
                     << std::dec << "H" << std::endl;
-
           i += 2; // increment with 2, one for high and one for low byte
 
         } break;
