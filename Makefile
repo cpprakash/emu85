@@ -17,9 +17,11 @@ MAIN_FRAME=$(BUILD_DIR)/MainFrame.o
 FILE_HANDLER=$(BUILD_DIR)/FileHandler.o
 PARSER=$(BUILD_DIR)/Parser.o
 HELPER=$(BUILD_DIR)/Helper.o
+API=$(BUILD_DIR)/Api.o
+DISASSEMBLER=$(BUILD_DIR)/Disassembler.o
 
-emu8085: createdir MainApp.o main.o FileHandler.o Parser.o Instructions.o Assembler.o Helper.o MainFrame.o
-	$(PROJECT) $(BUILD_DIR)/MainApp.o $(MAIN) $(INSTRUCTIONS) $(WX_WIDGET) $(ASSEMBLER) $(MAIN_FRAME)
+emu8085: createdir MainApp.o main.o FileHandler.o Parser.o Instructions.o Assembler.o Api.o Helper.o MainFrame.o
+	$(PROJECT) $(BUILD_DIR)/MainApp.o $(MAIN) $(INSTRUCTIONS) $(WX_WIDGET) $(ASSEMBLER) $(API) $(MAIN_FRAME)
 
 createdir: clean
 	mkdir $(BUILD_DIR)
@@ -30,6 +32,9 @@ Instructions.o: src/Instructions.cpp includes/Instructions.hpp
 Assembler.o: src/Assembler.cpp includes/Assembler.hpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c src/Assembler.cpp -o $(ASSEMBLER)
 
+Disassembler.o: src/Disassembler.cpp includes/Disassembler.hpp
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c src/Disassembler.cpp -o $(DISASSEMBLER)
+
 FileHandler.o: src/FileHandler.cpp includes/FileHandler.hpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c src/FileHandler.cpp -o $(FILE_HANDLER)
 
@@ -38,6 +43,9 @@ Parser.o: src/Parser.cpp includes/Parser.hpp
 
 Helper.o: src/Helper.cpp includes/Helper.hpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c src/Helper.cpp -o $(HELPER)
+
+Api.o: api/Api.cpp api/Api.hpp
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -c api/Api.cpp -o $(API)
 
 main.o: main.cpp
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) -c main.cpp -o $(MAIN)
@@ -51,8 +59,8 @@ MainApp.o: src/MainApp.cpp includes/MainApp.hpp
 clean:
 	rm -rf $(BUILD_DIR)
 
-console: createdir main.o Instructions.o Assembler.o FileHandler.o Parser.o Helper.o
-	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES)  -o build/emu8085 $(MAIN) $(INSTRUCTIONS) $(FILE_HANDLER) $(ASSEMBLER) $(PARSER) $(HELPER)
+console: createdir main.o Instructions.o Assembler.o FileHandler.o Parser.o Helper.o Api.o Disassembler.o
+	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES)  -o build/emu8085 $(MAIN) $(INSTRUCTIONS) $(FILE_HANDLER) $(ASSEMBLER) $(PARSER) $(HELPER)  $(API)  $(DISASSEMBLER)
 
 debug: createdir main.o Instructions.o Assembler.o FileHandler.o
 	$(COMPILER) $(COMPILER_VERSION) $(COMPILER_OPTIONS) $(COMPILER_INCLUDES) -g -o build/emu8085 main.o $(INSTRUCTIONS) $(FILE_HANDLER) $(ASSEMBLER) 

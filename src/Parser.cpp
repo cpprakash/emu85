@@ -1,6 +1,7 @@
 #include "../includes/Parser.hpp"
 #include "../includes/Helper.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -9,6 +10,11 @@ u_BYTE *Parser::ParseProgram(const std::vector<TokenStruct> &tokens) {
             << tokens.size() << "]" << std::endl;
 
   this->m_vectTokens = tokens; // do everything with the local variable
+
+  // Parsing the labels in the first pass
+  for (unsigned long i = 0; i < this->m_vectTokens.size(); i++) {
+    this->ParseLabels(this->m_vectTokens[i], i);
+  }
 
   // main loop iterate over the token vector
   for (this->m_currentIndex = 0ul;
@@ -104,6 +110,10 @@ std::vector<std::string> Parser::GetNextNTokens(unsigned int howMany = 1) {
   return temp;
 }
 
+/***
+ * just peek the next token
+ * we dont need to consume this token yet
+ */
 std::string Parser::PeekNextToken(unsigned long howMany) {
   return this->m_vectTokens[m_currentIndex + howMany].m_tokenValue;
 }
@@ -117,7 +127,8 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
   if (token.m_tokenValue == "ADC" || token.m_tokenValue == "ADD" ||
       token.m_tokenValue == "ANA" || token.m_tokenValue == "CMP" ||
       token.m_tokenValue == "ORA" || token.m_tokenValue == "SBB" ||
-      token.m_tokenValue == "SUB" || token.m_tokenValue == "XRA") {
+      token.m_tokenValue == "SUB" || token.m_tokenValue == "XRA" ||
+      token.m_tokenValue == "INR" || token.m_tokenValue == "DCR") {
     // std::cout << "ACI " << std::endl;
     this->Handle8BitRegMemInstructions(token);
   } else if (token.m_tokenValue == "ACI" || token.m_tokenValue == "ADI" ||
@@ -129,16 +140,18 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
     this->Handle8BitDataInstructions(token);
   }
 
-  // handle HLT instruction
-  else if (token.m_tokenValue == "HLT") {
-    if (this->HandleHltInstruction(token) == false) {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing HLT "
-                   "Instruction failed.]"
-                << std::endl;
+  // handle all control instruction
+  else if (token.m_tokenValue == "DI" || token.m_tokenValue == "EI" ||
+           token.m_tokenValue == "HLT" || token.m_tokenValue == "NOP" ||
+           token.m_tokenValue == "RIM" || token.m_tokenValue == "RST" ||
+           token.m_tokenValue == "SIM") {
+    if (this->HandleAllControlInstructions(token) == false) {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing "
+                << token.m_tokenValue << "Instruction failed.]" << std::endl;
     } else {
       std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "HLT at line "
-                << token.m_lineNumber << "]" << std::endl;
+                << token.m_tokenValue << " at line " << token.m_lineNumber
+                << "]" << std::endl;
     }
   }
 
@@ -146,16 +159,17 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
            token.m_tokenValue == "JC" || token.m_tokenValue == "JZ" ||
            token.m_tokenValue == "JP" || token.m_tokenValue == "JPE" ||
            token.m_tokenValue == "JNC" || token.m_tokenValue == "JNZ" ||
-           token.m_tokenValue == "JM" || token.m_tokenValue == "JPO" ||
-           token.m_tokenValue == "RC" || token.m_tokenValue == "RZ" ||
-           token.m_tokenValue == "RP" || token.m_tokenValue == "RPE" ||
-           token.m_tokenValue == "RNC" || token.m_tokenValue == "RNZ" ||
-           token.m_tokenValue == "RM" || token.m_tokenValue == "RPO" ||
-           token.m_tokenValue == "CC" || token.m_tokenValue == "CZ" ||
-           token.m_tokenValue == "CP" || token.m_tokenValue == "CPE" ||
-           token.m_tokenValue == "CNC" || token.m_tokenValue == "CNZ" ||
-           token.m_tokenValue == "CM" || token.m_tokenValue == "CPO" ||
-           token.m_tokenValue == "LHLD" || token.m_tokenValue == "STHD") {
+           token.m_tokenValue == "JM" || token.m_tokenValue == "JMP" ||
+           token.m_tokenValue == "JPO" || token.m_tokenValue == "RC" ||
+           token.m_tokenValue == "RZ" || token.m_tokenValue == "RP" ||
+           token.m_tokenValue == "RPE" || token.m_tokenValue == "RNC" ||
+           token.m_tokenValue == "RNZ" || token.m_tokenValue == "RM" ||
+           token.m_tokenValue == "RPO" || token.m_tokenValue == "CC" ||
+           token.m_tokenValue == "CZ" || token.m_tokenValue == "CP" ||
+           token.m_tokenValue == "CPE" || token.m_tokenValue == "CNC" ||
+           token.m_tokenValue == "CNZ" || token.m_tokenValue == "CM" ||
+           token.m_tokenValue == "CPO" || token.m_tokenValue == "LHLD" ||
+           token.m_tokenValue == "STHD") {
     this->Handle16BitAddressInstructions(token);
   }
 
@@ -183,6 +197,21 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << token.m_lineNumber << "]" << std::endl;
     }
   }
+
+  // Parser Accumulator instructions
+  else if (token.m_tokenValue == "RLC" || token.m_tokenValue == "RAL" ||
+           token.m_tokenValue == "RRC" || token.m_tokenValue == "RAR" ||
+           token.m_tokenValue == "CMA" || token.m_tokenValue == "DAA") {
+    if (this->HandleAccumulatorInstruction(token) == false) {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing "
+                << token.m_tokenValue << " Instruction failed.]" << std::endl;
+    } else {
+      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
+                << token.m_tokenValue << " at line " << token.m_lineNumber
+                << "]" << std::endl;
+    }
+  }
+
   // Parse SHLD Instruction
   else if (token.m_tokenValue == "SHLD") {
     if (!this->HandleShldInstruction(token)) {
@@ -191,20 +220,8 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << std::endl;
     } else {
       std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "SHLD instruction at line "
-                << token.m_lineNumber << "]" << std::endl;
-    }
-  }
-  // Parse STA instruction
-  else if (token.m_tokenValue == "STA") {
-    if (this->HandleStaInstruction(token) == false) {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing STA "
-                   "Instruction failed.]"
-                << std::endl;
-    } else {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "STA instruction at line "
-                << token.m_lineNumber << "]" << std::endl;
+                << token.m_tokenValue << " at line " << token.m_lineNumber
+                << "]" << std::endl;
     }
   } else { // hopefully it never comes here
     this->HandleAndSaveError(token, ERROR_ILLEGAL_INSTRUCTION,
@@ -215,39 +232,81 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
 }
 
 /***
- * Handle the label
+ * Handle the label with string input
  */
-void Parser::HandleTokenLabel(const TokenStruct &token) {
+SixteenBitAddress Parser::HandleTokenLabel(const std::string &token) {
+  std::cout
+      << "[Parser]::[HandleTokenLabelSTRING]::[Start]::[Checking for a label "
+      << "with value = " << token << "]" << std::endl;
+  SixteenBitAddress address{"", 0x00, 0x00, false};
+  Helper::CheckIfLabelNameIsValid(token);
+  // search in the vector of symble table for this label
+  for (unsigned long i = 0; i < this->m_vecSymbolTable.size(); i++) {
+    if (this->m_vecSymbolTable[i].symbolValue == token) {
+      address.result = true;
+      address.addressLow = this->m_vecSymbolTable[i].symbolAddressLow;
+      address.addressHigh = this->m_vecSymbolTable[i].symbolAddressHigh;
+      address.message = "Successfully parser the lable";
+      return address;
+    }
+  }
+  return address;
+}
+/***
+ * Handle the label with token input overloaded
+ */
+SixteenBitAddress Parser::HandleTokenLabel(const TokenStruct &token) {
   std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label found at "
             << token.m_lineNumber << " with value = " << token.m_tokenValue
             << "]" << std::endl;
-  if (token.m_tokenValue.length() > 6) { // check if label is less than 6 char
-    std::cout << "[Parser]::[HandleTokenLabel]::[A label  cannot have more "
-                 "than 6 characters "
-              << token.m_tokenValue << "]" << std::endl;
-    return;
+  SixteenBitAddress address{"", 0x00, 0x00, false};
+  if (!Helper::CheckIfLabelNameIsValid(token.m_tokenValue)) {
+    std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label failed "
+              << token.m_lineNumber << " with value = " << token.m_tokenValue
+              << " is not a label]" << std::endl;
+    return address;
   }
-  // case check label if has only one char, then its not any illegal char
-  if (token.m_tokenValue.length() == 1 &&
-      (Helper::CheckIfRegistersAreValid(token.m_tokenValue) ||
-       token.m_tokenValue.substr(1, 1) == "?" ||
-       token.m_tokenValue.substr(1, 1) == "@" ||
-       isdigit(token.m_tokenValue[0]))) {
-    std::cout << "[Parser]::[HandleTokenLabel]::[A label cannot have one "
-                 "character with either @,?, a register name or with a digit "
-              << token.m_tokenValue << "]" << std::endl;
-    return;
-  }
-  if (this->PeekNextToken() == "COLON") {
-    std::cout << "[Parser]::[HandleTokenLabel]::[A label found at "
+  /***
+   * if we have a token which is a label then there are two possibilites
+   * first: label is declared at this line, means the next token should be colon
+   *    |-> search the vector to see if the label is not declared twice
+   *    |-> if the label is redeclared, generate error
+   *    |-> else save it in the vector and retunr the high and low address
+   * second: the label is referenced here at this line
+   */
+  if (this->PeekNextToken() == "COLON") { // label declaration here
+    std::cout << "[Parser]::[HandleTokenLabel]::[A label declaration found at "
               << token.m_lineNumber << " with value = " << token.m_tokenValue
               << "]" << std::endl;
+    bool labelFound = false;
+    for (unsigned long int i = 0; i < this->m_vecSymbolTable.size(); i++) {
+      if (this->m_vecSymbolTable[i].symbolValue == token.m_tokenValue) {
+        address.message = "Label is defined multiple times";
+        address.result = false;
+        // return;
+      }
+    }
+
+    if (!labelFound) {
+      std::cout << "[Parser]::[HandleTokenLabel]::[Okay the symbol was not "
+                   "found, will create it for address "
+                << this->pCounter << "]" << std::endl;
+      /*m_vecSymbolTable.push_back(
+          {false, token.m_tokenValue, token.m_lineNumber, this->pCounter});*/
+      address.message = "Created new entry in the symbol table at address";
+      address.result = true;
+      address.addressLow = this->pCounter;
+      address.addressHigh = this->pCounter + 1;
+    }
+
     this->GetNextToken(); // advance tokens by one
-    return;
+    return address;
   }
-  std::cout << "[Parser]::[HandleTokenLabel]::[Checking for a label failed "
-            << token.m_lineNumber << " with value = " << token.m_tokenValue
-            << " is not a label]" << std::endl;
+  std::cout
+      << "[Parser]::[HandleTokenLabel]::[End]::[Checking for a label failed "
+      << token.m_lineNumber << " with value = " << token.m_tokenValue
+      << " is not a label]" << std::endl;
+  return address;
 }
 
 /***
@@ -264,9 +323,9 @@ void Parser::HandleTokenComment(const TokenStruct &token) {
     std::cout << "Comment =" << comment << std::endl;
   }
 
-  this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
+  /*this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
                                    token.m_endPos, comment.length(), comment,
-                                   0x76, "", "", "", false});
+                                   0x76, "", "", "", false});*/
 }
 
 /***
@@ -280,9 +339,18 @@ void Parser::HandleTokenComment(const TokenStruct &token) {
  */
 void Parser::ParseSingleLine(const TokenStruct &token) {
   std::cout << "[Parser]::[ParseSingleLine]::[Parsing token= "
-            << token.m_tokenValue << " (" << this->m_currentIndex << "/"
+            << token.m_tokenValue << " (" << this->m_currentIndex + 1 << "/"
             << this->m_vectTokens.size() << ")]" << std::endl;
 
+  /***
+   * the start of the line can have only five possibilites for this program
+   * 1. there can be a label definition e.g <Label:>
+   * 2. there can be an instruction <ANY INSTRUCTION>
+   * 3. there can be a comment e.g. <;COMMENT>
+   * 4. there can be a newline \\n or \r treated as NEWLINE
+   * 5. there can be a EOF, added automatically
+   * other than these cases, it must be an error
+   */
   switch (token.m_tokenType) {
   case TOKEN_INSTRUCTION:
     this->HandleAllInstructions(token);
@@ -290,52 +358,27 @@ void Parser::ParseSingleLine(const TokenStruct &token) {
   case TOKEN_LABEL:
     this->HandleTokenLabel(token);
     break;
-  case TOKEN_ADDDRESS:
-    // Handle16BitAddress();
-    break;
-  case TOKEN_DATA:
-    // Handle8BitData();
-    break;
-  case TOKEN_REGISTER:
-    // HandleRegister();
-    break;
   case TOKEN_NEWLINE:
     // HandleNewline();
     std::cout << "[Parser]::[ParseSingleLine]::[A newline found at line number "
-              << token.m_lineNumber << "]" << std::endl;
+              << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   case TOKEN_EOF: // token parsing is complete or no more tokens are there
     // HandleFileEnd();
     std::cout << "[Parser]::[ParseSingleLine]::[An EOF found at "
-              << token.m_lineNumber << "]" << std::endl;
+              << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   case TOKEN_COMMENT:
     this->HandleTokenComment(token);
-    std::cout << "[Parser]::[ParseSingleLine]::[A comment found at "
-              << token.m_lineNumber << "]" << std::endl;
-    break;
-  case TOKEN_COMMA:
-    // HandleComma();
-    std::cout << "[Parser]::[ParseSingleLine]::[A comma found at "
-              << token.m_lineNumber << "]" << std::endl;
-    break;
-  case TOKEN_COLON:
-    // HandleColon();
-    std::cout << "[Parser]::[ParseSingleLine]::[colon found at line number "
-              << token.m_lineNumber << "]" << std::endl;
-    break;
-  case TOKEN_NUMBER:
-    // HandleNumber();
-    std::cout << "[Parser]::[ParseSingleLine]::[A Number found at line number "
-              << token.m_lineNumber << " with value " << token.m_tokenValue
-              << "]" << std::endl;
+    std::cout << "[Parser]::[ParseSingleLine]::[A comment found at line "
+              << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   case TOKEN_UNKNOWN:
   default:
     std::cout
         << "[Parser]::[ParseSingleLine]::[Wrong Instruction found. Please "
-           "check it again line] "
-        << token.m_lineNumber << std::endl;
+           "check the line number "
+        << token.m_lineNumber + 1 << "]" << std::endl;
     break;
   }
 }
@@ -377,19 +420,6 @@ bool Parser::HandleAddInstruction(const TokenStruct &token) {
 bool Parser::HandleAdiInstruction(const TokenStruct &token) { return false; }
 bool Parser::HandleAnaInstruction(const TokenStruct &token) { return false; }
 bool Parser::HandleAniInstruction(const TokenStruct &token) { return false; }
-
-// handle HLT instruction
-bool Parser::HandleHltInstruction(const TokenStruct &token) {
-  std::cout << "[Parser]::[HandleHltInstruction]:[start]" << std::endl;
-  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 1
-  if (temp[0] != "NEWLINE") {
-    std::cout << "[Parser]::[HandleHltInstruction]::[expecting newline]"
-              << std::endl;
-    return false;
-  }
-  std::cout << "[Parser]::[HandleHltInstruction]:[end]" << std::endl;
-  return this->ReturnInstructionHex(token.m_tokenValue);
-}
 
 // handle all MVI instructions
 /***
@@ -521,38 +551,6 @@ bool Parser::HandleShldInstruction(const TokenStruct &token) {
   return resultInst;
 }
 
-// handle STA instructions
-bool Parser::HandleStaInstruction(const TokenStruct &token) {
-  std::cout << "[Parser]::[HandleStaInstruction]::[start]" << std::endl;
-  if (token.m_tokenValue != "STA") {
-    return false; // just make sure once again
-  }
-  // get next 3 tokens
-  std::vector<std::string> temp = this->GetNextNTokens(4);
-  // std::cout << "STA INS size of temp =" << temp.size() << std::endl;
-  for (unsigned long i = 0; i < temp.size(); i++)
-    std::cout << temp[i] << std::endl;
-  // next token should be a 16bit address
-  if (!Helper::CheckIfAddressInRange(temp[0])) {
-    return false;
-  }
-
-  if (!Helper::CheckIfBaseIsValid(temp[1])) { // base is wrong
-    return false;
-  }
-
-  if (temp[2] != "NEWLINE") { // check if the next token is newline,
-    return false;
-  }
-
-  this->m_astVectTokens.push_back({token.m_lineNumber, token.m_startPos,
-                                   token.m_endPos, token.m_totalLength,
-                                   token.m_tokenValue, 0x76, "", temp[0],
-                                   temp[1], false});
-  std::cout << "[Parser]::[HandleStaInstruction]::[end]" << std::endl;
-  return true;
-}
-
 bool Parser::ReturnInstructionHex(const std::string &inst) {
   std::cout << "[Parser]::[ReturnInstructionHex]::[start for instruction "
             << inst << "]" << std::endl;
@@ -586,15 +584,22 @@ bool Parser::Handle8BitRegMemInstructions(const TokenStruct &token) {
       << "[Parser]::[Handle8BitRegMemInstructions]:[started for instruction "
       << token.m_tokenValue << "]" << std::endl;
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
+
   if (!Helper::CheckIfRegistersAreValid(temp[0])) {
     std::cout << "[Parser]::[Handle8BitRegMemInstructions]::[first operand is "
                  "not valid]"
               << std::endl;
     return false;
   }
-  if (temp[1] != "NEWLINE") {
+  // we need to check if next token is comment or newline
+  if (temp[1][0] == ';') {
+    if (this->PeekNextToken() != "NEWLINE") {
+      return false;
+    }
+  } else if (temp[1] != "NEWLINE") {
     return false;
   }
+
   std::cout
       << "[Parser]::[Handle8BitRegMemInstructions]:[ended for instruction "
       << token.m_tokenValue << "]" << std::endl;
@@ -617,7 +622,6 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
     std::cout << "[Parser]::[Handle8BitDataInstructions]::[first operand is "
                  "not valid]"
               << std::endl;
-    result = false;
   }
   // expects a comma between register and 8bit data
   if (temp[1] != "COMMA") {
@@ -635,7 +639,6 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
     if (temp[3][0] == ';' && this->PeekNextToken() == "NEWLINE") {
       // do nothing
     } else {
-      result = false;
       std::cout
           << "[Parser]::[Handle8BitDataInstructions]::[expecting a new line]"
           << std::endl;
@@ -661,8 +664,8 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
 /***
  * Handle all instructions that operate on 16 bit address
  * this function covers these instructions
- * LDA, SDA, JC, JZ, JP, JPE, JNC, JNZ, JM, JPO, RC, RZ, RP, RPE, RNC, RNZ, RM,
- * RPO, CC, CZ, CP, CPE, CNC; CNZ, CM, CPO
+ * LDA, SDA, JC, JZ, JP, JMP, JPE, JNC, JNZ, JM, JPO, RC, RZ, RP, RPE, RNC, RNZ,
+ * RM, RPO, CC, CZ, CP, CPE, CNC; CNZ, CM, CPO
  */
 bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
   std::cout
@@ -670,27 +673,31 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
       << token.m_tokenValue << "]" << std::endl;
   SixteenBitAddress address{"", 0x00, 0x00, false};
 
+  // the next token type can either be a label referece or a 16 bit address
   TOKEN_TYPES type = this->ReturnTokenType(this->m_currentIndex + 1);
 
   std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
 
-  address = Helper::CheckAndReturn16BitAddress(temp[0]);
-  if (type == TOKEN_NUMBER && !address.result) {
-    std::cout
-        << "[Parser]::[Handle16BitAddressInstructions]:[address is invalid "
-        << temp[0] << "]" << std::endl;
+  // if token type is number it should be a 16 bit address
+  if (type == TOKEN_NUMBER) {
+    address = Helper::CheckAndReturn16BitAddress(temp[0]);
+    if (!address.result) { // if the result is invalid
+      std::cout
+          << "[Parser]::[Handle16BitAddressInstructions]:[address is invalid "
+          << temp[0] << "]" << std::endl;
+    } else if (temp[1] != "NEWLINE") {
+      if (temp[1][0] == ';' && this->PeekNextToken() == "NEWLINE") {
+        std::cout
+            << "[Parser]::[Handle16BitAddressInstructions]:[its a comment, "
+               "ahve to get another token "
+            << temp[1] << "]" << std::endl;
+      } else {
+        // return false;
+      }
+    }
 
   } else if (type == TOKEN_LABEL) { // TODO handle label
-  }
-
-  if (temp[1] != "NEWLINE") {
-    if (temp[1][0] == ';' && this->PeekNextToken() == "NEWLINE") {
-      std::cout << "[Parser]::[Handle16BitAddressInstructions]:[its a comment, "
-                   "ahve to get another token "
-                << temp[1] << "]" << std::endl;
-    } else {
-      return false;
-    }
+    address = this->HandleTokenLabel(temp[0]);
   }
 
   std::cout
@@ -706,11 +713,22 @@ bool Parser::Handle16BitAddressInstructions(const TokenStruct &token) {
 
 /***
  * Handle all instructions that operate on 8 bit port number
+ * IN <PORT> and OUT <PORT> instructions
+ * where PORT is an 8Bit port address
  * this function covers these instructions
  * IN, OUT
  */
 bool Parser::Handle8BitPortNumberInstructions(const TokenStruct &token) {
-  return false;
+  std::cout << "[Parser]::[Handle8BitPortNumberInstructions]:[started for "
+               "instruction "
+            << token.m_tokenValue << "]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(3); // will get only 2
+  // it should check that if the PORT address is valid 8 bit number TODO
+  // and then it should check if the next token is a new line or comment TODO
+  std::cout
+      << "[Parser]::[Handle8BitPortNumberInstructions]:[ended for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  return this->ReturnInstructionHex(token.m_tokenValue + "_" + temp[0]);
 }
 
 /***
@@ -727,6 +745,134 @@ bool Parser::Handle16BitRegPairInstructions(const TokenStruct &token) {
  * ADD, ADC, SUB, SBB, ANA, XRA, ORA, CMP
  */
 bool Parser::Handle16BitImmediateOperandInstructions(const TokenStruct &token) {
+  return false;
+}
+
+/***
+ * parse all the labels in the first pass
+ * so that at the second pass the symbols can be resolved
+ */
+void Parser::ParseLabels(const TokenStruct &token, const unsigned long index) {
+  /*std::cout << "[Parser]::[ParseLabels]:[start for token " <<
+     token.m_tokenValue
+            << "]" << std::endl;*/
+  if (token.m_tokenType ==
+      TOKEN_INSTRUCTION) { // get the byte of this instruction
+    const auto code = type_mapInstructionOffsetBytes.find(token.m_tokenValue);
+    if (code !=
+        type_mapInstructionOffsetBytes.end()) { // the instruction is in map
+      this->m_TotalBytesTillNow += (code->second);
+    }
+  }
+
+  if (token.m_tokenType == TOKEN_LABEL) {
+    if (Helper::CheckIfLabelNameIsValid(token.m_tokenValue)) {
+      if (this->m_vectTokens[index + 1].m_tokenType == TOKEN_COLON) {
+        m_vecSymbolTable.push_back(
+            {false, token.m_tokenValue, token.m_lineNumber,
+             static_cast<u_BYTE>(this->m_TotalBytesTillNow & 0x00FF),
+             static_cast<u_BYTE>((this->m_TotalBytesTillNow & 0xFF00) >> 8)});
+        std::cout << "[Parser]::[ParseLabels]:[New entry added for token "
+                  << token.m_tokenValue << "]" << std::endl;
+      }
+    } else {
+      // std::cout << "Invalid lable name found" << std::endl;
+    }
+  } else {
+    /*std::cout << "[Parser]::[ParseLabels]:[No label found at this token] "
+              << std::endl;*/
+  }
+
+  /*std::cout << "[Parser]::[ParseLabels]:[end for token " << token.m_tokenValue
+            << "]" << std::endl;*/
+}
+
+bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[HandleAllControlInstructions]:[start for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 1
+  // we need to check if next token is comment or newline
+  if (temp[0][0] == ';') {
+    if (this->PeekNextToken() != "NEWLINE") {
+      return false;
+    }
+  }
+  if ((temp[0] == "NEWLINE") ||
+      (this->PeekNextToken() == "NEWLINE")) { // valid line
+    std::cout
+        << "[Parser]::[HandleAllControlInstructions]:[ended for instruction "
+        << token.m_tokenValue << "]" << std::endl;
+    bool resultInst = this->ReturnInstructionHex(token.m_tokenValue);
+    return resultInst;
+  }
+  return false;
+}
+
+bool Parser::HandleAccumulatorInstruction(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[HandleAccumulatorInstruction]:[start for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 2
+  // we need to check if next token is comment or newline
+
+  if (temp[0][0] == ';') {
+    if (this->PeekNextToken() != "NEWLINE") {
+      return false;
+    }
+  } else if (temp[0] != "NEWLINE") {
+    return false;
+  }
+
+  // TODO check this again when there is no comment at end
+  if (this->PeekNextToken() == "NEWLINE") { // valid line
+    std::cout
+        << "[Parser]::[HandleAccumulatorInstruction]:[ended for instruction "
+        << token.m_tokenValue << "]" << std::endl;
+    bool resultInst = this->ReturnInstructionHex(token.m_tokenValue);
+    return resultInst;
+  }
+  return false;
+}
+
+bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[HandleAllControlInstructions]:[start for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+
+  if (this->PeekNextToken() == "NEWLINE") { // valid line
+    std::cout
+        << "[Parser]::[HandleAllControlInstructions]:[ended for instruction "
+        << token.m_tokenValue << "]" << std::endl;
+    bool resultInst = this->ReturnInstructionHex(token.m_tokenValue);
+    return resultInst;
+  }
+  return false;
+}
+
+bool Parser::HandleAccumulatorInstruction(const TokenStruct &token) {
+  std::cout
+      << "[Parser]::[HandleAccumulatorInstruction]:[start for instruction "
+      << token.m_tokenValue << "]" << std::endl;
+  std::vector<std::string> temp = this->GetNextNTokens(2); // will get only 2
+  // we need to check if next token is comment or newline
+
+  if (temp[0][0] == ';') {
+    if (this->PeekNextToken() != "NEWLINE") {
+      return false;
+    }
+  } else if (temp[0] != "NEWLINE") {
+    return false;
+  }
+
+  // TODO check this again when there is no comment at end
+  if (this->PeekNextToken() == "NEWLINE") { // valid line
+    std::cout
+        << "[Parser]::[HandleAccumulatorInstruction]:[ended for instruction "
+        << token.m_tokenValue << "]" << std::endl;
+    bool resultInst = this->ReturnInstructionHex(token.m_tokenValue);
+    return resultInst;
+  }
   return false;
 }
 

@@ -34,6 +34,9 @@ public:
   static EightBitData CheckOctalNumber(const std::string &input);
   static EightBitData CheckHexNumber(const std::string &input);
 
+  // check if a label name is valid
+  static bool CheckIfLabelNameIsValid(const std::string &label);
+
 private:
   // void InsertInstructionsInMap(void);
 };
