@@ -185,18 +185,6 @@ void Parser::HandleAllInstructions(const TokenStruct &token) {
                 << token.m_lineNumber << "]" << std::endl;
     }
   }
-  // here deal with all MVI instructions
-  else if (token.m_tokenValue == "MVI") {
-    if (this->HandleMviInstruction(token) == false) {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Parsing MVI "
-                   "Instruction failed.]"
-                << std::endl;
-    } else {
-      std::cout << "[Parser]::[HandleAllInstructions]::[Successfully parsed "
-                   "MVI at line "
-                << token.m_lineNumber << "]" << std::endl;
-    }
-  }
 
   // Parser Accumulator instructions
   else if (token.m_tokenValue == "RLC" || token.m_tokenValue == "RAL" ||
@@ -646,10 +634,9 @@ bool Parser::Handle8BitDataInstructions(const TokenStruct &token) {
   }
 
   if (token.m_tokenValue == "MVI") {
-    result = this->ReturnInstructionHex(token.m_tokenValue + "_" + temp[0] +
-                                        "_Data");
+    result = this->ReturnInstructionHex(token.m_tokenValue + "_" + temp[0]);
   } else {
-    result = this->ReturnInstructionHex(token.m_tokenValue + "_Data");
+    result = this->ReturnInstructionHex(token.m_tokenValue);
   }
   if (result) // if we were able to find instruction only push operand
   {

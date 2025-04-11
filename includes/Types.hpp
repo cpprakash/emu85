@@ -11,26 +11,7 @@ typedef char BYTE;
 typedef unsigned short u_WORD;
 typedef short WORD;
 
-static unsigned char MIN_CHAR_DATA{0};
-static unsigned char MIN_BOOL_DATA{0b0000};
-static unsigned char MIN_HEX_DATA{0x00};
-static unsigned char MIN_OCT_DATA{00};
-
-static unsigned char MAX_CHAR_DATA{255};
-static unsigned char MAX_BOOL_DATA{0b11111111};
-static unsigned char MAX_HEX_DATA{0xFF};
-static unsigned char MAX_OCT_DATA{0377};
-
-static unsigned short MIN_CHAR_ADDRESS{0};
-static unsigned short MIN_BOOL_ADDRESS{0b0000000000000000};
-static unsigned short MIN_HEX_ADDRESS{0x0000};
-static unsigned short MIN_OCT_ADDRESS{00};
-
 static unsigned short MAX_CHAR_ADDRESS{65535};
-static unsigned short MAX_BOOL_ADDRESS{0b1111111111111111};
-static unsigned short MAX_HEX_ADDRESS{0xFFFF};
-static unsigned short MAX_OCT_ADDRESS{0177777};
-
 static const unsigned short BIN_FILE_SIZE{1024};
 
 /**
@@ -42,9 +23,6 @@ const std::string MESSAGE_SUCCESS{"SUCCESS"};
  * Failure message strings
  */
 const std::string MESSAGE_EMPTY_FIELD{"Data/Address is empty."};
-
-// base for the operand
-enum BASE { b, d, h, o };
 
 // struct for 8 bit data
 struct EightBitData {
@@ -194,7 +172,7 @@ const std::map<std::string, unsigned char> type_mapInstructionOffsetBytes{
     {"XRI", 2},  {"XTHL", 1}};
 
 const std::map<std::string, unsigned char> types_mapInstruction{
-    {"ACI_Data", 0xCE},
+    {"ACI", 0xCE},
     {"ADC_A", 0x8F},
     {"ADC_B", 0x88},
     {"ADC_C", 0x89},
@@ -211,7 +189,7 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"ADD_H", 0x84},
     {"ADD_L", 0x85},
     {"ADD_M", 0x86},
-    {"ADI_Data", 0xC6},
+    {"ADI", 0xC6},
     {"ANA_A", 0xA7},
     {"ANA_B", 0xA0},
     {"ANA_C", 0xA1},
@@ -220,7 +198,7 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"ANA_H", 0xA4},
     {"ANA_L", 0xA5},
     {"ANA_M", 0xA6},
-    {"ANI_Data", 0xE6},
+    {"ANI", 0xE6},
     {"CALL_Address", 0xCD},
     {"CC_Address", 0xDC},
     {"CM_Address", 0xFC},
@@ -238,7 +216,7 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"CNZ_Address", 0xC4},
     {"CP_Address", 0xF4},
     {"CPE_Address", 0xEC},
-    {"CPI_Data", 0xFE},
+    {"CPI", 0xFE},
     {"CPO_Address", 0xE4},
     {"CZ_Address", 0xCC},
     {"DAA", 0x27},
@@ -354,14 +332,14 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"MOV_M_E", 0x73},
     {"MOV_M_H", 0x74},
     {"MOV_M_L", 0x75},
-    {"MVI_A_Data", 0x3E},
-    {"MVI_B_Data", 0x06},
-    {"MVI_C_Data", 0x0E},
-    {"MVI_D_Data", 0x16},
-    {"MVI_E_Data", 0x1E},
-    {"MVI_H_Data", 0x26},
-    {"MVI_L_Data", 0x2E},
-    {"MVI_M_Data", 0x36},
+    {"MVI_A", 0x3E},
+    {"MVI_B", 0x06},
+    {"MVI_C", 0x0E},
+    {"MVI_D", 0x16},
+    {"MVI_E", 0x1E},
+    {"MVI_H", 0x26},
+    {"MVI_L", 0x2E},
+    {"MVI_M", 0x36},
     {"NOP", 0x00},
     {"ORA_A", 0xB7},
     {"ORA_B", 0xB0},
@@ -371,7 +349,7 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"ORA_H", 0xB4},
     {"ORA_L", 0xB5},
     {"ORA_M", 0xB6},
-    {"ORI_Data", 0xF6},
+    {"ORI", 0xF6},
     {"OUT_Port-Address", 0xD3},
     {"PCHL", 0xE9},
     {"POP_B", 0xC1},
@@ -412,7 +390,7 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"SBB_H", 0x9C},
     {"SBB_L", 0x9D},
     {"SBB_M", 0x9E},
-    {"SBI_Data", 0xDE},
+    {"SBI", 0xDE},
     {"SHLD_Address", 0x22},
     {"SIM", 0x30},
     {"SPHL", 0xF9},
@@ -428,7 +406,7 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"SUB_H", 0x94},
     {"SUB_L", 0x95},
     {"SUB_M", 0x96},
-    {"SUI_Data", 0xD6},
+    {"SUI", 0xD6},
     {"XCHG", 0xEB},
     {"XRA_A", 0xAF},
     {"XRA_B", 0xA8},
@@ -438,7 +416,7 @@ const std::map<std::string, unsigned char> types_mapInstruction{
     {"XRA_H", 0xAC},
     {"XRA_L", 0xAD},
     {"XRA_M", 0xAE},
-    {"XRI_Data", 0xEE},
+    {"XRI", 0xEE},
     {"XTHL", 0xE3},
 };
 

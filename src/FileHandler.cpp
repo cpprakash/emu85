@@ -114,10 +114,8 @@ void FileHandler::GenerateTokens(const std::string &file_text) {
         i++;
       }
       end_pos = i;
-      if (std::find(this->m_arrAllInstructions.begin(),
-                    this->m_arrAllInstructions.end(),
-                    Helper::ConvertToUppercase(temp_string)) !=
-          std::end(this->m_arrAllInstructions)) {
+      if (type_mapInstructionOffsetBytes.find(Helper::ConvertToUppercase(
+              temp_string)) != type_mapInstructionOffsetBytes.end()) {
         m_vectTokens.push_back({line_number, start_pos + 1, end_pos,
                                 temp_string.length(), TOKEN_INSTRUCTION,
                                 Helper::ConvertToUppercase(temp_string)});
