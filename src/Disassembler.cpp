@@ -92,8 +92,8 @@ void Disassembler::ReadBinaryFileToDisassemble(void) {
         case 0xCA: //{0xCA, "JZ"}
         {
           std::cout << data->second << " 0" << std::hex
-                    << (static_cast<unsigned short>(fileContent[i + 2] << 8) |
-                        (fileContent[i + 1]))
+                    << (static_cast<unsigned short>((fileContent[i + 2] << 8) |
+                                                    (fileContent[i + 1])))
                     << std::dec << "H" << std::endl;
           i += 2; // increment with 2, one for high and one for low byte
 
@@ -293,8 +293,9 @@ const std::string &
 Disassembler::ReturnInstructionWithoutUnderscore(const std::string &input) {
   this->m_strInstruction = "";
   bool firstComma = false;
-  if (input == "")
+  if (input == "") {
     return this->m_strInstruction;
+  }
 
   unsigned int counter = 0;
   while (counter < input.length()) {

@@ -95,24 +95,28 @@ void MainFrame::CreateBoxSizers() {
    */
   this->m_pCodeWindowBoxSizer = new wxBoxSizer(wxVERTICAL);
 
-  this->m_pCodeWindowBoxSizer->Add(this->m_pCodeWindow);
-  this->m_pCodeWindowBoxSizer->Add(this->m_pConsoleListView);
+  this->m_pCodeWindowBoxSizer->Add(this->m_pCodeWindow, 1, wxEXPAND | wxALL,
+                                   20);
+  this->m_pCodeWindowBoxSizer->Add(this->m_pConsoleListView, 1,
+                                   wxEXPAND | wxALL, 20);
 
   this->m_pRomRamBoxSizer = new wxBoxSizer(wxVERTICAL);
-  this->m_pRomRamBoxSizer->Add(this->m_pRomListView);
-  this->m_pRomRamBoxSizer->Add(this->m_pRamListView);
+  this->m_pRomRamBoxSizer->Add(this->m_pRomListView, 1, wxEXPAND | wxALL, 20);
+  this->m_pRomRamBoxSizer->Add(this->m_pRamListView, 1, wxEXPAND | wxALL, 20);
 
   wxStaticText *text =
       new wxStaticText(this, wxID_STATIC, wxT("Write here register values"));
-  this->m_pOuterBoxSizer->Add(text);
-  this->m_pOuterBoxSizer->Add(
-      this->m_pCodeWindowBoxSizer); // add codeWindowBoxSizer
+  this->m_pRegistersBoxSizer->Add(text, 1, wxALL, 20);
 
-  this->m_pOuterBoxSizer->Add(
-      this->m_pRomRamBoxSizer); // add Ram_Rom boxer to this boxer
+  this->m_pOuterBoxSizer->Add(this->m_pRegistersBoxSizer, 1, wxALL, 20);
+  this->m_pOuterBoxSizer->Add(this->m_pCodeWindowBoxSizer, 1, wxEXPAND | wxALL,
+                              20); // add codeWindowBoxSizer
 
-  SetSizer(this->m_pOuterBoxSizer);
-  this->m_pOuterBoxSizer->Fit(this);
+  this->m_pOuterBoxSizer->Add(this->m_pRomRamBoxSizer, 1, wxEXPAND | wxALL,
+                              20); // add Ram_Rom boxer to this boxer
+
+  SetSizerAndFit(this->m_pOuterBoxSizer);
+  // this->m_pOuterBoxSizer->Fit(this);
 }
 
 /***

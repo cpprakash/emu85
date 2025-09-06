@@ -796,7 +796,7 @@ bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
   return false;
 }
 
-bool Parser::HandleAccumulatorInstruction(const TokenStruct &token) {
+/*bool Parser::HandleAccumulatorInstruction(const TokenStruct &token) {
   std::cout
       << "[Parser]::[HandleAccumulatorInstruction]:[start for instruction "
       << token.m_tokenValue << "]" << std::endl;
@@ -835,7 +835,7 @@ bool Parser::HandleAllControlInstructions(const TokenStruct &token) {
     return resultInst;
   }
   return false;
-}
+}*/
 
 bool Parser::HandleAccumulatorInstruction(const TokenStruct &token) {
   std::cout
